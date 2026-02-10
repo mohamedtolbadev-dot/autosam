@@ -1,0 +1,71 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif, "Segoe UI", Roboto, sans-serif;
+}
+
+@layer base {
+  html {
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+    min-width: 0;
+  }
+  #root {
+    min-width: 0;
+    overflow-x: hidden;
+  }
+}
+
+/* Masquer le placeholder natif (mm/dd/yyyy) des champs date quand vide */
+.date-field-wrapper.date-field-empty .search-date-input::-webkit-datetime-edit {
+  opacity: 0;
+}
+.date-field-wrapper.date-field-empty .search-date-input::-webkit-datetime-edit-fields-wrapper {
+  visibility: hidden;
+}
+.date-field-wrapper .search-date-input::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.6;
+  margin-left: 0;
+}
+
+/* Firefox: masquer le texte placeholder du champ date */
+.date-field-wrapper.date-field-empty .search-date-input::-moz-placeholder {
+  opacity: 0;
+}
+
+/* Défilement auto des voitures vers la gauche */
+@keyframes cars-scroll-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+.cars-scroll-track {
+  animation: cars-scroll-left 35s linear infinite;
+}
+.cars-scroll-track:hover {
+  animation-play-state: paused;
+}
+
+/* Défilement auto des voitures vers la droite */
+@keyframes cars-scroll-right {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+.cars-scroll-track-right {
+  animation: cars-scroll-right 40s linear infinite;
+}
+.cars-scroll-track-right:hover {
+  animation-play-state: paused;
+}
