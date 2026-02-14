@@ -8,6 +8,8 @@ export const CustomerProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
   const [initializing, setInitializing] = useState(true);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showRegisterModal, setShowRegisterModal] = useState(false);
 
   // Check for existing token on mount
   useEffect(() => {
@@ -118,6 +120,10 @@ export const CustomerProvider = ({ children }) => {
     logout,
     updateProfile,
     fetchProfile,
+    showLoginModal,
+    setShowLoginModal,
+    showRegisterModal,
+    setShowRegisterModal,
   };
 
   return (

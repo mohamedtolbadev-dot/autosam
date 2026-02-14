@@ -5,7 +5,7 @@ import { bookingApi } from '../api/index';
 import { useTranslation } from 'react-i18next';
 
 const MyBookings = () => {
-  const { customer, isAuthenticated, loading: authLoading } = useCustomer();
+  const { customer, isAuthenticated, loading: authLoading, setShowLoginModal } = useCustomer();
   const { t } = useTranslation();
   
   const [bookings, setBookings] = useState([]);
@@ -148,12 +148,12 @@ const MyBookings = () => {
           <img src="/imgs/autosam1.jpg" alt="Logo" className="h-12 w-auto mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-slate-800 mb-4">Connexion requise</h2>
           <p className="text-slate-600 mb-6">Connectez-vous pour voir vos réservations.</p>
-          <Link
-            to="/login"
+          <button
+            onClick={() => setShowLoginModal(true)}
             className="inline-block bg-red-600 text-white py-3 px-8 rounded-xl font-medium hover:bg-red-700 transition"
           >
             Se connecter
-          </Link>
+          </button>
         </div>
       </div>
     );
