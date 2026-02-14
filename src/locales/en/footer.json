@@ -1,0 +1,44 @@
+{
+  "brand": {
+    "name": "Location Maroc",
+    "description": "Your trusted partner for car rental in Morocco. A modern fleet and customer service available 24/7."
+  },
+  "quickLinks": {
+    "title": "Quick Links",
+    "items": {
+      "home": "Home",
+      "vehicles": "Our Vehicles",
+      "about": "About",
+      "contact": "Contact",
+      "booking": "Book Now"
+    }
+  },
+  "services": {
+    "title": "Our Services",
+    "items": {
+      "shortTerm": "Short-term Rental",
+      "longTerm": "Long-term Rental",
+      "withDriver": "Rental with Driver",
+      "airport": "Airport Transfer",
+      "insurance": "Full Insurance"
+    }
+  },
+  "contact": {
+    "title": "Contact",
+    "address": "123 Boulevard Mohammed V,",
+    "city": "Casablanca, Morocco",
+    "hours": "Mon-Sat: 8AM-8PM",
+    "weekend": "Sun: 9AM-6PM"
+  },
+  "bottomBar": {
+    "copyright": "© {{year}} Location Maroc. All rights reserved.",
+    "terms": "Terms & Conditions",
+    "privacy": "Privacy Policy",
+    "legal": "Legal Notice"
+  },
+  "social": {
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "twitter": "Twitter"
+  }
+}

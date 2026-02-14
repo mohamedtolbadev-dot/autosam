@@ -1,0 +1,93 @@
+{
+  "title": "Réservation",
+  "heroTitle": "Complétez votre réservation",
+  "heroSubtitle": "En quelques étapes — informations, options, paiement.",
+  "steps": {
+    "dates": "Dates",
+    "options": "Options",
+    "confirm": "Confirmation"
+  },
+  "vehicle": {
+    "title": "Véhicule",
+    "category": "Catégorie",
+    "pricePerDay": "Prix par jour",
+    "preview": "Aperçu"
+  },
+  "form": {
+    "yourInfo": "Vos informations",
+    "startDate": "Date de début",
+    "endDate": "Date de fin",
+    "pickup": "Lieu de prise en charge",
+    "dropoff": "Lieu de restitution",
+    "firstName": "Prénom",
+    "firstNamePlaceholder": "Ex: Mohamed",
+    "lastName": "Nom",
+    "lastNamePlaceholder": "Ex: Tolba",
+    "email": "Email",
+    "emailPlaceholder": "exemple@email.com",
+    "phone": "Téléphone",
+    "phonePlaceholder": "+212 6XX XXX XXX",
+    "license": "Numéro de permis de conduire",
+    "licensePlaceholder": "Ex: AB123456",
+    "rentalDetails": "Détails de location",
+    "client": "Client",
+    "dates": "Dates"
+  },
+  "options": {
+    "title": "Options supplémentaires",
+    "gps": {
+      "title": "GPS",
+      "desc": "Système de navigation"
+    },
+    "childSeat": {
+      "title": "Siège bébé",
+      "desc": "Siège pour enfant (0-4 ans)"
+    }
+  },
+  "insurance": {
+    "title": "Assurance",
+    "basic": {
+      "title": "Assurance de base",
+      "desc": "Incluse dans le prix"
+    },
+    "premium": {
+      "title": "Assurance premium",
+      "desc": "Zéro franchise, couverture maximale"
+    }
+  },
+  "summary": {
+    "title": "Récapitulatif",
+    "rental": "Location",
+    "days": "jours",
+    "total": "Total",
+    "included": "Inclus",
+    "promo": {
+      "placeholder": "Code promo",
+      "apply": "Appliquer",
+      "applied": "Réduction de 10% appliquée."
+    }
+  },
+  "actions": {
+    "previous": "Précédent",
+    "next": "Suivant",
+    "confirmBooking": "Confirmer la réservation",
+    "cancel": "Annuler"
+  },
+  "messages": {
+    "loading": "Chargement...",
+    "error": "Une erreur est survenue",
+    "success": "Réservation confirmée !",
+    "successDesc": "Merci ! Votre réservation a été enregistrée. Vous allez être redirigé vers l'accueil.",
+    "confirmInfo": "Vérifiez vos informations. Annulation gratuite jusqu'à 24h avant la prise en charge.",
+    "termsPart1": "Je confirme que mes informations sont correctes et j'accepte les",
+    "termsPart2": "conditions générales",
+    "terms": "J'accepte les conditions générales"
+  },
+  "included": {
+    "title": "Inclus :",
+    "allRisk": "Assurance tous risques",
+    "unlimited": "Kilométrage illimité",
+    "assistance": "Assistance 24/7",
+    "cancellation": "Annulation gratuite"
+  }
+}

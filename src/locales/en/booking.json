@@ -1,0 +1,93 @@
+{
+  "title": "Booking",
+  "heroTitle": "Complete your booking",
+  "heroSubtitle": "In a few steps — information, options, payment.",
+  "steps": {
+    "dates": "Dates",
+    "options": "Options",
+    "confirm": "Confirmation"
+  },
+  "vehicle": {
+    "title": "Vehicle",
+    "category": "Category",
+    "pricePerDay": "Price per day",
+    "preview": "Preview"
+  },
+  "form": {
+    "yourInfo": "Your Information",
+    "pickup": "Pickup location",
+    "dropoff": "Drop-off location",
+    "startDate": "Start date",
+    "endDate": "End date",
+    "firstName": "First name",
+    "firstNamePlaceholder": "Ex: John",
+    "lastName": "Last name",
+    "lastNamePlaceholder": "Ex: Smith",
+    "email": "Email",
+    "emailPlaceholder": "example@email.com",
+    "phone": "Phone",
+    "phonePlaceholder": "+1 234 567 890",
+    "license": "License number",
+    "licensePlaceholder": "Ex: AB123456",
+    "rentalDetails": "Rental Details",
+    "client": "Client",
+    "dates": "Dates"
+  },
+  "options": {
+    "title": "Additional Options",
+    "gps": {
+      "title": "GPS",
+      "desc": "Navigation system"
+    },
+    "childSeat": {
+      "title": "Child seat",
+      "desc": "Seat for child (0-4 years)"
+    }
+  },
+  "insurance": {
+    "title": "Insurance",
+    "basic": {
+      "title": "Basic insurance",
+      "desc": "Included in price"
+    },
+    "premium": {
+      "title": "Premium insurance",
+      "desc": "Zero deductible, maximum coverage"
+    }
+  },
+  "summary": {
+    "title": "Summary",
+    "rental": "Rental",
+    "days": "days",
+    "total": "Total",
+    "included": "Included",
+    "promo": {
+      "placeholder": "Promo code",
+      "apply": "Apply",
+      "applied": "10% discount applied."
+    }
+  },
+  "actions": {
+    "previous": "Previous",
+    "next": "Next",
+    "confirmBooking": "Confirm booking",
+    "cancel": "Cancel"
+  },
+  "messages": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "success": "Booking confirmed!",
+    "successDesc": "Thank you! Your booking has been saved. You will be redirected to the home page.",
+    "confirmInfo": "Please verify your information. Free cancellation up to 24 hours before pickup.",
+    "termsPart1": "I confirm that my information is correct and I accept the",
+    "termsPart2": "terms and conditions",
+    "terms": "I accept the terms and conditions"
+  },
+  "included": {
+    "title": "Included:",
+    "allRisk": "All-risk insurance",
+    "unlimited": "Unlimited mileage",
+    "assistance": "24/7 assistance",
+    "cancellation": "Free cancellation"
+  }
+}

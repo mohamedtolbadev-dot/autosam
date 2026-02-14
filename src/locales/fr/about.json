@@ -1,0 +1,63 @@
+{
+  "hero": {
+    "breadcrumb": "À propos",
+    "title": "À propos de nous",
+    "subtitle": "Votre partenaire de confiance pour la location de voitures au Maroc depuis 2009"
+  },
+  "stats": {
+    "vehicles": "Véhicules",
+    "satisfiedCustomers": "Clients satisfaits",
+    "agencies": "Agences",
+    "yearsExperience": "Ans d'expérience"
+  },
+  "story": {
+    "title": "Notre histoire",
+    "paragraph1": "Fondée en 2009, notre agence de location de voitures est née de la passion de faciliter les déplacements au Maroc. Ce qui a commencé comme une petite entreprise familiale à Casablanca avec seulement 20 véhicules s'est transformé en l'un des leaders du secteur de la location de voitures au royaume.",
+    "paragraph2": "Notre mission est simple : offrir à nos clients des véhicules fiables, modernes et adaptés à leurs besoins, tout en garantissant un service client exceptionnel. Que vous soyez un touriste découvrant les merveilles du Maroc ou un résident ayant besoin d'un véhicule temporaire, nous avons la solution parfaite pour vous.",
+    "paragraph3": "Aujourd'hui, avec plus de 500 véhicules et 15 agences réparties dans les principales villes du Maroc, nous continuons à innover et à améliorer nos services pour rester votre partenaire de confiance pour tous vos besoins de mobilité."
+  },
+  "values": {
+    "title": "Nos valeurs",
+    "security": {
+      "title": "Sécurité",
+      "description": "Tous nos véhicules sont régulièrement entretenus et couverts par une assurance complète pour votre tranquillité d'esprit."
+    },
+    "availability": {
+      "title": "Disponibilité",
+      "description": "Service client disponible 24h/24 et 7j/7 pour répondre à tous vos besoins, où que vous soyez au Maroc."
+    },
+    "quality": {
+      "title": "Qualité",
+      "description": "Une flotte moderne et diversifiée pour répondre à tous les besoins, de l'économique au véhicule de luxe."
+    }
+  },
+  "timeline": {
+    "title": "Notre parcours",
+    "item1": {
+      "year": "2009",
+      "title": "Création de l'entreprise",
+      "description": "Ouverture de notre première agence à Casablanca avec une flotte de 20 véhicules."
+    },
+    "item2": {
+      "year": "2012",
+      "title": "Expansion nationale",
+      "description": "Ouverture d'agences à Rabat, Marrakech et Fès pour mieux servir nos clients."
+    },
+    "item3": {
+      "year": "2017",
+      "title": "Modernisation",
+      "description": "Lancement de notre plateforme de réservation en ligne et renouvellement complet de notre flotte."
+    },
+    "item4": {
+      "year": "2024",
+      "title": "Leader du marché",
+      "description": "Plus de 500 véhicules et 15 agences à travers tout le royaume, au service de milliers de clients."
+    }
+  },
+  "cta": {
+    "title": "Rejoignez des milliers de clients satisfaits",
+    "subtitle": "Découvrez pourquoi nous sommes le premier choix pour la location de voitures au Maroc",
+    "vehiclesButton": "Voir nos véhicules",
+    "contactButton": "Nous contacter"
+  }
+}

@@ -1,5 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { useCustomer } from '../context/CustomerContext';
+import CurrencySelector from './CurrencySelector';
+import LanguageSelector from './LanguageSelector';
 
 // --- Icônes optimisées ---
 const IconCar = ({ className = 'w-6 h-6' }) => (
@@ -25,17 +29,20 @@ const IconClose = ({ className = 'w-6 h-6' }) => (
   </svg>
 );
 
-const navLinks = [
-  { to: '/', label: 'Accueil' },
-  { to: '/cars', label: 'Véhicules' },
-  { to: '/about', label: 'À propos' },
-  { to: '/contact', label: 'Contact' }
-];
-
 const Header = () => {
+  const { t } = useTranslation();
+  const { customer, isAuthenticated, logout } = useCustomer();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
   const location = useLocation();
+
+  const navLinks = [
+    { to: '/', label: t('nav.home') },
+    { to: '/cars', label: t('nav.cars') },
+    { to: '/about', label: t('nav.about') },
+    { to: '/contact', label: t('nav.contact') }
+  ];
 
   // Effet de scroll pour changer l'apparence au défilement
   useEffect(() => {
@@ -58,8 +65,8 @@ const Header = () => {
     <header 
       className={`sticky top-0 z-50 transition-all duration-300 ${
         scrolled 
-          ? 'bg-white/80 backdrop-blur-lg shadow-sm py-2' 
-          : 'bg-transparent py-4'
+          ? 'bg-white/80 backdrop-blur-lg shadow-sm py-1' 
+          : 'bg-transparent py-2'
       }`}
     >
       <div className="container mx-auto px-4 sm:px-6 max-w-7xl">
@@ -70,18 +77,11 @@ const Header = () => {
             to="/"
             className="flex items-center gap-3 group focus:outline-none"
           >
-            <div className="relative">
-              <div className="absolute -inset-1 bg-red-100 rounded-xl blur opacity-0 group-hover:opacity-100 transition duration-300" />
-              <span className="relative inline-flex items-center justify-center w-11 h-11 bg-red-600 text-white rounded-xl shadow-lg transition-transform duration-500 group-hover:rotate-[10deg]">
-                <IconCar className="w-6 h-6" />
-              </span>
-            </div>
-            <div className="flex flex-col leading-tight">
-              <span className="text-xl font-black tracking-tighter text-slate-900 uppercase">
-                Location <span className="text-red-600">Maroc</span>
-              </span>
-              <span className="text-[10px] font-bold text-slate-400 tracking-[0.2em] uppercase">Premium Service</span>
-            </div>
+            <img 
+              src="/imgs/autosam1.jpg" 
+              alt="Logo" 
+              className="h-10 w-auto object-contain"
+            />
           </Link>
 
           {/* Desktop Navigation */}
@@ -98,13 +98,82 @@ const Header = () => {
               </NavLink>
             ))}
             
-            <div className="h-6 w-[1px] bg-slate-200 mx-2" /> {/* Séparateur */}
+            <div className="h-6 w-[1px] bg-slate-200 mx-2" />
+
+            <CurrencySelector scrolled={scrolled} />
+
+            <div className="h-6 w-[1px] bg-slate-200 mx-2" />
+
+            <LanguageSelector scrolled={scrolled} />
+
+            <div className="h-6 w-[1px] bg-slate-200 mx-2" />
+
+            {/* Customer Auth */}
+            {isAuthenticated ? (
+              <div className="relative">
+                <button
+                  onClick={() => setShowUserMenu(!showUserMenu)}
+                  className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-700 hover:text-red-600 transition-colors"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  <span className="hidden lg:inline">{customer?.first_name || 'Mon compte'}</span>
+                  <svg className={`w-4 h-4 transition-transform ${showUserMenu ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                
+                {showUserMenu && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-slate-200 py-2 z-50">
+                    <Link
+                      to="/my-bookings"
+                      className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-red-600"
+                      onClick={() => setShowUserMenu(false)}
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                      </svg>
+                      Mes réservations
+                    </Link>
+                    <button
+                      onClick={() => {
+                        logout();
+                        setShowUserMenu(false);
+                      }}
+                      className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                      </svg>
+                      Déconnexion
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <Link
+                  to="/login"
+                  className="text-sm font-medium text-slate-600 hover:text-red-600 transition-colors"
+                >
+                  Connexion
+                </Link>
+                <span className="text-slate-300">|</span>
+                <Link
+                  to="/register"
+                  className="text-sm font-medium text-red-600 hover:text-red-700 transition-colors"
+                >
+                  Inscription
+                </Link>
+              </div>
+            )}
 
             <Link
               to="/cars"
               className="inline-flex items-center px-6 py-2.5 bg-slate-900 text-white text-sm font-bold rounded-full hover:bg-red-600 hover:scale-105 transition-all duration-300 shadow-xl shadow-slate-200 hover:shadow-red-200"
             >
-              Réserver maintenant
+              {t('actions.reserve')}
             </Link>
           </nav>
 
@@ -135,11 +204,26 @@ const Header = () => {
                 {label}
               </NavLink>
             ))}
+            
+            <div className="border-t border-slate-100 my-2" />
+            
+            <div className="px-4 py-2">
+              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Devise</p>
+              <CurrencySelector scrolled={true} />
+            </div>
+
+            <div className="border-t border-slate-100 my-2" />
+
+            <div className="px-4 py-2">
+              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Langue</p>
+              <LanguageSelector scrolled={true} />
+            </div>
+
             <Link
               to="/cars"
               className="mt-4 w-full py-4 bg-red-600 text-white text-center font-black rounded-xl shadow-lg shadow-red-200"
             >
-              VOIR LE CATALOGUE
+              {t('actions.seeCatalog')}
             </Link>
           </nav>
         </div>

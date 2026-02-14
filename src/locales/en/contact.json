@@ -1,0 +1,71 @@
+{
+  "hero": {
+    "breadcrumb": "Contact",
+    "title": "Contact Us",
+    "subtitle": "Our team is at your disposal to answer all your questions."
+  },
+  "form": {
+    "title": "Send us a message",
+    "success": {
+      "title": "Message sent!",
+      "message": "We have received your message and will respond as soon as possible."
+    },
+    "fields": {
+      "name": {
+        "label": "Full Name *",
+        "placeholder": "Ex: John Smith"
+      },
+      "email": {
+        "label": "Email *",
+        "placeholder": "example@email.com"
+      },
+      "phone": {
+        "label": "Phone",
+        "placeholder": "+1 234 567 890"
+      },
+      "subject": {
+        "label": "Subject *",
+        "placeholder": "Select a subject",
+        "options": {
+          "reservation": "Reservation",
+          "information": "Information Request",
+          "modification": "Reservation Modification",
+          "reclamation": "Complaint",
+          "autre": "Other"
+        }
+      },
+      "message": {
+        "label": "Message *",
+        "placeholder": "Your message..."
+      }
+    },
+    "submit": "Send Message"
+  },
+  "contactInfo": {
+    "title": "Contact Information",
+    "phone": {
+      "title": "Phone",
+      "number": "+212 522 123 456",
+      "subtitle": "Customer service available 24/7"
+    },
+    "email": {
+      "title": "Email",
+      "address": "contact@locationvoiture.ma",
+      "subtitle": "Response within 24h"
+    },
+    "hours": {
+      "title": "Hours",
+      "weekdays": "Mon-Sat: 8:00 AM - 8:00 PM",
+      "weekend": "Sunday: 9:00 AM - 6:00 PM"
+    }
+  },
+  "urgent": {
+    "title": "Need urgent help?",
+    "description": "Our assistance service is available 24/7 to help you in case of need.",
+    "callButton": "Call Now"
+  },
+  "map": {
+    "title": "Agency Map",
+    "subtitle": "(Google Maps integration coming soon)"
+  }
+}

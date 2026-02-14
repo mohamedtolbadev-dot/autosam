@@ -1,8 +1,26 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { getCarById, getRentalOptions } from '../data/cars';
+import { useTranslation } from 'react-i18next';
+import { useCars } from '../context/CarContext';
+import { useCurrency } from '../context/CurrencyContext';
 
-// Icônes SVG inline (alignées avec Home.jsx / Cars.jsx)
+// Utility function to calculate tiered pricing options
+const getRentalOptions = (pricePerDay) => {
+  const tiers = [
+    { days: 1, factor: 1 },
+    { days: 3, factor: 0.92 },
+    { days: 7, factor: 0.84 },
+    { days: 14, factor: 0.76 },
+    { days: 30, factor: 0.68 }
+  ];
+  return tiers.map(({ days, factor }) => ({
+    days,
+    pricePerDay: Math.round(pricePerDay * factor),
+    total: Math.round(pricePerDay * factor * days)
+  }));
+};
+
+// Inline SVG icons (aligned with Home.jsx / Cars.jsx)
 const IconCar = ({ className = 'w-8 h-8' }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H8.5a1 1 0 0 0-.8.4L5 11l-.16.01a1 1 0 0 0-.84.99V16h3" />
@@ -66,7 +84,18 @@ const IconDoor = ({ className = 'w-5 h-5' }) => (
 const CarDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const car = getCarById(id);
+  const { selectedCar, fetchCarById, loading, error } = useCars();
+  const { formatPrice } = useCurrency();
+  const { t } = useTranslation(['cars', 'common', 'booking']);
+  
+  // Load car on mount
+  useEffect(() => {
+    if (id) {
+      fetchCarById(id);
+    }
+  }, [id, fetchCarById]);
+  
+  const car = selectedCar;
   const rentalOptions = car ? getRentalOptions(car.price) : [];
 
   const inputBaseClassName =
@@ -75,7 +104,7 @@ const CarDetails = () => {
     'w-full rounded-xl px-4 py-3 text-slate-800 bg-white border border-slate-200 shadow-sm focus:ring-2 focus:ring-red-500/40 focus:border-red-500 focus:outline-none transition cursor-pointer appearance-none';
 
   const [rentalForm, setRentalForm] = useState({
-    pickupLocation: 'Casablanca',
+    pickupLocation: '',
     startDate: '',
     endDate: ''
   });
@@ -83,15 +112,55 @@ const CarDetails = () => {
   const isRentalFormValid =
     Boolean(rentalForm.pickupLocation) && Boolean(rentalForm.startDate) && Boolean(rentalForm.endDate);
 
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
+        <div className="text-center">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-red-50 text-red-600 rounded-full mb-4 animate-pulse">
+            <IconCar className="w-8 h-8" />
+          </div>
+          <h1 className="text-xl font-bold text-slate-800 mb-2">{t('cars.loading')}</h1>
+          <p className="text-slate-600">{t('cars.loadingDetails')}</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
+        <div className="text-center">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-red-50 text-red-500 rounded-full mb-4">
+            <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+          </div>
+          <h1 className="text-xl font-bold text-slate-800 mb-2">{t('cars.error')}</h1>
+          <p className="text-slate-600 mb-4">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors"
+          >
+            {t('common:actions.retry')}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   if (!car) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
         <div className="text-center">
-          <h1 className="text-xl font-bold text-slate-800 mb-2">Véhicule introuvable</h1>
-          <p className="text-slate-600 mb-4">Ce véhicule n'existe pas ou a été retiré.</p>
+          <h1 className="text-xl font-bold text-slate-800 mb-2">{t('cars.empty')}</h1>
+          <p className="text-slate-600 mb-4">{t('cars.emptyDetails')}</p>
           <Link to="/cars" className="inline-flex items-center gap-2 text-red-600 font-semibold hover:text-red-700">
             <IconArrowLeft className="w-5 h-5" />
-            Retour à la flotte
+            {t('common:actions.back')}
           </Link>
         </div>
       </div>
@@ -100,7 +169,7 @@ const CarDetails = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 min-w-0 overflow-x-hidden">
-      {/* Fil d'Ariane */}
+      {/* Breadcrumb */}
       <div className="bg-white border-b border-slate-200">
         <div className="container mx-auto px-4 sm:px-6 max-w-6xl py-3 sm:py-4 min-w-0">
           <button
@@ -108,50 +177,56 @@ const CarDetails = () => {
             className="inline-flex items-center gap-2 text-slate-600 hover:text-red-600 font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 rounded-lg text-sm sm:text-base"
           >
             <IconArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
-            <span className="hidden sm:inline">Retour aux véhicules</span>
-            <span className="sm:hidden">Retour</span>
+            <span className="hidden sm:inline">{t('common:actions.back')}</span>
+            <span className="sm:hidden">{t('common:actions.back')}</span>
           </button>
         </div>
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 max-w-6xl py-4 sm:py-6 lg:py-8 min-w-0">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-          {/* Contenu principal */}
+          {/* Main content */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Image principale + miniatures */}
+            {/* Main image + thumbnails */}
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
               <div className="aspect-[16/10] sm:aspect-[4/3] max-h-[300px] sm:max-h-[380px] bg-slate-100 flex items-center justify-center relative overflow-hidden">
                 {car.image ? (
                   <img
-                    src={car.image}
+                    src={car.image.startsWith('http') ? car.image : `http://localhost:5000${car.image}`}
                     alt={car.name}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain"
                   />
                 ) : (
                   <IconCar className="w-20 h-20 sm:w-24 sm:h-24 text-slate-300" />
                 )}
               </div>
               <div className="grid grid-cols-3 gap-1.5 sm:gap-2 p-2 sm:p-3 border-t border-slate-100">
-                {[1, 2, 3].map((img) => (
-                  <div key={img} className="aspect-video bg-slate-100 rounded-lg sm:rounded-xl flex items-center justify-center overflow-hidden">
-                    {car.image ? (
-                      <img src={car.image} alt="" className="w-full h-full object-cover opacity-80 hover:opacity-100 transition" />
-                    ) : (
-                      <IconCar className="w-8 h-8 sm:w-10 sm:h-10 text-slate-300" />
-                    )}
+                {car.images && car.images.length > 0 ? (
+                  car.images.slice(0, 3).map((img, index) => (
+                    <div key={index} className="aspect-video bg-slate-100 rounded-lg sm:rounded-xl flex items-center justify-center overflow-hidden">
+                      <img 
+                        src={img.startsWith('http') ? img : `http://localhost:5000${img}`} 
+                        alt={`Image ${index + 1}`} 
+                        className="w-full h-full object-cover opacity-80 hover:opacity-100 transition" 
+                      />
+                    </div>
+                  ))
+                ) : (
+                  <div className="col-span-3 text-center py-4 text-slate-400 text-sm">
+                    {t('cars.noAdditionalImages')}
                   </div>
-                ))}
+                )}
               </div>
             </div>
 
-            {/* Fiche véhicule */}
+            {/* Vehicle details */}
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-5 lg:p-6">
               <div className="flex flex-col sm:flex-row sm:flex-wrap justify-between items-start gap-3 sm:gap-4 mb-4">
                 <div className="min-w-0 space-y-1 flex-1">
                   <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-800 leading-tight">
                     {car.name}
                   </h1>
-                  <p className="text-sm text-slate-500">
+                  <p className="text-sm sm:text-base text-slate-600">
                     {car.category} • {car.year}
                   </p>
                   <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-2">
@@ -165,7 +240,7 @@ const CarDetails = () => {
                     </span>
                     <span className="inline-flex items-center rounded-full bg-slate-50 px-2.5 sm:px-3 py-1 text-[11px] sm:text-xs font-medium text-slate-700 border border-slate-200">
                       <IconUsers className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1 text-slate-500" />
-                      {car.seats} places
+                      {car.seats} {t('cars.seats')}
                     </span>
                   </div>
                 </div>
@@ -173,18 +248,18 @@ const CarDetails = () => {
                   {car.available ? (
                     <span className="inline-flex items-center gap-1.5 sm:gap-2 bg-emerald-50 text-emerald-700 px-2.5 sm:px-3 py-1 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-semibold">
                       <span className="inline-block w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-500" />
-                      Disponible
+                      {t('cars.available')}
                     </span>
                   ) : (
                     <span className="inline-flex items-center gap-1.5 sm:gap-2 bg-red-50 text-red-700 px-2.5 sm:px-3 py-1 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-semibold">
                       <span className="inline-block w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-red-500" />
-                      Non disponible
+                      {t('cars.notAvailable')}
                     </span>
                   )}
                   <div className="text-right text-xs text-slate-500 ml-auto sm:ml-0">
-                    <p>À partir de</p>
+                    <p>{t('cars.from')}</p>
                     <p className="text-base sm:text-lg font-bold text-slate-900">
-                      {car.price} <span className="text-[10px] sm:text-xs font-semibold text-slate-600">MAD/jour</span>
+                      {formatPrice(car.price)} <span className="text-[10px] sm:text-xs font-semibold text-slate-600">{t('cars.perDay')}</span>
                     </p>
                   </div>
                 </div>
@@ -194,14 +269,14 @@ const CarDetails = () => {
                 {car.description}
               </p>
 
-              {/* Specs — icônes et couleurs alignées */}
+              {/* Specs — icons and colors aligned */}
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-4 mb-5 sm:mb-6">
                 <div className="flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3 lg:p-4 bg-slate-50 rounded-xl border border-slate-100">
                   <div className="inline-flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 lg:w-10 lg:h-10 bg-red-50 text-red-600 rounded-xl shrink-0">
                     <IconUsers className="w-4 h-4 sm:w-4.5 sm:h-4.5 lg:w-5 lg:h-5" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[10px] sm:text-xs text-slate-500">Places</p>
+                    <p className="text-[10px] sm:text-xs text-slate-500">{t('cars.seatsLabel')}</p>
                     <p className="font-semibold text-slate-800 text-sm sm:text-base">{car.seats}</p>
                   </div>
                 </div>
@@ -210,7 +285,7 @@ const CarDetails = () => {
                     <IconCog className="w-4 h-4 sm:w-4.5 sm:h-4.5 lg:w-5 lg:h-5" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[10px] sm:text-xs text-slate-500">Transmission</p>
+                    <p className="text-[10px] sm:text-xs text-slate-500">{t('specs.transmission')}</p>
                     <p className="font-semibold text-slate-800 text-sm sm:text-base">{car.transmission}</p>
                   </div>
                 </div>
@@ -219,7 +294,7 @@ const CarDetails = () => {
                     <IconFuel className="w-4 h-4 sm:w-4.5 sm:h-4.5 lg:w-5 lg:h-5" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[10px] sm:text-xs text-slate-500">Carburant</p>
+                    <p className="text-[10px] sm:text-xs text-slate-500">{t('specs.fuel')}</p>
                     <p className="font-semibold text-slate-800 text-sm sm:text-base">{car.fuel}</p>
                   </div>
                 </div>
@@ -228,15 +303,15 @@ const CarDetails = () => {
                     <IconDoor className="w-4 h-4 sm:w-4.5 sm:h-4.5 lg:w-5 lg:h-5" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[10px] sm:text-xs text-slate-500">Portes</p>
+                    <p className="text-[10px] sm:text-xs text-slate-500">{t('cars.doors')}</p>
                     <p className="font-semibold text-slate-800 text-sm sm:text-base">{car.doors}</p>
                   </div>
                 </div>
               </div>
 
-              {/* Équipements */}
+              {/* Equipment */}
               <div>
-                <h3 className="text-base sm:text-lg font-bold text-slate-800 mb-2 sm:mb-3">Équipements</h3>
+                <h3 className="text-base sm:text-lg font-bold text-slate-800 mb-2 sm:mb-3">{t('cars.equipments')}</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {car.features.map((feature, index) => (
                     <div key={index} className="flex items-center gap-2">
@@ -248,9 +323,9 @@ const CarDetails = () => {
               </div>
             </div>
 
-            {/* Inclus */}
+            {/* Included */}
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-5 lg:p-6">
-              <h3 className="text-base sm:text-lg font-bold text-slate-800 mb-2 sm:mb-3">Inclus dans le prix</h3>
+              <h3 className="text-base sm:text-lg font-bold text-slate-800 mb-2 sm:mb-3">{t('cars.included')}</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                 {car.included.map((item, index) => (
                   <div key={index} className="flex items-start gap-2 sm:gap-3">
@@ -262,57 +337,43 @@ const CarDetails = () => {
             </div>
           </div>
 
-          {/* Sidebar réservation */}
+          {/* Booking Sidebar */}
           <div className="lg:col-span-1 order-first lg:order-last">
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-5 lg:p-6 lg:sticky lg:top-4">
               <div className="text-center mb-4 sm:mb-6 pb-4 sm:pb-6 border-b border-slate-100">
-                <p className="text-slate-500 text-xs sm:text-sm mb-1">À partir de</p>
-                <p className="text-2xl sm:text-3xl lg:text-4xl font-bold text-red-600">{car.price} MAD</p>
-                <p className="text-slate-500 text-xs sm:text-sm">par jour</p>
-              </div>
-
-              <div className="mb-4 sm:mb-6">
-                <h4 className="font-bold text-slate-800 mb-2 sm:mb-3 text-sm sm:text-base">Tarifs dégressifs</h4>
-                <div className="space-y-1.5 sm:space-y-2">
-                  {rentalOptions.map((option) => (
-                    <div key={option.days} className="flex justify-between items-center p-2 sm:p-3 bg-slate-50 rounded-xl border border-slate-100">
-                      <div>
-                        <p className="font-medium text-slate-800 text-sm">{option.days} jour{option.days > 1 ? 's' : ''}</p>
-                        <p className="text-[10px] sm:text-xs text-slate-500">{option.pricePerDay} MAD/jour</p>
-                      </div>
-                      <p className="font-bold text-red-600 text-sm sm:text-base">{option.total} MAD</p>
-                    </div>
-                  ))}
-                </div>
+                <p className="text-slate-500 text-xs sm:text-sm mb-1">{t('booking.startingFrom')}</p>
+                <p className="text-2xl sm:text-3xl lg:text-4xl font-bold text-red-600">{formatPrice(car.price)}</p>
+                <p className="text-slate-500 text-xs sm:text-sm">{t('common:currency.perDay')}</p>
               </div>
 
               <div className="mb-4 sm:mb-6 space-y-3 sm:space-y-4">
                 <div>
                   <label className="flex items-center gap-2 text-xs sm:text-sm font-medium text-slate-700 mb-1.5 sm:mb-2">
                     <IconMapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500" />
-                    Lieu de prise en charge
+                    {t('booking.pickupLocation')}
                   </label>
                   <select
                     className={`${selectBaseClassName} text-sm`}
                     value={rentalForm.pickupLocation}
                     onChange={(e) => setRentalForm({ ...rentalForm, pickupLocation: e.target.value })}
                   >
-                    <option>Casablanca</option>
-                    <option>Rabat</option>
-                    <option>Marrakech</option>
-                    <option>Fès</option>
-                    <option>Tanger</option>
-                    <option>Agadir</option>
+                    <option value="">{t('booking.pickupLocation')}</option>
+                    <option>{t('booking.casablanca')}</option>
+                    <option>{t('booking.rabat')}</option>
+                    <option>{t('booking.marrakech')}</option>
+                    <option>{t('booking.fes')}</option>
+                    <option>{t('booking.tanger')}</option>
+                    <option>{t('booking.agadir')}</option>
                   </select>
                 </div>
                 <div>
                   <label className="flex items-center gap-2 text-xs sm:text-sm font-medium text-slate-700 mb-1.5 sm:mb-2">
                     <IconCalendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500" />
-                    Date de début
+                    {t('booking:form.startDate')}
                   </label>
                   <input
                     type="date"
-                    placeholder="JJ/MM/AAAA"
+                    name="startDate"
                     value={rentalForm.startDate}
                     onChange={(e) => setRentalForm({ ...rentalForm, startDate: e.target.value })}
                     className={`${inputBaseClassName} text-sm`}
@@ -321,11 +382,11 @@ const CarDetails = () => {
                 <div>
                   <label className="flex items-center gap-2 text-xs sm:text-sm font-medium text-slate-700 mb-1.5 sm:mb-2">
                     <IconCalendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500" />
-                    Date de fin
+                    {t('booking:form.endDate')}
                   </label>
                   <input
                     type="date"
-                    placeholder="JJ/MM/AAAA"
+                    name="endDate"
                     value={rentalForm.endDate}
                     onChange={(e) => setRentalForm({ ...rentalForm, endDate: e.target.value })}
                     className={`${inputBaseClassName} text-sm`}
@@ -334,7 +395,7 @@ const CarDetails = () => {
               </div>
 
               <Link
-                to={`/booking?car=${car.id}`}
+                to={`/booking?car=${car.id}&location=${encodeURIComponent(rentalForm.pickupLocation)}&startDate=${rentalForm.startDate}&endDate=${rentalForm.endDate}`}
                 aria-disabled={!car.available || !isRentalFormValid}
                 className={`block w-full text-center py-2.5 sm:py-3 rounded-xl font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 text-sm sm:text-base ${
                   car.available && isRentalFormValid
@@ -346,14 +407,14 @@ const CarDetails = () => {
                 }}
               >
                 {!car.available
-                  ? 'Non disponible'
+                  ? t('cars.notAvailableButton')
                   : !isRentalFormValid
-                    ? 'Compléter les dates'
-                    : 'Réserver maintenant'}
+                    ? t('cars.completeDates')
+                    : t('cars.bookNow')}
               </Link>
 
               <p className="text-[10px] sm:text-xs text-slate-500 text-center mt-3 sm:mt-4">
-                Annulation gratuite jusqu'à 24h avant
+                {t('booking.freeCancellation')}
               </p>
             </div>
           </div>

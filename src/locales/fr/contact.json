@@ -1,0 +1,71 @@
+{
+  "hero": {
+    "breadcrumb": "Contact",
+    "title": "Contactez-nous",
+    "subtitle": "Notre équipe est à votre disposition pour répondre à toutes vos questions."
+  },
+  "form": {
+    "title": "Envoyez-nous un message",
+    "success": {
+      "title": "Message envoyé !",
+      "message": "Nous avons bien reçu votre message et vous répondrons dans les plus brefs délais."
+    },
+    "fields": {
+      "name": {
+        "label": "Nom complet *",
+        "placeholder": "Ex: Mohamed Tolba"
+      },
+      "email": {
+        "label": "Email *",
+        "placeholder": "exemple@email.com"
+      },
+      "phone": {
+        "label": "Téléphone",
+        "placeholder": "+212 6XX XXX XXX"
+      },
+      "subject": {
+        "label": "Sujet *",
+        "placeholder": "Sélectionnez un sujet",
+        "options": {
+          "reservation": "Réservation",
+          "information": "Demande d'information",
+          "modification": "Modification de réservation",
+          "reclamation": "Réclamation",
+          "autre": "Autre"
+        }
+      },
+      "message": {
+        "label": "Message *",
+        "placeholder": "Votre message..."
+      }
+    },
+    "submit": "Envoyer le message"
+  },
+  "contactInfo": {
+    "title": "Informations de contact",
+    "phone": {
+      "title": "Téléphone",
+      "number": "+212 522 123 456",
+      "subtitle": "Service client disponible 24/7"
+    },
+    "email": {
+      "title": "Email",
+      "address": "contact@locationvoiture.ma",
+      "subtitle": "Réponse sous 24h"
+    },
+    "hours": {
+      "title": "Horaires",
+      "weekdays": "Lun-Sam: 8h00 - 20h00",
+      "weekend": "Dimanche: 9h00 - 18h00"
+    }
+  },
+  "urgent": {
+    "title": "Besoin d'aide urgente ?",
+    "description": "Notre service d'assistance est disponible 24h/24 et 7j/7 pour vous aider en cas de besoin.",
+    "callButton": "Appeler maintenant"
+  },
+  "map": {
+    "title": "Carte des agences",
+    "subtitle": "(Intégration Google Maps à venir)"
+  }
+}

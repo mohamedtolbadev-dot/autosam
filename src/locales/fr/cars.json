@@ -1,0 +1,149 @@
+{
+  "title": "Nos véhicules",
+  "filters": {
+    "title": "Filtres",
+    "reset": "Reset",
+    "all": "Tous",
+    "category": "Catégorie",
+    "categoryAll": "Toutes",
+    "economic": "Économique",
+    "compact": "Compacte",
+    "comfort": "Confort",
+    "premium": "Premium",
+    "suv": "SUV",
+    "van": "Van",
+    "transmission": "Transmission",
+    "transmissionAll": "Toutes",
+    "manual": "Manuelle",
+    "automatic": "Automatique",
+    "budget": "Budget (MAD/jour)",
+    "priceAll": "Tous les prix",
+    "priceUnder300": "Moins de 300",
+    "price300to500": "300 - 500",
+    "price500to700": "500 - 700",
+    "priceOver700": "Plus de 700",
+    "seats": "Nombre de sièges",
+    "seatsAll": "Tous",
+    "seats4": "4 sièges",
+    "seats5": "5 sièges",
+    "seats7": "7+ sièges",
+    "fuel": "Carburant",
+    "fuelAll": "Tous",
+    "gasoline": "Essence",
+    "diesel": "Diesel"
+  },
+  "booking": {
+    "startingFrom": "À partir de",
+    "pickupLocation": "Lieu de prise en charge",
+    "casablanca": "Casablanca",
+    "rabat": "Rabat",
+    "marrakech": "Marrakech",
+    "fes": "Fès",
+    "tanger": "Tanger",
+    "agadir": "Agadir",
+    "freeCancellation": "Annulation gratuite jusqu'à 24h avant"
+  },
+  "sort": {
+    "priceAsc": "Prix croissant",
+    "priceDesc": "Prix décroissant",
+    "priceAscShort": "Prix: Croissant",
+    "priceDescShort": "Prix: Décroissant",
+    "name": "Nom",
+    "recommended": "Recommandés"
+  },
+  "view": {
+    "grid": "Grille",
+    "list": "Liste",
+    "gridLabel": "Vue Grille",
+    "listLabel": "Vue Liste",
+    "grid": "Grille",
+    "list": "Liste"
+  },
+  "favorites": {
+    "all": "Tous",
+    "title": "Mes favoris",
+    "showOnly": "Afficher uniquement mes favoris",
+    "empty": "Aucun favori",
+    "badge": "Favoris",
+    "all": "Tous",
+    "title": "Mes favoris",
+    "showOnly": "Afficher uniquement mes favoris",
+    "empty": "Aucun favori",
+    "badge": "Favoris"
+  },
+  "results": {
+    "found": "résultats trouvés",
+    "category": "Catégorie",
+    "transmission": "Boîte",
+    "budget": "Budget",
+    "seats": "Sièges",
+    "fuel": "Carburant"
+  },
+  "loading": {
+    "title": "Chargement des véhicules...",
+    "subtitle": "Récupération des véhicules depuis le serveur"
+  },
+  "error": {
+    "title": "Erreur lors du chargement",
+    "connection": "Erreur de connexion",
+    "retry": "Réessayer"
+  },
+  "header": {
+    "subtitle": "Notre Flotte Premium",
+    "title": "Choisissez votre compagnon de route",
+    "description": "De la citadine agile au SUV robuste, découvrez une sélection de véhicules entretenus avec soin pour une expérience de conduite sans compromis au Maroc."
+  },
+  "search": {
+    "yourSearch": "Votre recherche :",
+    "placeholder": "Rechercher (ex: Clio, Dacia...)"
+  },
+  "empty": {
+    "title": "Aucun résultat",
+    "subtitle": "Essayez d'ajuster vos filtres ou votre recherche.",
+    "criteria": "Aucun véhicule ne correspond à vos critères",
+    "clearAll": "Tout effacer"
+  },
+  "loadMore": "Afficher plus de véhicules",
+  "showingResults": "Affichage de {{displayed}} sur {{total}} véhicules",
+  "car": {
+    "seats": "Sièges",
+    "ac": "Climatisée",
+    "ecoDeal": "Éco Deal",
+    "premium": "Premium",
+    "unavailable": "Indisponible",
+    "reserved": "Réservée",
+    "favoriteRemove": "Retirer des favoris",
+    "favoriteAdd": "Ajouter aux favoris",
+    "detail": "Détail",
+    "details": "Voir les détails"
+  },
+  "cars": {
+    "loading": "Chargement des véhicules...",
+    "loadingDetails": "Chargement des détails...",
+    "error": "Erreur de connexion",
+    "empty": "Aucun véhicule trouvé",
+    "emptyDetails": "Aucun véhicule ne correspond à votre recherche.",
+    "seats": "places",
+    "seatsLabel": "Places",
+    "doors": "Portes",
+    "equipments": "Équipements",
+    "included": "Inclus dans le prix",
+    "available": "Disponible",
+    "notAvailable": "Non disponible",
+    "notAvailableButton": "Non disponible",
+    "completeDates": "Compléter les dates",
+    "bookNow": "Réserver maintenant",
+    "from": "À partir de",
+    "perDay": "par jour",
+    "noAdditionalImages": "Pas d'images supplémentaires"
+  },
+  "specs": {
+    "seats": "places",
+    "luggage": "bagages",
+    "doors": "Portes",
+    "transmission": "Transmission",
+    "fuel": "Carburant"
+  },
+  "from": "À partir de",
+  "perDay": "/jour"
+}

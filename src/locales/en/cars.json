@@ -1,0 +1,142 @@
+{
+  "title": "Our Vehicles",
+  "header": {
+    "subtitle": "Our Premium Fleet",
+    "title": "Choose your road companion",
+    "description": "From agile city cars to robust SUVs, discover a selection of carefully maintained vehicles for an uncompromising driving experience in Morocco."
+  },
+  "search": {
+    "yourSearch": "Your search:",
+    "placeholder": "Search (e.g. Clio, Dacia...)"
+  },
+  "filters": {
+    "title": "Filters",
+    "reset": "Reset",
+    "all": "All",
+    "category": "Category",
+    "categoryAll": "All",
+    "economic": "Economic",
+    "compact": "Compact",
+    "comfort": "Comfort",
+    "premium": "Premium",
+    "suv": "SUV",
+    "van": "Van",
+    "transmission": "Transmission",
+    "transmissionAll": "All",
+    "manual": "Manual",
+    "automatic": "Automatic",
+    "budget": "Budget (MAD/day)",
+    "priceAll": "All prices",
+    "priceUnder300": "Under 300",
+    "price300to500": "300 - 500",
+    "price500to700": "500 - 700",
+    "priceOver700": "Over 700",
+    "seats": "Number of seats",
+    "seatsAll": "All",
+    "seats4": "4 seats",
+    "seats5": "5 seats",
+    "seats7": "7+ seats",
+    "fuel": "Fuel",
+    "fuelAll": "All",
+    "gasoline": "Gasoline",
+    "diesel": "Diesel"
+  },
+  "booking": {
+    "startingFrom": "Starting from",
+    "pickupLocation": "Pickup location",
+    "casablanca": "Casablanca",
+    "rabat": "Rabat",
+    "marrakech": "Marrakech",
+    "fes": "Fes",
+    "tanger": "Tangier",
+    "agadir": "Agadir",
+    "freeCancellation": "Free cancellation until 24h before"
+  },
+  "sort": {
+    "priceAsc": "Price ascending",
+    "priceDesc": "Price descending",
+    "priceAscShort": "Price: Low to High",
+    "priceDescShort": "Price: High to Low",
+    "name": "Name",
+    "recommended": "Recommended"
+  },
+  "view": {
+    "grid": "Grid",
+    "list": "List",
+    "gridLabel": "Grid View",
+    "listLabel": "List View"
+  },
+  "favorites": {
+    "all": "All",
+    "title": "My Favorites",
+    "showOnly": "Show only my favorites",
+    "empty": "No favorites",
+    "badge": "Favorites"
+  },
+  "results": {
+    "found": "results found",
+    "category": "Category",
+    "transmission": "Transmission",
+    "budget": "Budget",
+    "seats": "Seats",
+    "fuel": "Fuel"
+  },
+  "cars": {
+    "loading": "Loading vehicles...",
+    "loadingDetails": "Loading details...",
+    "error": "Connection error",
+    "empty": "No vehicle found",
+    "emptyDetails": "No vehicle matches your search.",
+    "seats": "seats",
+    "seatsLabel": "Seats",
+    "doors": "Doors",
+    "equipments": "Equipment",
+    "included": "Included in price",
+    "available": "Available",
+    "notAvailable": "Not available",
+    "notAvailableButton": "Not available",
+    "completeDates": "Complete dates",
+    "bookNow": "Book now",
+    "from": "From",
+    "perDay": "per day",
+    "noAdditionalImages": "No additional images"
+  },
+  "loading": {
+    "title": "Loading vehicles...",
+    "subtitle": "Fetching vehicles from server"
+  },
+  "error": {
+    "title": "Error loading vehicles",
+    "connection": "Connection error",
+    "retry": "Retry"
+  },
+  "empty": {
+    "title": "No results",
+    "subtitle": "Try adjusting your filters or search.",
+    "criteria": "No vehicles match your criteria",
+    "clearAll": "Clear all"
+  },
+  "loadMore": "Show more vehicles",
+  "showingResults": "Showing {{displayed}} of {{total}} vehicles",
+  "car": {
+    "seats": "Seats",
+    "ac": "Air conditioned",
+    "ecoDeal": "Eco Deal",
+    "premium": "Premium",
+    "unavailable": "Unavailable",
+    "reserved": "Reserved",
+    "favoriteRemove": "Remove from favorites",
+    "favoriteAdd": "Add to favorites",
+    "detail": "Detail",
+    "details": "View details"
+  },
+  "specs": {
+    "seats": "seats",
+    "luggage": "luggage",
+    "doors": "doors",
+    "transmission": "Transmission",
+    "fuel": "Fuel"
+  },
+  "from": "From",
+  "perDay": "/day"
+}

@@ -1,6 +1,8 @@
 import { useState, useMemo, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { cars as allCarsData } from '../data/cars';
+import { useTranslation } from 'react-i18next';
+import { useCars } from '../context/CarContext';
+import { useCurrency } from '../context/CurrencyContext';
 
 // --- NOUVELLES ICÔNES ---
 const IconHeart = ({ className = 'w-5 h-5', filled }) => (
@@ -104,6 +106,9 @@ const IconCheck = ({ className = 'w-3 h-3' }) => (
   );
 
 const Cars = () => {
+  const { t } = useTranslation('cars');
+  const { cars: allCarsData, loading, error } = useCars();
+  const { formatPrice } = useCurrency();
   const [searchParams] = useSearchParams();
   
   // États de l'interface
@@ -222,13 +227,13 @@ const Cars = () => {
         <div className="container mx-auto max-w-6xl relative z-10">
             <div className="max-w-2xl">
                 <p className="text-red-400 font-bold tracking-widest uppercase text-xs mb-3">
-                    Notre Flotte Premium
+                    {t('header.subtitle')}
                 </p>
                 <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-6 text-white leading-tight">
-                    Choisissez votre <br />compagnon de route
+                    {t('header.title')}
                 </h1>
                 <p className="text-lg text-slate-300 max-w-xl leading-relaxed">
-                    De la citadine agile au SUV robuste, découvrez une sélection de véhicules entretenus avec soin pour une expérience de conduite sans compromis au Maroc.
+                    {t('header.description')}
                 </p>
             </div>
         </div>
@@ -243,7 +248,7 @@ const Cars = () => {
         {/* Résumé Recherche Contextuelle */}
         {(searchLocation || searchStartDate || searchEndDate) && (
             <div className="bg-slate-800 text-slate-200 p-4 rounded-t-xl flex flex-wrap items-center gap-4 text-sm border-b border-slate-700">
-                <span className="text-slate-400 uppercase text-xs font-bold tracking-wider">Votre recherche :</span>
+                <span className="text-slate-400 uppercase text-xs font-bold tracking-wider">{t('search.yourSearch')}</span>
                 {searchLocation && (
                     <div className="flex items-center gap-2">
                         <IconMapPin className="w-4 h-4 text-red-400" />
@@ -272,7 +277,7 @@ const Cars = () => {
                 </div>
                 <input
                     type="text"
-                    placeholder="Rechercher (ex: Clio, Dacia...)"
+                    placeholder={t('search.placeholder')}
                     className="block w-full pl-10 pr-3 py-2.5 border border-slate-200 rounded-lg leading-5 bg-slate-50 placeholder-slate-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-red-500 transition-colors sm:text-sm text-slate-900"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
@@ -286,9 +291,9 @@ const Cars = () => {
                     onChange={(e) => setSortBy(e.target.value)}
                     className="flex-1 md:flex-none border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-700 bg-white focus:ring-2 focus:ring-red-500 focus:outline-none cursor-pointer"
                 >
-                    <option value="recommended">Recommandés</option>
-                    <option value="priceAsc">Prix: Croissant</option>
-                    <option value="priceDesc">Prix: Décroissant</option>
+                    <option value="recommended">{t('sort.recommended')}</option>
+                    <option value="priceAsc">{t('sort.priceAscShort')}</option>
+                    <option value="priceDesc">{t('sort.priceDescShort')}</option>
                 </select>
 
                 {/* Bouton "Favoris" */}
@@ -302,7 +307,7 @@ const Cars = () => {
                     }`}
                 >
                     <IconHeart className="w-4 h-4" filled={showOnlyFavorites} />
-                    {showOnlyFavorites ? 'Favoris' : 'Tous'}
+                    {showOnlyFavorites ? t('favorites.badge') : t('favorites.all')}
                 </button>
 
                 {/* Toggle Vue */}
@@ -310,14 +315,14 @@ const Cars = () => {
                     <button 
                         onClick={() => setViewMode('grid')}
                         className={`p-2 rounded-md transition-all ${viewMode === 'grid' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
-                        aria-label="Vue Grille"
+                        aria-label={t('view.gridLabel')}
                     >
                         <IconLayoutGrid className="w-5 h-5" />
                     </button>
                     <button 
                         onClick={() => setViewMode('list')}
                         className={`p-2 rounded-md transition-all ${viewMode === 'list' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
-                        aria-label="Vue Liste"
+                        aria-label={t('view.listLabel')}
                     >
                         <IconList className="w-5 h-5" />
                     </button>
@@ -336,14 +341,14 @@ const Cars = () => {
               <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
                 <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
                     <IconSliders className="w-5 h-5 text-red-600" />
-                    Filtres
+                    {t('filters.title')}
                 </h2>
                 {(filters.category !== 'all' || filters.transmission !== 'all' || filters.priceRange !== 'all' || filters.seats !== 'all' || filters.fuel !== 'all') && (
                     <button 
                         onClick={() => setFilters({ category: 'all', transmission: 'all', priceRange: 'all', seats: 'all', fuel: 'all' })}
                         className="text-xs text-red-600 font-semibold hover:underline"
                     >
-                        Reset
+                        {t('filters.reset')}
                     </button>
                 )}
               </div>
@@ -351,22 +356,22 @@ const Cars = () => {
               <div className="space-y-6">
                 {/* Groupe Filtre */}
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Catégorie</label>
+                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">{t('filters.category')}</label>
                   <select
                     value={filters.category}
                     onChange={(e) => setFilters({ ...filters, category: e.target.value })}
                     className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm bg-slate-50 focus:bg-white focus:ring-2 focus:ring-red-500 focus:outline-none"
                   >
-                    <option value="all">Toutes</option>
-                    <option value="Économique">Économique</option>
-                    <option value="Compacte">Compacte</option>
-                    <option value="SUV">SUV</option>
-                    <option value="Luxe">Luxe</option>
+                    <option value="all">{t('filters.categoryAll')}</option>
+                    <option value="Économique">{t('filters.economic')}</option>
+                    <option value="Compacte">{t('filters.compact') || 'Compacte'}</option>
+                    <option value="SUV">{t('filters.suv')}</option>
+                    <option value="Luxe">{t('filters.premium')}</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Transmission</label>
+                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">{t('filters.transmission')}</label>
                   <div className="flex gap-2">
                     {['all', 'Manuelle', 'Automatique'].map(type => (
                         <button
@@ -378,51 +383,51 @@ const Cars = () => {
                                 : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
                             }`}
                         >
-                            {type === 'all' ? 'Toutes' : type}
+                            {type === 'all' ? t('filters.transmissionAll') : type}
                         </button>
                     ))}
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Budget (MAD/jour)</label>
+                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">{t('filters.budget')}</label>
                   <select
                     value={filters.priceRange}
                     onChange={(e) => setFilters({ ...filters, priceRange: e.target.value })}
                     className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm bg-slate-50 focus:bg-white focus:ring-2 focus:ring-red-500 focus:outline-none"
                   >
-                    <option value="all">Tous les prix</option>
-                    <option value="0-300">Moins de 300</option>
-                    <option value="300-500">300 - 500</option>
-                    <option value="500-700">500 - 700</option>
-                    <option value="700">Plus de 700</option>
+                    <option value="all">{t('filters.priceAll')}</option>
+                    <option value="0-300">{t('filters.priceUnder300')}</option>
+                    <option value="300-500">{t('filters.price300to500')}</option>
+                    <option value="500-700">{t('filters.price500to700')}</option>
+                    <option value="700">{t('filters.priceOver700')}</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Nombre de sièges</label>
+                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">{t('filters.seats')}</label>
                   <select
                     value={filters.seats}
                     onChange={(e) => setFilters({ ...filters, seats: e.target.value })}
                     className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm bg-slate-50 focus:bg-white focus:ring-2 focus:ring-red-500 focus:outline-none"
                   >
-                    <option value="all">Tous</option>
-                    <option value="4">4 sièges</option>
-                    <option value="5">5 sièges</option>
-                    <option value="7">7+ sièges</option>
+                    <option value="all">{t('filters.seatsAll')}</option>
+                    <option value="4">{t('filters.seats4')}</option>
+                    <option value="5">{t('filters.seats5')}</option>
+                    <option value="7">{t('filters.seats7')}</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Carburant</label>
+                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">{t('filters.fuel')}</label>
                   <select
                     value={filters.fuel}
                     onChange={(e) => setFilters({ ...filters, fuel: e.target.value })}
                     className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm bg-slate-50 focus:bg-white focus:ring-2 focus:ring-red-500 focus:outline-none"
                   >
-                    <option value="all">Tous</option>
-                    <option value="Essence">Essence</option>
-                    <option value="Diesel">Diesel</option>
+                    <option value="all">{t('filters.fuelAll')}</option>
+                    <option value="Essence">{t('filters.gasoline')}</option>
+                    <option value="Diesel">{t('filters.diesel')}</option>
                   </select>
                 </div>
               </div>
@@ -433,11 +438,11 @@ const Cars = () => {
           <div className="lg:col-span-3">
             <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
                 <p className="text-sm text-slate-500">
-                    <span className="font-bold text-slate-900">{processedCars.length}</span> résultats trouvés
+                    <span className="font-bold text-slate-900">{processedCars.length}</span> {t('results.found')}
                     {showOnlyFavorites && (
                       <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-red-50 text-red-700 px-2 py-0.5 text-[11px] font-semibold border border-red-100">
                         <IconHeart className="w-3 h-3" filled />
-                        Favoris
+                        {t('favorites.badge')}
                       </span>
                     )}
                 </p>
@@ -451,40 +456,72 @@ const Cars = () => {
                   <div className="flex flex-wrap gap-2 text-xs">
                     {filters.category !== 'all' && (
                       <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-slate-100 text-slate-700">
-                        Catégorie: {filters.category}
+                        {t('results.category')}: {filters.category}
                       </span>
                     )}
                     {filters.transmission !== 'all' && (
                       <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-slate-100 text-slate-700">
-                        Boîte: {filters.transmission}
+                        {t('results.transmission')}: {filters.transmission}
                       </span>
                     )}
                     {filters.priceRange !== 'all' && (
                       <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-slate-100 text-slate-700">
-                        Budget: {filters.priceRange === '700' ? '700+ MAD' : filters.priceRange + ' MAD'}
+                        {t('results.budget')}: {filters.priceRange === '700' ? '700+ MAD' : filters.priceRange + ' MAD'}
                       </span>
                     )}
                     {filters.seats !== 'all' && (
                       <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-slate-100 text-slate-700">
-                        Sièges: {filters.seats}
+                        {t('results.seats')}: {filters.seats}
                       </span>
                     )}
                     {filters.fuel !== 'all' && (
                       <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-slate-100 text-slate-700">
-                        Carburant: {filters.fuel}
+                        {t('results.fuel')}: {filters.fuel}
                       </span>
                     )}
                   </div>
                 )}
             </div>
 
-            {displayedCars.length === 0 ? (
+            {/* Loading State */}
+            {loading && (
+              <div className="bg-white rounded-xl border border-dashed border-slate-300 p-12 text-center">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-slate-50 text-red-500 rounded-full mb-4 animate-pulse">
+                  <IconCar className="w-8 h-8" />
+                </div>
+                <h3 className="text-lg font-semibold text-slate-900 mb-1">{t('loading.title')}</h3>
+                <p className="text-slate-500">{t('loading.subtitle')}</p>
+              </div>
+            )}
+
+            {/* Error State */}
+            {error && !loading && (
+              <div className="bg-white rounded-xl border border-red-200 p-12 text-center">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-red-50 text-red-500 rounded-full mb-4">
+                  <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/>
+                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                  </svg>
+                </div>
+                <h3 className="text-lg font-semibold text-slate-900 mb-1">{t('error.connection')}</h3>
+                <p className="text-slate-500 mb-6">{error}</p>
+                <button
+                  onClick={() => window.location.reload()}
+                  className="px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors"
+                >
+                  {t('error.retry')}
+                </button>
+              </div>
+            )}
+
+            {!loading && !error && displayedCars.length === 0 ? (
               <div className="bg-white rounded-xl border border-dashed border-slate-300 p-12 text-center">
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-slate-50 text-slate-400 rounded-full mb-4">
                   <IconCar className="w-8 h-8" />
                 </div>
-                <h3 className="text-lg font-semibold text-slate-900 mb-1">Aucun résultat</h3>
-                <p className="text-slate-500 mb-6">Essayez d'ajuster vos filtres ou votre recherche.</p>
+                <h3 className="text-lg font-semibold text-slate-900 mb-1">{t('empty.title')}</h3>
+                <p className="text-slate-500 mb-6">{t('empty.subtitle')}</p>
                 <button
                   onClick={() => {
                       setFilters({ category: 'all', transmission: 'all', priceRange: 'all', seats: 'all', fuel: 'all' });
@@ -492,7 +529,7 @@ const Cars = () => {
                   }}
                   className="px-4 py-2 bg-slate-900 text-white text-sm font-medium rounded-lg hover:bg-slate-800 transition-colors"
                 >
-                  Tout effacer
+                  {t('empty.clearAll')}
                 </button>
               </div>
             ) : (
@@ -505,29 +542,34 @@ const Cars = () => {
                     {/* Image Section */}
                     <div className={`relative bg-slate-100 flex items-center justify-center overflow-hidden ${viewMode === 'list' ? 'sm:w-64 shrink-0 aspect-[4/3] sm:aspect-auto' : 'aspect-[4/3] h-48'}`}>
                         {car.image ? (
-                            <img src={car.image} alt={car.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                            <img src={car.image.startsWith('http') ? car.image : `http://localhost:5000${car.image}`} alt={car.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                         ) : (
                             <IconCar className="w-12 h-12 text-slate-300" />
                         )}
                         
                         {/* Tags Flottants */}
                         <div className="absolute top-3 left-3 flex flex-col gap-1">
-                             {car.price < 350 && <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm border border-emerald-200 uppercase tracking-wide">Éco Deal</span>}
-                             {car.category === 'Luxe' && <span className="inline-flex items-center gap-1 bg-slate-900 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm uppercase tracking-wide">Premium</span>}
+                             {car.price < 350 && <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm border border-emerald-200 uppercase tracking-wide">{t('car.ecoDeal')}</span>}
+                             {car.category === 'Luxe' && <span className="inline-flex items-center gap-1 bg-slate-900 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm uppercase tracking-wide">{t('car.premium')}</span>}
                         </div>
                         
                         {/* Bouton Favoris */}
                         <button 
                             onClick={(e) => toggleFavorite(e, car.id)}
                             className="absolute top-3 right-3 p-2 rounded-full bg-white/90 backdrop-blur-sm text-slate-400 hover:text-red-500 hover:bg-white shadow-sm transition-colors border border-transparent hover:border-slate-100 focus:outline-none focus:ring-2 focus:ring-red-500"
-                            aria-label={favorites.includes(car.id) ? 'Retirer des favoris' : 'Ajouter aux favoris'}
+                            aria-label={favorites.includes(car.id) ? t('car.favoriteRemove') : t('car.favoriteAdd')}
                         >
                             <IconHeart className="w-4 h-4" filled={favorites.includes(car.id)} />
                         </button>
 
                         {!car.available && (
                             <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px] flex items-center justify-center">
-                                <span className="bg-red-600 text-white px-3 py-1 rounded font-bold text-sm shadow-lg rotate-[-5deg]">Indisponible</span>
+                                <span className="bg-red-600 text-white px-3 py-1 rounded font-bold text-sm shadow-lg rotate-[-5deg]">{t('car.unavailable')}</span>
+                            </div>
+                        )}
+                        {car.reserved && car.available && (
+                            <div className="absolute inset-0 bg-[#F01023]/40 backdrop-blur-[2px] flex items-center justify-center">
+                                <span className="bg-[#F01023] text-white px-3 py-1 rounded font-bold text-sm shadow-lg rotate-[-5deg]">{t('car.reserved')}</span>
                             </div>
                         )}
                     </div>
@@ -543,10 +585,10 @@ const Cars = () => {
                             <p className="text-sm text-slate-500 font-medium">{car.category}</p>
                           </div>
                           <div className="text-right shrink-0">
-                            <p className="text-xs text-slate-400 font-medium uppercase">À partir de</p>
+                            <p className="text-xs text-slate-400 font-medium uppercase">{t('cars.from')}</p>
                             <div className="flex items-baseline gap-1">
-                              <span className="text-xl font-extrabold text-[#0F172B]">{car.price}</span>
-                              <span className="text-xs font-bold text-slate-500">MAD/j</span>
+                              <span className="text-xl font-extrabold text-[#0F172B]">{formatPrice(car.price)}</span>
+                              <span className="text-xs font-bold text-slate-500">{t('common:currency.perDayShort')}</span>
                             </div>
                           </div>
                         </div>
@@ -555,7 +597,7 @@ const Cars = () => {
                         <div className="grid grid-cols-2 gap-y-2 gap-x-4 my-4">
                             <div className="flex items-center gap-2 text-xs text-slate-600">
                                 <IconUsers className="w-4 h-4 text-slate-400" />
-                                <span>{car.seats} Sièges</span>
+                                <span>{car.seats} {t('car.seats')}</span>
                             </div>
                             <div className="flex items-center gap-2 text-xs text-slate-600">
                                 <IconCog className="w-4 h-4 text-slate-400" />
@@ -567,7 +609,7 @@ const Cars = () => {
                             </div>
                             <div className="flex items-center gap-2 text-xs text-slate-600">
                                 <IconCheck className="w-4 h-4 text-emerald-500" />
-                                <span>Climatisée</span>
+                                <span>{t('car.ac')}</span>
                             </div>
                         </div>
 
@@ -597,14 +639,14 @@ const Cars = () => {
                         <div className="flex gap-2 w-full sm:w-auto">
                           <Link
                             to={`/cars/${car.id}`}
-                            aria-label="Voir les détails du véhicule"
+                            aria-label={t('car.details') || 'Voir les détails'}
                             className="inline-flex items-center justify-center px-1 py-2.5 rounded-lg border border-transparent text-[#101424] bg-transparent underline underline-offset-4 hover:opacity-80 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 text-sm font-medium"
                           >
-                            Détail
+                            {t('car.detail') || 'Détail'}
                           </Link>
                           <Link
                             to={
-                              car.available
+                              car.available && !car.reserved
                                 ? `/booking?car=${car.id}` +
                                   (searchLocation ? `&location=${searchLocation}` : '') +
                                   (searchStartDate ? `&startDate=${searchStartDate}` : '') +
@@ -612,13 +654,13 @@ const Cars = () => {
                                 : '#'
                             }
                             className={`inline-flex items-center justify-center gap-2 px-1 py-2.5 rounded-lg text-sm font-bold transition-all shadow-none flex-1 sm:flex-none focus:outline-none focus:ring-2 focus:ring-red-500 underline underline-offset-4 ${
-                              car.available
+                              car.available && !car.reserved
                                 ? 'bg-transparent text-red-600 hover:opacity-80'
                                 : 'bg-transparent text-slate-400 cursor-not-allowed no-underline'
                             }`}
-                            onClick={(e) => !car.available && e.preventDefault()}
+                            onClick={(e) => !(car.available && !car.reserved) && e.preventDefault()}
                           >
-                            Réserver
+                            {car.available && !car.reserved ? t('common:actions.book') : t('cars:car.reserved')}
                             <IconArrowRight className="w-4 h-4" />
                           </Link>
                         </div>
@@ -636,10 +678,10 @@ const Cars = () => {
                         onClick={() => setVisibleCount(prev => prev + 6)}
                         className="bg-white border border-slate-300 text-slate-700 font-semibold py-3 px-8 rounded-full hover:bg-slate-50 hover:border-slate-400 transition-all shadow-sm"
                     >
-                        Afficher plus de véhicules
+                        {t('loadMore') || 'Afficher plus de véhicules'}
                     </button>
                     <p className="text-xs text-slate-400 mt-3">
-                        Affichage de {displayedCars.length} sur {processedCars.length} véhicules
+                        {t('showingResults', { displayed: displayedCars.length, total: processedCars.length }) || `Affichage de ${displayedCars.length} sur ${processedCars.length} véhicules`}
                     </p>
                 </div>
             )}

@@ -1,0 +1,162 @@
+{
+  "nav": {
+    "contact": "Contactez-nous"
+  },
+  "hero": {
+    "title": "Louez votre véhicule idéal au Maroc",
+    "subtitle": "Location de véhicules",
+    "description": "Des prix compétitifs, un service de qualité et une flotte moderne pour tous vos déplacements au royaume.",
+    "search": "Rechercher un véhicule",
+    "viewAll": "Voir tous les véhicules",
+    "trust": {
+      "insurance": "Assurance incluse",
+      "assistance": "Assistance 24/7",
+      "agencies": "Agences partout au Maroc"
+    }
+  },
+  "features": {
+    "title": "Pourquoi nous choisir ?",
+    "items": {
+      "premium": {
+        "title": "Véhicules Premium",
+        "desc": "Flotte récente et bien entretenue"
+      },
+      "price": {
+        "title": "Meilleurs Prix",
+        "desc": "Tarifs compétitifs garantis"
+      },
+      "service": {
+        "title": "Service Client",
+        "desc": "Support dédié 24h/24"
+      },
+      "flexibility": {
+        "title": "Flexibilité",
+        "desc": "Annulation gratuite"
+      }
+    },
+    "childSeat": "Sièges enfants et rehausseurs disponibles",
+    "suvDesc": "SUV et monospaces pour plus d'espace"
+  },
+  "brands": {
+    "title": "Marques disponibles"
+  },
+  "vehicles": {
+    "title": "Nos véhicules populaires",
+    "viewAll": "Voir tout le catalogue",
+    "reserved": "Réservé",
+    "unavailable": "Indisponible",
+    "available": "Disponible",
+    "description": "Découvrez notre sélection — défilement automatique",
+    "specs": {
+      "seats": "places",
+      "seatsShort": "pl.",
+      "transmission": "Transmission",
+      "fuel": "Carburant",
+      "automatic": "Automatique",
+      "automatique": "Automatique",
+      "manuelle": "Manuelle",
+      "manual": "Manuelle",
+      "essence": "Essence",
+      "gasoline": "Essence",
+      "diesel": "Diesel",
+      "electric": "Électrique",
+      "hybrid": "Hybride"
+    }
+  },
+  "loading": {
+    "title": "Chargement des véhicules...",
+    "error": "Erreur de connexion"
+  },
+  "faq": {
+    "title": "Foire aux questions",
+    "subtitle": "Tout ce que vous devez savoir",
+    "moreQuestions": "Vous avez d'autres questions ?",
+    "helpText": "Notre équipe est là pour vous aider",
+    "contactUs": "Contactez-nous",
+    "description": "Réponses claires et complètes pour vous aider à prendre la meilleure décision",
+    "items": {
+      "documents": {
+        "q": "Quels documents dois-je fournir pour louer une voiture ?",
+        "a": "Une pièce d'identité valide, un permis de conduire en cours de validité et un moyen de paiement. Des documents supplémentaires peuvent être demandés selon le véhicule."
+      },
+      "cancellation": {
+        "q": "Puis-je annuler ma réservation ?",
+        "a": "Oui. Les conditions d'annulation varient selon la réservation. Nous recommandons d'annuler au plus tard 24h avant la prise en charge pour éviter des frais."
+      },
+      "insurance": {
+        "q": "Est-ce que l'assurance est incluse ?",
+        "a": "L'assurance de base est incluse. Vous pouvez choisir une option premium pour une couverture renforcée selon vos besoins."
+      },
+      "childSeat": {
+        "q": "Puis-je ajouter un siège enfant ?",
+        "a": "Oui, vous pouvez ajouter un siège enfant lors de la réservation (selon disponibilité)."
+      }
+    }
+  },
+  "form": {
+    "startDate": "Date de début",
+    "endDate": "Date de fin",
+    "pickupLocation": "Lieu de prise en charge",
+    "dropoffLocation": "Lieu de restitution"
+  },
+  "actions": {
+    "search": "Rechercher",
+    "chooseDate": "Choisir une date",
+    "book": "Réserver",
+    "retry": "Réessayer",
+    "details": "Détail",
+    "seeFamilyVehicles": "Voir les véhicules familiaux",
+    "needAdvice": "Besoin de conseils ?"
+  },
+  "steps": {
+    "step1": {
+      "title": "Choisissez",
+      "desc": "Sélectionnez votre véhicule idéal parmi notre flotte"
+    },
+    "step2": {
+      "title": "Réservez",
+      "desc": "Remplissez vos informations et choisissez vos options"
+    },
+    "step3": {
+      "title": "Confirmez",
+      "desc": "Recevez votre confirmation par email instantanément"
+    },
+    "step4": {
+      "title": "Partez",
+      "desc": "Retirez votre voiture et profitez de votre voyage"
+    }
+  },
+  "family": {
+    "badge": "Pour toute la famille",
+    "title": "Confort, espace et tranquillité",
+    "description": "Pour vos vacances ou sorties en famille, choisissez un véhicule spacieux et agréable. Climatisation, rangement et sécurité : tout est pensé pour un voyage sans stress.",
+    "security": "Sécurité renforcée",
+    "securityDesc": "Systèmes modernes + entretien régulier",
+    "largeTrunk": "Grand coffre",
+    "seatsMax": "places max",
+    "assistance": "Assistance 24/7",
+    "assistanceDesc": "Support rapide pendant votre trajet"
+  },
+  "testimonials": {
+    "trustTitle": "Ils nous font confiance",
+    "satisfied": "clients satisfaits",
+    "rating": "Note moyenne 4.9/5",
+    "description": "Des avis authentiques et une expérience de location fluide, partout au Maroc.",
+    "openMaps": "Ouvrir sur Google Maps",
+    "reviews": {
+      "sara": "Voiture propre, service rapide et très bon rapport qualité/prix. Parfait pour un voyage en famille.",
+      "youssef": "Réservation simple, récupération sans attente. L'équipe est professionnelle et très réactive.",
+      "khadija": "Excellent confort sur route, tout était conforme. Je recommande vivement !",
+      "omar": "Très bonne expérience globalement. Support disponible et informations claires.",
+      "nadia": "Service premium, véhicules récents. On a apprécié l'assistance et la flexibilité."
+    }
+  },
+  "cta": {
+    "title": "Prêt à partir à l'aventure ?",
+    "subtitle": "Réservez votre véhicule en quelques clics",
+    "button": "Découvrir nos offres"
+  },
+  "currency": {
+    "perDay": "par jour"
+  }
+}

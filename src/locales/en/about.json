@@ -1,0 +1,63 @@
+{
+  "hero": {
+    "breadcrumb": "About",
+    "title": "About Us",
+    "subtitle": "Your trusted partner for car rental in Morocco since 2009"
+  },
+  "stats": {
+    "vehicles": "Vehicles",
+    "satisfiedCustomers": "Satisfied Customers",
+    "agencies": "Agencies",
+    "yearsExperience": "Years of Experience"
+  },
+  "story": {
+    "title": "Our Story",
+    "paragraph1": "Founded in 2009, our car rental agency was born from a passion for facilitating travel in Morocco. What started as a small family business in Casablanca with just 20 vehicles has grown into one of the leading car rental companies in the kingdom.",
+    "paragraph2": "Our mission is simple: to offer our customers reliable, modern vehicles tailored to their needs, while guaranteeing exceptional customer service. Whether you are a tourist discovering the wonders of Morocco or a resident needing a temporary vehicle, we have the perfect solution for you.",
+    "paragraph3": "Today, with over 500 vehicles and 15 agencies spread across Morocco's major cities, we continue to innovate and improve our services to remain your trusted partner for all your mobility needs."
+  },
+  "values": {
+    "title": "Our Values",
+    "security": {
+      "title": "Security",
+      "description": "All our vehicles are regularly maintained and covered by comprehensive insurance for your peace of mind."
+    },
+    "availability": {
+      "title": "Availability",
+      "description": "Customer service available 24/7 to meet all your needs, wherever you are in Morocco."
+    },
+    "quality": {
+      "title": "Quality",
+      "description": "A modern and diverse fleet to meet all needs, from economy to luxury vehicles."
+    }
+  },
+  "timeline": {
+    "title": "Our Journey",
+    "item1": {
+      "year": "2009",
+      "title": "Company Founded",
+      "description": "Opening of our first agency in Casablanca with a fleet of 20 vehicles."
+    },
+    "item2": {
+      "year": "2012",
+      "title": "National Expansion",
+      "description": "Opening of agencies in Rabat, Marrakech, and Fès to better serve our customers."
+    },
+    "item3": {
+      "year": "2017",
+      "title": "Modernization",
+      "description": "Launch of our online reservation platform and complete renewal of our fleet."
+    },
+    "item4": {
+      "year": "2024",
+      "title": "Market Leader",
+      "description": "Over 500 vehicles and 15 agencies throughout the kingdom, serving thousands of customers."
+    }
+  },
+  "cta": {
+    "title": "Join thousands of satisfied customers",
+    "subtitle": "Discover why we are the first choice for car rental in Morocco",
+    "vehiclesButton": "View Our Vehicles",
+    "contactButton": "Contact Us"
+  }
+}

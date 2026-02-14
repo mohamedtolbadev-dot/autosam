@@ -1,0 +1,159 @@
+{
+  "nav": {
+    "contact": "Contact us"
+  },
+  "hero": {
+    "title": "Rent your ideal vehicle in Morocco",
+    "subtitle": "Vehicle rental",
+    "description": "Competitive prices, quality service and a modern fleet for all your travels in the kingdom.",
+    "search": "Search vehicles",
+    "viewAll": "View all vehicles",
+    "trust": {
+      "insurance": "Insurance included",
+      "assistance": "24/7 Assistance",
+      "agencies": "Agencies throughout Morocco"
+    }
+  },
+  "features": {
+    "title": "Why choose us?",
+    "items": {
+      "premium": {
+        "title": "Premium Vehicles",
+        "desc": "Recent and well-maintained fleet"
+      },
+      "price": {
+        "title": "Best Prices",
+        "desc": "Competitive rates guaranteed"
+      },
+      "service": {
+        "title": "Customer Service",
+        "desc": "Dedicated support 24/7"
+      },
+      "flexibility": {
+        "title": "Flexibility",
+        "desc": "Free cancellation"
+      }
+    },
+    "childSeat": "Child seats and boosters available",
+    "suvDesc": "SUVs and minivans for more space"
+  },
+  "brands": {
+    "title": "Available Brands"
+  },
+  "vehicles": {
+    "title": "Our Popular Vehicles",
+    "viewAll": "View full catalog",
+    "reserved": "Reserved",
+    "unavailable": "Unavailable",
+    "available": "Available",
+    "description": "Discover our selection — automatic scrolling",
+    "specs": {
+      "seats": "seats",
+      "seatsShort": "seats",
+      "transmission": "Transmission",
+      "fuel": "Fuel",
+      "automatic": "Automatic",
+      "automatique": "Automatic",
+      "manuelle": "Manual",
+      "manual": "Manual",
+      "essence": "Gasoline",
+      "gasoline": "Gasoline",
+      "diesel": "Diesel",
+      "electric": "Electric",
+      "hybrid": "Hybrid"
+    }
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Everything you need to know",
+    "description": "Clear and comprehensive answers to help you make the best decision",
+    "moreQuestions": "Have other questions?",
+    "helpText": "Our team is here to help",
+    "contactUs": "Contact us",
+    "items": {
+      "documents": {
+        "q": "What documents do I need to provide to rent a car?",
+        "a": "A valid ID, a valid driver's license and a means of payment. Additional documents may be requested depending on the vehicle."
+      },
+      "cancellation": {
+        "q": "Can I cancel my reservation?",
+        "a": "Yes. Cancellation conditions vary depending on the reservation. We recommend canceling no later than 24 hours before pickup to avoid fees."
+      },
+      "insurance": {
+        "q": "Is insurance included?",
+        "a": "Basic insurance is included. You can choose a premium option for enhanced coverage according to your needs."
+      },
+      "childSeat": {
+        "q": "Can I add a child seat?",
+        "a": "Yes, you can add a child seat when booking (subject to availability)."
+      }
+    }
+  },
+  "form": {
+    "startDate": "Start date",
+    "endDate": "End date",
+    "pickupLocation": "Pickup location",
+    "dropoffLocation": "Drop-off location"
+  },
+  "actions": {
+    "search": "Search",
+    "chooseDate": "Choose a date",
+    "book": "Book",
+    "retry": "Retry",
+    "details": "Details",
+    "seeFamilyVehicles": "View family vehicles",
+    "needAdvice": "Need advice?"
+  },
+  "steps": {
+    "step1": {
+      "title": "Choose",
+      "desc": "Select your ideal vehicle from our fleet"
+    },
+    "step2": {
+      "title": "Book",
+      "desc": "Fill in your information and choose your options"
+    },
+    "step3": {
+      "title": "Confirm",
+      "desc": "Receive your confirmation by email instantly"
+    },
+    "step4": {
+      "title": "Go",
+      "desc": "Pick up your car and enjoy your trip"
+    }
+  },
+  "family": {
+    "badge": "For the whole family",
+    "title": "Comfort, space and tranquility",
+    "description": "For your vacations or family outings, choose a spacious and comfortable vehicle. Air conditioning, storage and safety: everything is designed for a stress-free trip.",
+    "security": "Enhanced security",
+    "securityDesc": "Modern systems + regular maintenance",
+    "largeTrunk": "Large trunk",
+    "seatsMax": "seats max",
+    "assistance": "24/7 Assistance",
+    "assistanceDesc": "Quick support during your journey",
+    "childSeat": "Child seats and boosters available"
+  },
+  "testimonials": {
+    "trustTitle": "They trust us",
+    "satisfied": "satisfied customers",
+    "rating": "Average rating 4.9/5",
+    "description": "Authentic reviews and a smooth rental experience, throughout Morocco.",
+    "openMaps": "Open on Google Maps",
+    "reviews": {
+      "sara": "Clean car, fast service and excellent value for money. Perfect for a family trip.",
+      "youssef": "Simple reservation, no waiting at pickup. The team is professional and very responsive.",
+      "khadija": "Excellent comfort on the road, everything was as expected. I highly recommend!",
+      "omar": "Very good experience overall. Support available and clear information.",
+      "nadia": "Premium service, recent vehicles. We appreciated the assistance and flexibility."
+    }
+  },
+  "cta": {
+    "title": "Ready to go on an adventure?",
+    "subtitle": "Book your vehicle in just a few clicks",
+    "button": "Discover our offers"
+  },
+  "currency": {
+    "perDay": "per day"
+  }
+}

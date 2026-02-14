@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { getFeaturedCars } from '../data/cars';
+import { useTranslation } from 'react-i18next';
+import { useCars } from '../context/CarContext';
+import { useCurrency } from '../context/CurrencyContext';
 
 // Icônes SVG inline
 const IconShield = ({ className = "w-8 h-8" }) => (
@@ -83,6 +85,8 @@ const HeroCarSilhouette = () => (
 
 const Home = () => {
   const navigate = useNavigate();
+  const { t, i18n, ready } = useTranslation('home');
+  const { formatPrice } = useCurrency();
   const inputBaseClassName =
     'w-full rounded-xl px-4 py-3 text-slate-800 placeholder:text-slate-400 bg-white border border-slate-200 shadow-sm focus:ring-2 focus:ring-red-500/40 focus:border-red-500 focus:outline-none transition min-h-11';
   const inputWithIconClassName =
@@ -103,58 +107,58 @@ const Home = () => {
       name: 'Sara A.',
       city: 'Casablanca',
       rating: 5,
-      text: 'Voiture propre, service rapide et très bon rapport qualité/prix. Parfait pour un voyage en famille.'
+      text: t('testimonials.reviews.sara')
     },
     {
       name: 'Youssef B.',
       city: 'Rabat',
       rating: 5,
-      text: 'Réservation simple, récupération sans attente. L’équipe est professionnelle et très réactive.'
+      text: t('testimonials.reviews.youssef')
     },
     {
       name: 'Khadija M.',
       city: 'Marrakech',
       rating: 5,
-      text: 'Excellent confort sur route, tout était conforme. Je recommande vivement !'
+      text: t('testimonials.reviews.khadija')
     },
     {
       name: 'Omar H.',
       city: 'Tanger',
       rating: 4,
-      text: 'Très bonne expérience globalement. Support disponible et informations claires.'
+      text: t('testimonials.reviews.omar')
     },
     {
       name: 'Nadia E.',
       city: 'Agadir',
       rating: 5,
-      text: 'Service premium, véhicules récents. On a apprécié l’assistance et la flexibilité.'
+      text: t('testimonials.reviews.nadia')
     }
   ];
 
   const faqs = [
     {
-      q: 'Quels documents dois-je fournir pour louer une voiture ?',
-      a: 'Une pièce d\'identité valide, un permis de conduire en cours de validité et un moyen de paiement. Des documents supplémentaires peuvent être demandés selon le véhicule.'
+      q: t('faq.items.documents.q'),
+      a: t('faq.items.documents.a')
     },
     {
-      q: 'Puis-je annuler ma réservation ?',
-      a: 'Oui. Les conditions d\'annulation varient selon la réservation. Nous recommandons d\'annuler au plus tard 24h avant la prise en charge pour éviter des frais.'
+      q: t('faq.items.cancellation.q'),
+      a: t('faq.items.cancellation.a')
     },
     {
-      q: 'Est-ce que l\'assurance est incluse ?',
-      a: 'L\'assurance de base est incluse. Vous pouvez choisir une option premium pour une couverture renforcée selon vos besoins.'
+      q: t('faq.items.insurance.q'),
+      a: t('faq.items.insurance.a')
     },
     {
-      q: 'Puis-je ajouter un siège enfant ?',
-      a: 'Oui, vous pouvez ajouter un siège enfant lors de la réservation (selon disponibilité).'
+      q: t('faq.items.childSeat.q'),
+      a: t('faq.items.childSeat.a')
     }
   ];
 
 const steps = [
     {
       step: '01',
-      title: 'Choisissez',
-      desc: 'Sélectionnez votre véhicule idéal parmi notre flotte',
+      title: t('steps.step1.title'),
+      desc: t('steps.step1.desc'),
       icon: (
         <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
           <path d="m21 21-4.34-4.34"/><circle cx="10" cy="10" r="7"/><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/><polyline points="13 2 13 9 20 9"/>
@@ -163,8 +167,8 @@ const steps = [
     },
     {
       step: '02',
-      title: 'Réservez',
-      desc: 'Remplissez vos informations et choisissez vos options',
+      title: t('steps.step2.title'),
+      desc: t('steps.step2.desc'),
       icon: (
         <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
           <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="m9 16 2 2 4-4"/>
@@ -173,8 +177,8 @@ const steps = [
     },
     {
       step: '03',
-      title: 'Confirmez',
-      desc: 'Recevez votre confirmation par email instantanément',
+      title: t('steps.step3.title'),
+      desc: t('steps.step3.desc'),
       icon: (
         <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
           <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/><circle cx="18" cy="17" r="3"/><path d="m20.5 18.5 1 1"/>
@@ -183,8 +187,8 @@ const steps = [
     },
     {
       step: '04',
-      title: 'Partez',
-      desc: 'Retirez votre voiture et profitez de votre voyage',
+      title: t('steps.step4.title'),
+      desc: t('steps.step4.desc'),
       icon: (
         <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
           <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 13.1V16c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M2 12h6"/><path d="M12 2v6"/><path d="m15 5 3-3 3 3"/>
@@ -208,14 +212,30 @@ const steps = [
     navigate(`/cars?${params.toString()}`);
   };
 
-  const featuredCars = getFeaturedCars();
+  const { cars: allCars, loading, error } = useCars();
+  
+const brands = [
+  { name: 'Dacia', logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTr17LnhouFzB2601fjq-N7IWthf_kw5S5NZQ&s' },
+  { name: 'Renault', logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1MHMl0NQdkgxIm6cxxNaqKaA0RffSx36EGg&s' },
+  { name: 'Hyundai', logo: 'https://dealerimages.dealereprocess.com/image/upload/2026576.jpg' },
+  { name: 'Volkswagen', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Volkswagen_logo_2019.svg/500px-Volkswagen_logo_2019.svg.png' },
+  { name: 'Toyota', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Toyota_logo_%28Red%29.svg/1280px-Toyota_logo_%28Red%29.svg.png' },
+  { name: 'Fiat', logo: 'https://cdn.worldvectorlogo.com/logos/fiat-3.svg' },
+  { name: 'Peugeot', logo: 'https://upload.wikimedia.org/wikipedia/fr/thumb/9/9d/Peugeot_2021_Logo.svg/langfr-250px-Peugeot_2021_Logo.svg.png' },
+  { name: 'Citroen', logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRl1KwpQIq-e4v9lUNmpBFHAzmzi8-7Zi3YJg&s' }
+];
+
+
+
+  // Get the first 6 unreserved cars as "featured" from the server
+  const featuredCars = allCars.filter(car => !car.reserved).slice(0, 6);
 
  
   
 
   return (
-    <div className="min-h-screen bg-slate-50 min-w-0 overflow-x-hidden">
-      {/* Hero — image Maroc en fond, overlay pour lisibilité */}
+    <div key={i18n.language} className="min-h-screen bg-slate-50 min-w-0 overflow-x-hidden">
+      {/* Hero — Morocco background image, overlay for readability */}
       <section
         className="relative text-white overflow-hidden rounded-b-2xl sm:rounded-b-3xl bg-slate-800"
         style={{
@@ -225,9 +245,9 @@ const steps = [
           backgroundRepeat: 'no-repeat'
         }}
       >
-        {/* Overlay sombre pour contraste du texte */}
+        {/* Dark overlay for text contrast */}
         <div className="absolute inset-0 bg-slate-900/70" aria-hidden />
-        {/* Légère grille optionnelle */}
+        {/* Optional light grid */}
         <div className="absolute inset-0 opacity-[0.04]" aria-hidden>
           <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
             <defs>
@@ -244,42 +264,42 @@ const steps = [
             {/* Copy block */}
             <div className="md:col-span-7 min-w-0 text-center md:text-left order-1">
               <p className="text-slate-300 text-xs sm:text-sm font-medium uppercase tracking-wider mb-3 sm:mb-4">
-                Location de véhicules
+                {t('hero.subtitle')}
               </p>
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-4 sm:mb-5 text-white break-words leading-tight">
-                Louez votre voiture au Maroc
+                {t('hero.title')}
               </h1>
               <p className="text-base sm:text-lg md:text-xl text-slate-200 mb-6 sm:mb-8 max-w-xl mx-auto md:mx-0 leading-relaxed">
-                Des prix compétitifs, un service de qualité et une flotte moderne pour tous vos déplacements au royaume.
+                {t('hero.description')}
               </p>
               <div className="flex flex-wrap justify-center md:justify-start gap-3 sm:gap-4">
                 <Link
                   to="/cars"
                   className="inline-flex items-center gap-2 bg-white text-red-600 px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl font-semibold hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-slate-900 transition-colors text-sm sm:text-base"
                 >
-                  Voir nos véhicules
+                  {t('hero.search')}
                   <IconArrowRight className="w-4 h-4 shrink-0" />
                 </Link>
                 <Link
                   to="/contact"
                   className="inline-flex items-center border-2 border-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl font-semibold hover:bg-white hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-slate-900 transition-colors text-sm sm:text-base"
                 >
-                  Nous contacter
+                  {t('nav.contact')}
                 </Link>
               </div>
               {/* Trust line */}
               <ul className="mt-8 sm:mt-10 flex flex-wrap justify-center md:justify-start gap-4 sm:gap-6 text-xs sm:text-sm text-slate-300" role="list">
                 <li className="flex items-center gap-2">
                   <IconShield className="w-5 h-5 text-slate-400 shrink-0" />
-                  <span>Assurance incluse</span>
+                  <span>{t('hero.trust.insurance')}</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <IconClock className="w-5 h-5 text-slate-400 shrink-0" />
-                  <span>Assistance 24/7</span>
+                  <span>{t('hero.trust.assistance')}</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <IconMapPin className="w-5 h-5 text-slate-400 shrink-0" />
-                  <span>Agences partout au Maroc</span>
+                  <span>{t('hero.trust.agencies')}</span>
                 </li>
               </ul>
             </div>
@@ -293,16 +313,18 @@ const steps = [
         </div>
       </section>
 
-      {/* Barre de recherche — champs détaillés, placeholder date masqué */}
+     
+
+      {/* Search bar — detailed fields, date placeholder hidden */}
       <section className="px-4 sm:px-6 -mt-6 sm:-mt-8 relative z-10">
         <div className="container mx-auto max-w-5xl min-w-0">
           <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-slate-200 p-4 sm:p-5 md:p-6">
             <form onSubmit={handleSearch} className="space-y-1">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-                {/* Lieu */}
+                {/* Location */}
                 <div className="flex flex-col">
                   <label htmlFor="search-location" className="text-sm font-medium text-slate-700 mb-2">
-                    Lieu de prise en charge
+                    {t('form.pickupLocation')}
                   </label>
                   <div className="relative">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" aria-hidden>
@@ -327,10 +349,10 @@ const steps = [
                   </div>
                 </div>
 
-                {/* Date de début — placeholder natif masqué */}
+                {/* Start date — native placeholder hidden */}
                 <div className="flex flex-col">
                   <label htmlFor="search-start" className="text-sm font-medium text-slate-700 mb-2">
-                    Date de début
+                    {t('form.startDate')}
                   </label>
                   <div className={`relative date-field-wrapper ${!searchData.startDate ? 'date-field-empty' : ''}`}>
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none z-10" aria-hidden>
@@ -345,16 +367,16 @@ const steps = [
                     />
                     {!searchData.startDate && (
                       <span className="date-custom-placeholder pointer-events-none absolute left-10 top-1/2 -translate-y-1/2 text-slate-400 text-[15px]">
-                        Choisir une date
+                        {t('actions.chooseDate')}
                       </span>
                     )}
                   </div>
                 </div>
 
-                {/* Date de fin — placeholder natif masqué */}
+                {/* End date — native placeholder hidden */}
                 <div className="flex flex-col">
                   <label htmlFor="search-end" className="text-sm font-medium text-slate-700 mb-2">
-                    Date de fin
+                    {t('form.endDate')}
                   </label>
                   <div className={`relative date-field-wrapper ${!searchData.endDate ? 'date-field-empty' : ''}`}>
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none z-10" aria-hidden>
@@ -369,26 +391,22 @@ const steps = [
                     />
                     {!searchData.endDate && (
                       <span className="date-custom-placeholder pointer-events-none absolute left-10 top-1/2 -translate-y-1/2 text-slate-400 text-[15px]">
-                        Choisir une date
+                        {t('actions.chooseDate')}
                       </span>
                     )}
                   </div>
                 </div>
 
-                {/* Bouton Rechercher */}
+                {/* Search button */}
                 <div className="flex flex-col justify-end mt-2 md:mt-0">
-                  <label className="text-sm font-medium text-slate-700 mb-2 hidden md:block md:invisible">Rechercher</label>
+                  <label className="text-sm font-medium text-slate-700 mb-2 hidden md:block md:invisible">{t('actions.search')}</label>
                   <button
                     type="submit"
                     disabled={!isSearchFormValid}
-                    className={`search-submit-btn w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors min-h-11 ${
-                      !isSearchFormValid
-                        ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
-                        : 'bg-red-600 text-white hover:bg-red-700'
-                    }`}
+                    className={`inline-flex items-center justify-center gap-2 px-6 py-3 bg-red-600 text-white font-semibold rounded-xl hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all h-11 ${!isSearchFormValid ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
                     <IconSearch className="w-5 h-5 shrink-0" />
-                    Rechercher
+                    {t('actions.search')}
                   </button>
                 </div>
               </div>
@@ -397,42 +415,107 @@ const steps = [
         </div>
       </section>
 
-      {/* Véhicules en vedette — bandeau avec défilement auto vers la gauche */}
+      {/* Brand Logos Marquee */}
+      <div className="bg-white py-12 sm:py-16 border-b border-slate-100 overflow-hidden">
+        <div className="brands-marquee-track">
+          {[...brands, ...brands, ...brands].map((brand, idx) => (
+            <div key={`${brand.name}-${idx}`} className="flex items-center justify-center mx-8 sm:mx-12 opacity-50 hover:opacity-100 transition-opacity duration-300">
+              <img 
+                src={brand.logo} 
+                alt={brand.name} 
+                className="h-12 sm:h-14 w-auto grayscale hover:grayscale-0 transition-all duration-300"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Featured vehicles — banner with auto-scroll to the left */}
       <section className="py-10 sm:py-14 md:py-16 bg-slate-50 overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6 max-w-6xl min-w-0">
           <header className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 sm:gap-4 mb-6 sm:mb-8">
             <div className="min-w-0">
-              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-slate-800 mb-1">
-                Véhicules en vedette
+              <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-slate-900 tracking-tight">
+                {t('vehicles.title')}
               </h2>
               <p className="text-sm sm:text-base text-slate-600">
-                Découvrez notre sélection — défilement automatique
+                {t('vehicles.description')}
               </p>
             </div>
             <Link
               to="/cars"
               className="inline-flex items-center gap-2 text-red-600 font-semibold hover:text-red-700 shrink-0"
             >
-              Voir tous les véhicules
+              {t('vehicles.viewAll')}
               <IconArrowRight className="w-4 h-4" />
             </Link>
           </header>
         </div>
         <div className="relative overflow-hidden">
-          <div className="flex w-max cars-scroll-track" style={{ width: 'max-content' }}>
-            {[...featuredCars, ...featuredCars].map((car, index) => (
+          {/* Loading State */}
+          {loading && (
+            <div className="flex justify-center py-12">
+              <div className="text-center">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-red-50 text-red-600 rounded-full mb-4 animate-pulse">
+                  <IconCar className="w-8 h-8" />
+                </div>
+                <p className="text-slate-600 font-medium">{t('loading.title')}</p>
+              </div>
+            </div>
+          )}
+
+          {/* Error State */}
+          {error && !loading && (
+            <div className="flex justify-center py-12">
+              <div className="text-center bg-white rounded-2xl border border-red-200 p-8 shadow-sm">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-red-50 text-red-500 rounded-full mb-4">
+                  <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/>
+                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                  </svg>
+                </div>
+                <h3 className="text-lg font-bold text-slate-900 mb-2">{t('loading.error')}</h3>
+                <p className="text-slate-600 mb-4">{error}</p>
+                <button
+                  onClick={() => window.location.reload()}
+                  className="px-4 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors"
+                >
+                  {t('actions.retry')}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Cars Display */}
+          {!loading && !error && featuredCars.length > 0 && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {featuredCars.map((car, index) => (
               <article
                 key={`${car.id}-${index}`}
-                className="w-[260px] sm:w-[300px] md:w-[340px] shrink-0 mx-2 md:mx-3 first:ml-4 last:mr-4 sm:first:ml-4 md:first:ml-6 md:last:mr-6"
+                className="w-full"
               >
-                <Link to={`/cars/${car.id}`} className="block group">
+                <div 
+                  onClick={() => navigate(`/cars/${car.id}`)} 
+                  className="block group cursor-pointer"
+                >
                   <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-lg hover:border-slate-300 transition-all duration-300">
-                    <div className="aspect-[4/3] bg-slate-100 overflow-hidden rounded-t-2xl">
+                    <div className="aspect-[4/3] bg-slate-100 overflow-hidden rounded-t-2xl relative">
                       <img
-                        src={car.image}
+                        src={car.image.startsWith('http') ? car.image : `http://localhost:5000${car.image}`}
                         alt={car.name}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
+                      {!car.available && (
+                        <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px] flex items-center justify-center">
+                          <span className="bg-red-600 text-white px-3 py-1 rounded font-bold text-sm shadow-lg rotate-[-5deg]">{t('vehicles.unavailable')}</span>
+                        </div>
+                      )}
+                      {car.reserved && car.available && (
+                        <div className="absolute inset-0 bg-[#F01023]/40 backdrop-blur-[2px] flex items-center justify-center">
+                          <span className="bg-[#F01023] text-white px-3 py-1 rounded font-bold text-sm shadow-lg rotate-[-5deg]">{t('vehicles.reserved')}</span>
+                        </div>
+                      )}
                     </div>
                     <div className="p-4">
                       <div className="flex justify-between items-start gap-2 mb-3">
@@ -441,53 +524,79 @@ const steps = [
                           <p className="text-sm text-slate-500">{car.category}</p>
                         </div>
                         <div className="text-right shrink-0">
-                          <p className="text-xl font-bold text-red-600">{car.price} MAD</p>
-                          <p className="text-xs text-slate-500">par jour</p>
+                          <p className="text-xl font-bold text-red-600">{formatPrice(car.price)}</p>
+                          <p className="text-xs text-slate-500">{t('currency.perDay')}</p>
                         </div>
                       </div>
                       <ul className="flex flex-wrap gap-x-3 gap-y-1 text-sm text-slate-600 mb-3">
                         <li className="flex items-center gap-1">
                           <IconUsers className="w-4 h-4 text-slate-500 shrink-0" />
-                          <span>{car.seats} pl.</span>
+                          <span>{car.seats} {t('vehicles.specs.seatsShort')}</span>
                         </li>
                         <li className="flex items-center gap-1">
                           <IconCog className="w-4 h-4 text-slate-500 shrink-0" />
-                          <span>{car.transmission}</span>
+                          <span>{t(`vehicles.specs.${car.transmission.toLowerCase()}`)}</span>
                         </li>
                         <li className="flex items-center gap-1">
                           <IconFuel className="w-4 h-4 text-slate-500 shrink-0" />
-                          <span>{car.fuel}</span>
+                          <span>{t(`vehicles.specs.${car.fuel.toLowerCase()}`)}</span>
                         </li>
                       </ul>
                       <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-100">
                         <span className="text-[#101424] font-semibold text-sm underline underline-offset-4 hover:opacity-80 transition-opacity">
-                          Détail
+                          {t('actions.details')}
                         </span>
-                        <span className="inline-flex items-center gap-1 text-red-600 font-bold text-sm underline underline-offset-4 hover:opacity-80 transition-opacity">
-                          Réserver
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (car.available && !car.reserved) {
+                              navigate(`/booking?car=${car.id}`);
+                            }
+                          }}
+                          className={`inline-flex items-center gap-1 font-bold text-sm underline underline-offset-4 transition-opacity ${
+                            car.available && !car.reserved
+                              ? 'text-red-600 hover:opacity-80'
+                              : 'text-slate-400 cursor-not-allowed no-underline'
+                          }`}
+                        >
+                          {car.available && !car.reserved ? t('common:actions.book') : t('cars:car.reserved')}
                           <IconArrowRight className="w-4 h-4" />
-                        </span>
+                        </button>
                       </div>
                     </div>
                   </div>
-                </Link>
+                </div>
               </article>
             ))}
           </div>
+          )}
         </div>
 
        
-        <div className="relative overflow-hidden mt-6">
-          <div className="flex w-max cars-scroll-track-right" style={{ width: 'max-content' }}>
-            {[...featuredCars, ...featuredCars].map((car, index) => (
+        <div className="mt-6">
+          {!loading && !error && featuredCars.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {featuredCars.map((car, index) => (
               <article
                 key={`right-2-${car.id}-${index}`}
-                className="w-[240px] sm:w-[280px] md:w-[320px] shrink-0 mx-2 md:mx-3 first:ml-4 last:mr-4 md:first:ml-6 md:last:mr-6"
-              >
-                <Link to={`/cars/${car.id}`} className="block group">
+                className="w-full"              >
+                <div 
+                  onClick={() => navigate(`/cars/${car.id}`)} 
+                  className="block group cursor-pointer"
+                >
                   <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-lg hover:border-slate-300 transition-all duration-300">
-                    <div className="aspect-[4/3] bg-slate-100 overflow-hidden rounded-t-2xl">
-                      <img src={car.image} alt={car.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                    <div className="aspect-[4/3] bg-slate-100 overflow-hidden rounded-t-2xl relative">
+                      <img src={car.image.startsWith('http') ? car.image : `http://localhost:5000${car.image}`} alt={car.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                      {!car.available && (
+                        <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px] flex items-center justify-center">
+                          <span className="bg-red-600 text-white px-3 py-1 rounded font-bold text-sm shadow-lg rotate-[-5deg]">{t('vehicles.unavailable')}</span>
+                        </div>
+                      )}
+                      {car.reserved && car.available && (
+                        <div className="absolute inset-0 bg-[#F01023]/40 backdrop-blur-[2px] flex items-center justify-center">
+                          <span className="bg-[#F01023] text-white px-3 py-1 rounded font-bold text-sm shadow-lg rotate-[-5deg]">{t('vehicles.reserved')}</span>
+                        </div>
+                      )}
                     </div>
                     <div className="p-4">
                       <div className="flex justify-between items-start gap-2 mb-3">
@@ -495,28 +604,41 @@ const steps = [
                           <h3 className="text-lg font-semibold text-slate-800 group-hover:text-red-600 transition-colors">{car.name}</h3>
                           <p className="text-sm text-slate-500">{car.category}</p>
                         </div>
-                        <p className="text-lg font-bold text-red-600 shrink-0">{car.price} MAD</p>
+                        <p className="text-lg font-bold text-red-600 shrink-0">{formatPrice(car.price)}</p>
                       </div>
                       <ul className="flex flex-wrap gap-x-3 text-sm text-slate-600 mb-3">
-                        <li className="flex items-center gap-1"><IconUsers className="w-4 h-4 text-slate-500 shrink-0" /><span>{car.seats} pl.</span></li>
-                        <li className="flex items-center gap-1"><IconCog className="w-4 h-4 text-slate-500 shrink-0" /><span>{car.transmission}</span></li>
-                        <li className="flex items-center gap-1"><IconFuel className="w-4 h-4 text-slate-500 shrink-0" /><span>{car.fuel}</span></li>
+                        <li className="flex items-center gap-1"><IconUsers className="w-4 h-4 text-slate-500 shrink-0" /><span>{car.seats} {t('vehicles.specs.seatsShort')}</span></li>
+                        <li className="flex items-center gap-1"><IconCog className="w-4 h-4 text-slate-500 shrink-0" /><span>{t(`vehicles.specs.${car.transmission.toLowerCase()}`)}</span></li>
+                        <li className="flex items-center gap-1"><IconFuel className="w-4 h-4 text-slate-500 shrink-0" /><span>{t(`vehicles.specs.${car.fuel.toLowerCase()}`)}</span></li>
                       </ul>
                       <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-100">
                         <span className="text-[#101424] font-semibold text-sm underline underline-offset-4 hover:opacity-80 transition-opacity">
-                          Détail
+                          {t('actions.details')}
                         </span>
-                        <span className="inline-flex items-center gap-1 text-red-600 font-bold text-sm underline underline-offset-4 hover:opacity-80 transition-opacity">
-                          Réserver
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (car.available && !car.reserved) {
+                              navigate(`/booking?car=${car.id}`);
+                            }
+                          }}
+                          className={`inline-flex items-center gap-1 font-bold text-sm underline underline-offset-4 transition-opacity ${
+                            car.available && !car.reserved
+                              ? 'text-red-600 hover:opacity-80'
+                              : 'text-slate-400 cursor-not-allowed no-underline'
+                          }`}
+                        >
+                          {car.available && !car.reserved ? t('common:actions.book') : t('cars:car.reserved')}
                           <IconArrowRight className="w-4 h-4" />
-                        </span>
+                        </button>
                       </div>
                     </div>
                   </div>
-                </Link>
+                </div>
               </article>
             ))}
           </div>
+          )}
         </div>
       </section>
 
@@ -528,8 +650,8 @@ const steps = [
               <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-200 bg-slate-100 shadow-xl">
                 <div className="absolute inset-0 bg-gradient-to-tr from-slate-900/30 via-transparent to-transparent" />
                 <img
-                  src="https://cache.magicmaman.com/data/photo/w1000_ci/1eb/voiturefamiliale.jpg"
-                  alt="Famille en voyage en voiture"
+                  src="../public/imgs/famly.jpg"
+                  alt={t('family.imageAlt')}
                   className="w-full h-64 sm:h-80 md:h-96 object-cover"
                   loading="lazy"
                 />
@@ -538,23 +660,23 @@ const steps = [
                 <div className="absolute left-4 bottom-4 flex flex-wrap gap-2">
                   <span className="inline-flex items-center gap-2 rounded-full bg-white/90 backdrop-blur px-3 py-1 text-xs font-semibold text-slate-900 border border-white/60">
                     <IconShield className="w-4 h-4 text-red-600" />
-                    Sécurité famille
+                    {t('family.security')}
                   </span>
                   <span className="inline-flex items-center gap-2 rounded-full bg-white/90 backdrop-blur px-3 py-1 text-xs font-semibold text-slate-900 border border-white/60">
                     <IconCar className="w-4 h-4 text-red-600" />
-                    Grand coffre
+                    {t('family.largeTrunk')}
                   </span>
                 </div>
               </div>
 
-              <div className="absolute -bottom-4 -right-4 sm:bottom-6 sm:right-6 bg-white rounded-2xl shadow-lg p-4 border border-slate-200">
+              <div className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 bg-white rounded-2xl shadow-lg p-3 sm:p-4 border border-slate-200">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 bg-red-50 rounded-2xl flex items-center justify-center border border-red-100">
                     <IconUsers className="w-6 h-6 text-red-600" />
                   </div>
                   <div>
                     <p className="text-2xl font-extrabold text-slate-900 leading-none">7</p>
-                    <p className="text-xs text-slate-500 font-semibold">places max</p>
+                    <p className="text-xs text-slate-500 font-semibold">{t('family.seatsMax')}</p>
                   </div>
                 </div>
               </div>
@@ -562,14 +684,13 @@ const steps = [
 
             <div className="order-1 md:order-2">
               <span className="inline-flex items-center gap-2 text-red-600 text-sm font-semibold uppercase tracking-wider mb-3">
-                Pour toute la famille
+                {t('family.badge')}
               </span>
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 mb-4 leading-tight">
-                Confort, espace et tranquillité
+                {t('family.title')}
               </h2>
               <p className="text-slate-600 text-base sm:text-lg leading-relaxed mb-6">
-                Pour vos vacances ou sorties en famille, choisissez un véhicule spacieux et agréable.
-                Climatisation, rangement et sécurité : tout est pensé pour un voyage sans stress.
+                {t('family.description')}
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-7">
@@ -579,8 +700,8 @@ const steps = [
                       <IconShield className="w-4 h-4 sm:w-5 sm:h-5 text-red-600" />
                     </div>
                     <div>
-                      <p className="text-xs sm:text-sm font-bold text-slate-900">Sécurité renforcée</p>
-                      <p className="text-[10px] sm:text-xs text-slate-600">Systèmes modernes + entretien régulier</p>
+                      <p className="text-xs sm:text-sm font-bold text-slate-900">{t('family.security')}</p>
+                      <p className="text-[10px] sm:text-xs text-slate-600">{t('family.securityDesc')}</p>
                     </div>
                   </div>
                 </div>
@@ -590,8 +711,8 @@ const steps = [
                       <IconClock className="w-4 h-4 sm:w-5 sm:h-5 text-red-600" />
                     </div>
                     <div>
-                      <p className="text-xs sm:text-sm font-bold text-slate-900">Assistance 24/7</p>
-                      <p className="text-[10px] sm:text-xs text-slate-600">Support rapide pendant votre trajet</p>
+                      <p className="text-xs sm:text-sm font-bold text-slate-900">{t('family.assistance')}</p>
+                      <p className="text-[10px] sm:text-xs text-slate-600">{t('family.assistanceDesc')}</p>
                     </div>
                   </div>
                 </div>
@@ -602,13 +723,13 @@ const steps = [
                   <div className="w-7 h-7 sm:w-8 sm:h-8 bg-red-50 rounded-lg sm:rounded-xl flex items-center justify-center shrink-0 border border-red-100">
                     <IconUsers className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-600" />
                   </div>
-                  <span className="text-xs sm:text-sm">Sièges enfants et rehausseurs disponibles</span>
+                  <span className="text-xs sm:text-sm">{t('features.childSeat')}</span>
                 </li>
                 <li className="flex items-center gap-2 sm:gap-3 text-slate-700">
                   <div className="w-7 h-7 sm:w-8 sm:h-8 bg-red-50 rounded-lg sm:rounded-xl flex items-center justify-center shrink-0 border border-red-100">
                     <IconCar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-600" />
                   </div>
-                  <span className="text-xs sm:text-sm">SUV & monospaces récents, parfaits pour la route</span>
+                  <span className="text-xs sm:text-sm">{t('features.suvDesc')}</span>
                 </li>
               </ul>
 
@@ -617,120 +738,20 @@ const steps = [
                   to="/cars"
                   className="inline-flex items-center justify-center gap-2 bg-red-600 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg sm:rounded-xl font-semibold text-sm sm:text-base hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors"
                 >
-                  Voir les véhicules familiaux
+                  {t('actions.seeFamilyVehicles')}
                   <IconArrowRight className="w-4 h-4" />
                 </Link>
                 <Link
                   to="/contact"
                   className="inline-flex items-center justify-center gap-2 bg-white text-slate-900 px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg sm:rounded-xl font-semibold text-sm sm:text-base border border-slate-200 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors"
                 >
-                  Besoin de conseils ?
+                  {t('actions.needAdvice')}
                 </Link>
               </div>
             </div>
           </div>
         </div>
       </section>
-
-    <section className="py-16 sm:py-24 bg-white relative overflow-hidden">
-      {/* Background decoration */}
-      <div className="absolute inset-0 bg-gradient-to-b from-white via-slate-50/50 to-white" />
-      
-      <div className="container mx-auto px-4 sm:px-6 max-w-6xl relative">
-        <div className="text-center mb-16">
-          <span className="inline-flex items-center gap-2 text-red-600 text-xs font-bold uppercase tracking-widest mb-4 bg-red-50 px-4 py-2 rounded-full">
-            Simple & Rapide
-          </span>
-          <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-6">
-            Comment ça <span className="text-red-600">marche ?</span>
-          </h2>
-        </div>
-
-        {/* Steps Grid / Timeline */}
-        <div className="flex flex-col lg:flex-row gap-12 lg:gap-6 relative">
-          {steps.map((item, idx) => (
-            <div key={item.step} className="flex-1 relative group">
-              
-              {/* السهم الملتوي - يظهر فقط في الشاشات الكبيرة */}
-              {idx < steps.length - 1 && (
-                <div className="hidden lg:block absolute top-10 left-[70%] w-[70%] h-12 z-0">
-                  <svg width="100%" height="100%" viewBox="0 0 150 50" fill="none">
-                    <path 
-                      d="M10 30C40 5 110 5 140 25" 
-                      stroke={`url(#grad${idx})`} 
-                      strokeWidth="2.5" 
-                      strokeDasharray="6 4"
-                      strokeLinecap="round"
-                    />
-                    <path d="M132 22L140 25L135 15" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <defs>
-                      <linearGradient id={`grad${idx}`} x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stopColor="#ef4444" />
-                        <stop offset="100%" stopColor="#fca5a5" />
-                      </linearGradient>
-                    </defs>
-                  </svg>
-                </div>
-              )}
-
-              {/* محتوى الخطوة */}
-              <div className="flex flex-row lg:flex-col items-start lg:items-center gap-6 lg:gap-0">
-                
-                {/* الجزء الأيسر في الموبايل / العلوي في الكمبيوتر (الأيقونة والرقم) */}
-                <div className="relative shrink-0 lg:mb-8">
-                  <div className="w-16 h-16 lg:w-20 lg:h-20 rounded-2xl bg-white border border-slate-200 shadow-xl flex items-center justify-center relative z-10 group-hover:border-red-500 transition-all duration-300">
-                    <div className="w-11 h-11 lg:w-14 lg:h-14 bg-red-50 rounded-xl flex items-center justify-center text-red-600 group-hover:bg-red-600 group-hover:text-white transition-colors">
-                      {item.icon}
-                    </div>
-                    {/* الرقم */}
-                    <span className="absolute -top-2 -right-2 w-7 h-7 rounded-lg bg-slate-900 text-white text-[10px] font-bold flex items-center justify-center border-2 border-white shadow-md">
-                      {item.step}
-                    </span>
-                  </div>
-                  
-                  {/* خط الربط الرأسي للموبايل فقط */}
-                  {idx < steps.length - 1 && (
-                    <div className="lg:hidden absolute top-20 left-1/2 -translate-x-1/2 w-0.5 h-full bg-dashed border-l-2 border-dashed border-slate-200 z-0 py-4" />
-                  )}
-                </div>
-
-                {/* الجزء الأيمن في الموبايل / السفلي في الكمبيوتر (النص) */}
-                <div className="flex-1 lg:text-center pb-12 lg:pb-0">
-                  <h3 className="text-xl font-bold text-slate-900 mb-2 lg:mb-4 group-hover:text-red-600 transition-colors">
-                    {item.title}
-                  </h3>
-                  <p className="text-slate-500 text-sm lg:text-base leading-relaxed">
-                    {item.desc}
-                  </p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* CTA Section */}
-        <div className="mt-12 lg:mt-20 text-center">
-          <Link
-            to="/cars"
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-transparent text-red-600 px-2 py-2 rounded-2xl font-bold text-lg transition-opacity hover:opacity-80 underline underline-offset-4"
-          >
-            Commencer ma réservation
-            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <path d="M5 12h14m-7-7 7 7-7 7"/>
-            </svg>
-          </Link>
-
-          <div className="mt-3">
-            <Link
-              to="/cars"
-              className="inline-flex items-center justify-center bg-transparent text-[#101424] px-2 py-1 font-semibold transition-opacity hover:opacity-80 underline underline-offset-4"
-            >
-              Détails
-            </Link>
-          </div>
-        </div>
-      </div>
-    </section>
 
       {/* FAQ Section */}
       <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-b from-slate-50 to-white">
@@ -742,13 +763,13 @@ const steps = [
                 <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
                 <path d="M12 17h.01"/>
               </svg>
-              Foire aux questions
+              {t('faq.title')}
             </span>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 mb-4 leading-tight">
-              Tout ce que vous devez savoir
+              {t('faq.subtitle')}
             </h2>
             <p className="text-slate-600 text-base sm:text-lg max-w-xl mx-auto">
-              Réponses claires et complètes pour vous aider à prendre la meilleure décision
+              {t('faq.description')}
             </p>
           </div>
 
@@ -819,15 +840,15 @@ const steps = [
                   </svg>
                 </div>
                 <div className="text-left">
-                  <p className="text-sm font-semibold text-slate-900">Vous avez d'autres questions ?</p>
-                  <p className="text-xs text-slate-500">Notre équipe est là pour vous aider</p>
+                  <p className="text-sm font-semibold text-slate-900">{t('faq.moreQuestions')}</p>
+                  <p className="text-xs text-slate-500">{t('faq.helpText')}</p>
                 </div>
               </div>
               <Link
                 to="/contact"
                 className="inline-flex items-center gap-2 bg-red-600 text-white px-5 py-2.5 rounded-xl font-semibold hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors text-sm whitespace-nowrap"
               >
-                Contactez-nous
+                {t('faq.contactUs')}
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
                 </svg>
@@ -843,13 +864,13 @@ const steps = [
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
             <div className="lg:col-span-4">
               <div className="bg-slate-50/70 border border-slate-200 rounded-2xl p-6 shadow-sm">
-                <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Ils nous font confiance</p>
+                <p className="text-xs font-bold uppercase tracking-wider text-slate-500">{t('testimonials.trustTitle')}</p>
                 <div className="mt-3 flex items-end gap-3">
                   <p className="text-4xl font-black text-slate-900 leading-none">{clientCount}</p>
-                  <p className="text-sm font-semibold text-slate-600 pb-1">clients satisfaits</p>
+                  <p className="text-sm font-semibold text-slate-600 pb-1">{t('testimonials.satisfied')}</p>
                 </div>
                 <p className="mt-3 text-sm text-slate-600 leading-relaxed">
-                  Des avis authentiques et une expérience de location fluide, partout au Maroc.
+                  {t('testimonials.description')}
                 </p>
                 <div className="mt-4 flex items-center gap-2">
                   <div className="flex items-center text-amber-500">
@@ -857,7 +878,7 @@ const steps = [
                       <IconStar key={n} className="w-4 h-4" filled />
                     ))}
                   </div>
-                  <span className="text-xs font-semibold text-slate-500">Note moyenne 4.9/5</span>
+                  <span className="text-xs font-semibold text-slate-500">{t('testimonials.rating')}</span>
                 </div>
 
                 <a
@@ -872,7 +893,7 @@ const steps = [
                       <circle cx="12" cy="10" r="2.5" />
                     </svg>
                   </span>
-                  Ouvrir sur Google Maps
+                  {t('testimonials.openMaps')}
                 </a>
               </div>
             </div>
@@ -914,20 +935,20 @@ const steps = [
         </div>
       </section>
 
-      {/* CTA — fond uni */}
+      {/* CTA — solid background */}
       <section className="bg-red-600 text-white py-10 sm:py-14 md:py-16 rounded-t-2xl sm:rounded-t-3xl">
         <div className="container mx-auto px-4 sm:px-6 max-w-6xl text-center min-w-0">
           <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 sm:mb-3 px-1">
-            Prêt à partir à l'aventure ?
+            {t('cta.title')}
           </h2>
           <p className="text-base sm:text-lg text-red-100 mb-4 sm:mb-6">
-            Réservez votre véhicule en quelques clics
+            {t('cta.subtitle')}
           </p>
           <Link
             to="/cars"
             className="inline-flex items-center gap-2 bg-white text-red-600 px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl font-semibold hover:bg-red-50 transition-colors text-sm sm:text-base"
           >
-            Découvrir nos offres
+            {t('cta.button')}
             <IconArrowRight className="w-4 h-4" />
           </Link>
         </div>

@@ -66,6 +66,16 @@
 .cars-scroll-track-right {
   animation: cars-scroll-right 40s linear infinite;
 }
-.cars-scroll-track-right:hover {
+/* Défilement auto des logos de marques */
+@keyframes brands-marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.brands-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: brands-marquee 20s linear infinite;
+}
+.brands-marquee-track:hover {
   animation-play-state: paused;
 }

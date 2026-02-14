@@ -1,0 +1,44 @@
+{
+  "brand": {
+    "name": "Location Maroc",
+    "description": "Votre partenaire de confiance pour la location de voitures au Maroc. Une flotte moderne et un service client disponible 24h/24."
+  },
+  "quickLinks": {
+    "title": "Liens rapides",
+    "items": {
+      "home": "Accueil",
+      "vehicles": "Nos véhicules",
+      "about": "À propos",
+      "contact": "Contact",
+      "booking": "Réserver"
+    }
+  },
+  "services": {
+    "title": "Nos services",
+    "items": {
+      "shortTerm": "Location courte durée",
+      "longTerm": "Location longue durée",
+      "withDriver": "Location avec chauffeur",
+      "airport": "Transfert aéroport",
+      "insurance": "Assurance complète"
+    }
+  },
+  "contact": {
+    "title": "Contact",
+    "address": "123 Boulevard Mohammed V,",
+    "city": "Casablanca, Maroc",
+    "hours": "Lun-Sam: 8h-20h",
+    "weekend": "Dim: 9h-18h"
+  },
+  "bottomBar": {
+    "copyright": "© {{year}} Location Maroc. Tous droits réservés.",
+    "terms": "Conditions générales",
+    "privacy": "Politique de confidentialité",
+    "legal": "Mentions légales"
+  },
+  "social": {
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "twitter": "Twitter"
+  }
+}
