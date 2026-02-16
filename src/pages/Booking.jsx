@@ -5,6 +5,8 @@ import { useCars } from '../context/CarContext';
 import { useBookings } from '../context/BookingContext';
 import { useCurrency } from '../context/CurrencyContext';
 import { useCustomer } from '../context/CustomerContext';
+import { sanitizeInput, isValidEmail, isValidPhone } from '../utils/security';
+import RegisterModal from '../components/RegisterModal';
 
 // Icônes SVG inline (alignées avec Home / Cars / CarDetails)
 const IconUser = ({ className = 'w-5 h-5' }) => (
@@ -60,10 +62,10 @@ const IconInfo = ({ className = 'w-5 h-5' }) => (
 );
 
 const Booking = () => {
-  const { t } = useTranslation('booking');
+  const { t, i18n } = useTranslation(['booking', 'common']);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { cars, loading: carsLoading } = useCars();
+  const { cars, loading: carsLoading, fetchCars } = useCars();
   const { createBooking, loading: bookingLoading, error: bookingError } = useBookings();
   const { formatPrice } = useCurrency();
   const { customer, isAuthenticated } = useCustomer();
@@ -74,7 +76,7 @@ const Booking = () => {
   const searchEndDate = searchParams.get('endDate');
 
   // Trouver la voiture depuis le contexte (serveur)
-  const car = cars.find(c => c.id === Number(carId)) || cars[0] || { 
+  const car = cars.find(c => c.id === carId) || cars[0] || { 
     name: t('messages.loading'), 
     category: '', 
     price: 0, 
@@ -120,6 +122,100 @@ const Booking = () => {
   const [step, setStep] = useState(1);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showAccountPrompt, setShowAccountPrompt] = useState(false);
+  const [showRegisterModal, setShowRegisterModal] = useState(false);
+
+  // Scroll to top when step changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [step]);
+
+  const getTodayInputValue = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const todayInputValue = getTodayInputValue();
+
+  const [dateModalOpen, setDateModalOpen] = useState(false);
+  const [activeDateField, setActiveDateField] = useState(null);
+  const [calendarMonth, setCalendarMonth] = useState(() => {
+    const d = new Date();
+    return new Date(d.getFullYear(), d.getMonth(), 1);
+  });
+
+  const parseInputDate = (value) => {
+    if (!value) return null;
+    const [y, m, d] = value.split('-').map(Number);
+    if (!y || !m || !d) return null;
+    return new Date(y, m - 1, d);
+  };
+
+  const toInputDate = (date) => {
+    if (!date) return '';
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  };
+
+  const openDateModal = (field) => {
+    setActiveDateField(field);
+    const current = field === 'pickup' ? formData.pickupDate : formData.dropoffDate;
+    const currentDate = parseInputDate(current);
+    const base = currentDate || new Date();
+    setCalendarMonth(new Date(base.getFullYear(), base.getMonth(), 1));
+    setDateModalOpen(true);
+  };
+
+  const closeDateModal = () => {
+    setDateModalOpen(false);
+    setActiveDateField(null);
+  };
+
+  const minSelectableInputValue =
+    activeDateField === 'dropoff'
+      ? (formData.pickupDate || todayInputValue)
+      : todayInputValue;
+  const minSelectableDate = parseInputDate(minSelectableInputValue);
+
+  const selectDate = (date) => {
+    const value = toInputDate(date);
+    if (activeDateField === 'pickup') {
+      setFormData((prev) => {
+        const next = { ...prev, pickupDate: value };
+        if (next.dropoffDate && value && next.dropoffDate < value) {
+          next.dropoffDate = '';
+        }
+        return next;
+      });
+    }
+    if (activeDateField === 'dropoff') {
+      setFormData((prev) => ({ ...prev, dropoffDate: value }));
+    }
+    closeDateModal();
+  };
+
+  const clearActiveDate = () => {
+    if (activeDateField === 'pickup') {
+      setFormData((prev) => ({ ...prev, pickupDate: '', dropoffDate: '' }));
+    }
+    if (activeDateField === 'dropoff') {
+      setFormData((prev) => ({ ...prev, dropoffDate: '' }));
+    }
+    closeDateModal();
+  };
+
+  const monthLabel = (date) =>
+    date.toLocaleDateString(i18n.language, { month: 'long', year: 'numeric' });
+
+  const isDateRangeValid =
+    Boolean(formData.pickupDate) &&
+    Boolean(formData.dropoffDate) &&
+    formData.pickupDate >= todayInputValue &&
+    formData.dropoffDate >= (formData.pickupDate || todayInputValue);
 
   const calculateDays = () => {
     if (!formData.pickupDate || !formData.dropoffDate) return 0;
@@ -148,7 +244,7 @@ const Booking = () => {
       // Envoyer la réservation au serveur
       try {
         const bookingData = {
-          car_id: Number(carId),
+          car_id: carId,
           first_name: formData.firstName,
           last_name: formData.lastName,
           email: formData.email,
@@ -161,6 +257,7 @@ const Booking = () => {
         };
         
         await createBooking(bookingData);
+        await fetchCars();
         // Skip success modal, directly show account prompt or redirect
         if (!isAuthenticated) {
           setShowAccountPrompt(true);
@@ -168,7 +265,7 @@ const Booking = () => {
           navigate('/');
         }
       } catch (error) {
-        alert('Erreur lors de la réservation: ' + error.message);
+        alert(t('messages.bookingError') + error.message);
       }
     }
   };
@@ -180,9 +277,16 @@ const Booking = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+    
+    // Sanitize text inputs
+    let sanitizedValue = value;
+    if (type === 'text' || type === 'email' || type === 'tel') {
+      sanitizedValue = sanitizeInput(value);
+    }
+    
     setFormData({
       ...formData,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === 'checkbox' ? checked : sanitizedValue
     });
   };
 
@@ -196,7 +300,10 @@ const Booking = () => {
       formData.pickupDate &&
       formData.dropoffDate;
 
-    return hasRequired && calculateDays() > 0;
+    // Prevent same day booking - dropoff must be after pickup
+    const isDifferentDay = formData.pickupDate !== formData.dropoffDate;
+
+    return hasRequired && isDateRangeValid && isDifferentDay && calculateDays() > 0;
   };
 
 
@@ -229,20 +336,20 @@ const Booking = () => {
                 onClick={handleCloseSuccessModal}
                 className="px-4 py-2.5 rounded-xl font-semibold bg-red-600 text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors"
               >
-                OK
+                {t('actions.ok')}
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Account Creation Prompt Modal - Elegant Compact Design */}
+      {/* Account Creation Prompt Modal */}
       {showAccountPrompt && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center px-4"
           role="dialog"
           aria-modal="true"
-          aria-label="Créer un compte"
+          aria-label={t('accountPrompt.title')}
         >
           <div className="absolute inset-0 bg-slate-900/50" onClick={() => setShowAccountPrompt(false)} />
           <div className="relative z-10 w-full max-w-xs rounded-2xl bg-white shadow-2xl p-6 text-center">
@@ -254,15 +361,15 @@ const Booking = () => {
             </div>
 
             {/* Title */}
-            <h3 className="text-lg font-bold text-slate-900 mb-1">Réservation confirmée !</h3>
+            <h3 className="text-lg font-bold text-slate-900 mb-1">{t('accountPrompt.confirmed')}</h3>
             <p className="text-sm text-slate-500 mb-5">
-              N° #{Math.floor(Math.random() * 9000) + 1000}
+              {t('accountPrompt.bookingNumber')} #{Math.floor(Math.random() * 9000) + 1000}
             </p>
 
             {/* Benefits */}
             <div className="bg-slate-50 rounded-xl p-4 mb-5 text-left">
               <p className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-3 text-center">
-                Créez un compte pour
+                {t('accountPrompt.benefitsTitle')}
               </p>
               <div className="space-y-3 text-sm text-slate-700">
                 <div className="flex items-start gap-3">
@@ -270,8 +377,8 @@ const Booking = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                   </svg>
                   <div>
-                    <span className="font-medium">Suivre votre réservation</span>
-                    <p className="text-xs text-slate-500">En temps réel, 24h/24</p>
+                    <span className="font-medium">{t('accountPrompt.trackBooking')}</span>
+                    <p className="text-xs text-slate-500">{t('accountPrompt.trackDesc')}</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
@@ -279,8 +386,8 @@ const Booking = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                   </svg>
                   <div>
-                    <span className="font-medium">Recevoir une confirmation</span>
-                    <p className="text-xs text-slate-500">Notification dès validation</p>
+                    <span className="font-medium">{t('accountPrompt.notification')}</span>
+                    <p className="text-xs text-slate-500">{t('accountPrompt.notificationDesc')}</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
@@ -288,8 +395,8 @@ const Booking = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                   </svg>
                   <div>
-                    <span className="font-medium">Modifier ou annuler</span>
-                    <p className="text-xs text-slate-500">Gérez votre réservation facilement</p>
+                    <span className="font-medium">{t('accountPrompt.modify')}</span>
+                    <p className="text-xs text-slate-500">{t('accountPrompt.modifyDesc')}</p>
                   </div>
                 </div>
               </div>
@@ -299,10 +406,13 @@ const Booking = () => {
             <div className="space-y-2">
               <button
                 type="button"
-                onClick={() => navigate('/register')}
+                onClick={() => {
+                  setShowAccountPrompt(false);
+                  setShowRegisterModal(true);
+                }}
                 className="w-full py-2.5 px-4 rounded-xl font-semibold text-sm text-white bg-red-600 hover:bg-red-700 transition-colors"
               >
-                Créer mon compte
+                {t('accountPrompt.createAccount')}
               </button>
               <button
                 type="button"
@@ -312,12 +422,25 @@ const Booking = () => {
                 }}
                 className="w-full py-2 px-4 rounded-xl font-medium text-sm text-slate-400 hover:text-slate-600 transition-colors"
               >
-                Plus tard
+                {t('accountPrompt.later')}
               </button>
             </div>
           </div>
         </div>
       )}
+
+      {/* Register Modal */}
+      <RegisterModal
+        isOpen={showRegisterModal}
+        onClose={() => {
+          setShowRegisterModal(false);
+          navigate('/');
+        }}
+        onSwitchToLogin={() => {
+          setShowRegisterModal(false);
+          navigate('/');
+        }}
+      />
       <section className="relative text-white overflow-hidden rounded-b-2xl sm:rounded-b-3xl bg-slate-800">
         <div className="absolute inset-0 bg-slate-900/70" aria-hidden />
         <div className="container relative z-10 mx-auto px-4 sm:px-6 max-w-6xl py-8 sm:py-14 min-w-0">
@@ -462,24 +585,34 @@ const Booking = () => {
                     <div>
                       <label className="flex items-center gap-2 text-xs sm:text-sm font-medium text-slate-700 mb-1.5 sm:mb-2"><IconMapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500" />{t('form.pickup')} *</label>
                       <select name="pickupLocation" value={formData.pickupLocation} onChange={handleChange} className={`${selectBaseClassName} text-sm sm:text-base`}>
-                        <option>Casablanca</option><option>Rabat</option><option>Marrakech</option><option>Fès</option><option>Tanger</option><option>Agadir</option>
+                        <option value="casablanca">{t('common:cities.casablanca')}</option>
+                        <option value="rabat">{t('common:cities.rabat')}</option>
+                        <option value="marrakech">{t('common:cities.marrakech')}</option>
+                        <option value="fes">{t('common:cities.fes')}</option>
+                        <option value="tanger">{t('common:cities.tanger')}</option>
+                        <option value="agadir">{t('common:cities.agadir')}</option>
                       </select>
                     </div>
                     <div>
                       <label className="flex items-center gap-2 text-xs sm:text-sm font-medium text-slate-700 mb-1.5 sm:mb-2"><IconMapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500" />{t('form.dropoff')} *</label>
                       <select name="dropoffLocation" value={formData.dropoffLocation} onChange={handleChange} className={`${selectBaseClassName} text-sm sm:text-base`}>
-                        <option>Casablanca</option><option>Rabat</option><option>Marrakech</option><option>Fès</option><option>Tanger</option><option>Agadir</option>
+                        <option value="casablanca">{t('common:cities.casablanca')}</option>
+                        <option value="rabat">{t('common:cities.rabat')}</option>
+                        <option value="marrakech">{t('common:cities.marrakech')}</option>
+                        <option value="fes">{t('common:cities.fes')}</option>
+                        <option value="tanger">{t('common:cities.tanger')}</option>
+                        <option value="agadir">{t('common:cities.agadir')}</option>
                       </select>
                     </div>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 mb-3 sm:mb-4">
                     <div>
                       <label className="flex items-center gap-2 text-xs sm:text-sm font-medium text-slate-700 mb-1.5 sm:mb-2"><IconCalendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500" />{t('form.startDate')} *</label>
-                      <input type="date" name="pickupDate" value={formData.pickupDate} onChange={handleChange} required className={`${inputBaseClassName} text-sm sm:text-base`} />
+                      <input type="text" readOnly name="pickupDate" placeholder={t('form.startDatePlaceholder')} value={formData.pickupDate} onClick={() => openDateModal('pickup')} required className={`${inputBaseClassName} text-sm sm:text-base`} />
                     </div>
                     <div>
                       <label className="flex items-center gap-2 text-xs sm:text-sm font-medium text-slate-700 mb-1.5 sm:mb-2"><IconCalendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500" />{t('form.endDate')} *</label>
-                      <input type="date" name="dropoffDate" value={formData.dropoffDate} onChange={handleChange} required className={`${inputBaseClassName} text-sm sm:text-base`} />
+                      <input type="text" readOnly name="dropoffDate" placeholder={t('form.endDatePlaceholder')} value={formData.dropoffDate} onClick={() => openDateModal('dropoff')} required className={`${inputBaseClassName} text-sm sm:text-base`} />
                     </div>
                   </div>
                 </div>
@@ -495,7 +628,7 @@ const Booking = () => {
                         <div className="flex-1 min-w-0">
                           <div className="flex flex-wrap justify-between items-start gap-2">
                             <div className="min-w-0"><p className="font-semibold text-slate-800 text-sm sm:text-base">{t('options.gps.title')}</p><p className="text-xs sm:text-sm text-slate-600">{t('options.gps.desc')}</p></div>
-                            <p className="text-red-600 font-bold text-sm sm:text-base">+{formatPrice(50)}/jour</p>
+                            <p className="text-red-600 font-bold text-sm sm:text-base">+{formatPrice(50)}{t('currency.perDay')}</p>
                           </div>
                         </div>
                       </label>
@@ -528,7 +661,7 @@ const Booking = () => {
                       <div className="flex-1 min-w-0">
                         <div className="flex flex-wrap justify-between items-start gap-2">
                           <div className="min-w-0"><p className="font-semibold text-slate-800 text-sm sm:text-base">{t('insurance.premium.title')}</p><p className="text-xs sm:text-sm text-slate-600">{t('insurance.premium.desc')}</p></div>
-                          <p className="text-red-600 font-bold text-sm sm:text-base">+{formatPrice(100)}/jour</p>
+                          <p className="text-red-600 font-bold text-sm sm:text-base">+{formatPrice(100)}{t('currency.perDay')}</p>
                         </div>
                       </div>
                     </label>
@@ -574,6 +707,138 @@ const Booking = () => {
                 <button type="submit" disabled={step === 1 && !canGoNextFromStep1()} className={`px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl font-semibold text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors ${step === 1 && !canGoNextFromStep1() ? 'bg-slate-200 text-slate-400 cursor-not-allowed' : 'bg-red-600 text-white hover:bg-red-700'}`}>{step === 3 ? t('actions.confirmBooking') : t('actions.next')}</button>
               </div>
             </form>
+
+            {dateModalOpen && (
+              <div className="fixed inset-0 z-[60]">
+                <button
+                  type="button"
+                  aria-label="Close"
+                  onClick={closeDateModal}
+                  className="absolute inset-0 bg-slate-950/40 backdrop-blur-[2px]"
+                />
+                <div className="absolute left-1/2 top-1/2 w-[92vw] max-w-sm -translate-x-1/2 -translate-y-1/2">
+                  <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl overflow-hidden">
+                    <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold text-slate-900 truncate">
+                          {activeDateField === 'pickup' ? t('form.startDate') : t('form.endDate')}
+                        </p>
+                        <p className="text-xs text-slate-500 truncate">{monthLabel(calendarMonth)}</p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={closeDateModal}
+                        className="inline-flex items-center justify-center w-9 h-9 rounded-xl hover:bg-slate-100 text-slate-600"
+                      >
+                        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M18 6 6 18" />
+                          <path d="M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+
+                    <div className="px-4 py-3 flex items-center justify-between">
+                      <button
+                        type="button"
+                        onClick={() => setCalendarMonth((prev) => new Date(prev.getFullYear(), prev.getMonth() - 1, 1))}
+                        className="inline-flex items-center justify-center w-10 h-10 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700"
+                      >
+                        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M15 18l-6-6 6-6" />
+                        </svg>
+                      </button>
+                      <div className="text-sm font-bold text-slate-900">{monthLabel(calendarMonth)}</div>
+                      <button
+                        type="button"
+                        onClick={() => setCalendarMonth((prev) => new Date(prev.getFullYear(), prev.getMonth() + 1, 1))}
+                        className="inline-flex items-center justify-center w-10 h-10 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700"
+                      >
+                        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M9 18l6-6-6-6" />
+                        </svg>
+                      </button>
+                    </div>
+
+                    <div className="px-4 pb-4">
+                      <div className="grid grid-cols-7 gap-1 text-[11px] font-semibold text-slate-500 mb-2">
+                        {t('common:calendar.shortDays', { returnObjects: true }).map((d) => (
+                          <div key={d} className="text-center py-1">{d}</div>
+                        ))}
+                      </div>
+
+                      <div className="grid grid-cols-7 gap-1">
+                        {(() => {
+                          const firstOfMonth = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth(), 1);
+                          const startDay = firstOfMonth.getDay();
+                          const gridStart = new Date(firstOfMonth);
+                          gridStart.setDate(firstOfMonth.getDate() - startDay);
+
+                          const selectedValue =
+                            activeDateField === 'pickup' ? formData.pickupDate : formData.dropoffDate;
+                          const selectedDate = parseInputDate(selectedValue);
+
+                          const cells = [];
+                          for (let i = 0; i < 42; i++) {
+                            const cellDate = new Date(gridStart);
+                            cellDate.setDate(gridStart.getDate() + i);
+
+                            const inMonth = cellDate.getMonth() === calendarMonth.getMonth();
+                            const disabled = minSelectableDate ? cellDate < minSelectableDate : false;
+                            const isSelected =
+                              selectedDate && toInputDate(selectedDate) === toInputDate(cellDate);
+
+                            const base =
+                              'h-10 w-10 mx-auto rounded-xl text-sm font-semibold transition flex items-center justify-center';
+                            const classes = disabled
+                              ? `${base} text-slate-300 cursor-not-allowed`
+                              : isSelected
+                                ? `${base} bg-red-600 text-white shadow-sm`
+                                : inMonth
+                                  ? `${base} text-slate-800 hover:bg-red-50 hover:text-red-700`
+                                  : `${base} text-slate-400 hover:bg-slate-50`;
+
+                            cells.push(
+                              <button
+                                key={toInputDate(cellDate)}
+                                type="button"
+                                disabled={disabled}
+                                onClick={() => selectDate(cellDate)}
+                                className={classes}
+                              >
+                                {cellDate.getDate()}
+                              </button>
+                            );
+                          }
+
+                          return cells;
+                        })()}
+                      </div>
+
+                      <div className="mt-4 flex items-center justify-between">
+                        <button
+                          type="button"
+                          onClick={clearActiveDate}
+                          className="text-sm font-semibold text-slate-600 hover:text-slate-900"
+                        >
+                          {t('actions.clear')}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => selectDate(parseInputDate(minSelectableInputValue) || new Date())}
+                          className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-red-600 text-white font-semibold hover:bg-red-700"
+                        >
+                          {t('actions.today')}
+                          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M5 12h14" />
+                            <path d="M12 5l7 7-7 7" />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

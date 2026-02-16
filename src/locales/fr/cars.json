@@ -145,5 +145,9 @@
     "fuel": "Carburant"
   },
   "from": "À partir de",
-  "perDay": "/jour"
+  "perDay": "/jour",
+  "actions": {
+    "clear": "Effacer",
+    "today": "Aujourd'hui"
+  }
 }

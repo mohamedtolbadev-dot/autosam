@@ -28,6 +28,17 @@
     "fr": "Français",
     "en": "English"
   },
+  "cities": {
+    "casablanca": "Casablanca",
+    "rabat": "Rabat",
+    "marrakech": "Marrakech",
+    "fes": "Fes",
+    "tanger": "Tangier",
+    "agadir": "Agadir"
+  },
+  "calendar": {
+    "shortDays": ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"]
+  },
   "footer": {
     "copyright": "© 2024 Location Maroc. All rights reserved."
   }

@@ -85,7 +85,7 @@ const HeroCarSilhouette = () => (
 
 const Home = () => {
   const navigate = useNavigate();
-  const { t, i18n, ready } = useTranslation('home');
+  const { t, i18n, ready } = useTranslation(['home', 'common']);
   const { formatPrice } = useCurrency();
   const inputBaseClassName =
     'w-full rounded-xl px-4 py-3 text-slate-800 placeholder:text-slate-400 bg-white border border-slate-200 shadow-sm focus:ring-2 focus:ring-red-500/40 focus:border-red-500 focus:outline-none transition min-h-11';
@@ -199,12 +199,97 @@ const steps = [
 
   const [openFaqIndex, setOpenFaqIndex] = useState(0);
 
+  const getTodayInputValue = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const todayInputValue = getTodayInputValue();
+
+  const [dateModalOpen, setDateModalOpen] = useState(false);
+  const [activeDateField, setActiveDateField] = useState(null);
+  const [calendarMonth, setCalendarMonth] = useState(() => {
+    const d = new Date();
+    return new Date(d.getFullYear(), d.getMonth(), 1);
+  });
+
+  const parseInputDate = (value) => {
+    if (!value) return null;
+    const [y, m, d] = value.split('-').map(Number);
+    if (!y || !m || !d) return null;
+    return new Date(y, m - 1, d);
+  };
+
+  const toInputDate = (date) => {
+    if (!date) return '';
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  };
+
+  const openDateModal = (field) => {
+    setActiveDateField(field);
+    const current = field === 'start' ? searchData.startDate : searchData.endDate;
+    const currentDate = parseInputDate(current);
+    const base = currentDate || new Date();
+    setCalendarMonth(new Date(base.getFullYear(), base.getMonth(), 1));
+    setDateModalOpen(true);
+  };
+
+  const closeDateModal = () => {
+    setDateModalOpen(false);
+    setActiveDateField(null);
+  };
+
+  const minSelectableInputValue =
+    activeDateField === 'end' ? (searchData.startDate || todayInputValue) : todayInputValue;
+  const minSelectableDate = parseInputDate(minSelectableInputValue);
+
+  const selectDate = (date) => {
+    const value = toInputDate(date);
+    if (activeDateField === 'start') {
+      setSearchData((prev) => {
+        const next = { ...prev, startDate: value };
+        if (next.endDate && value && next.endDate < value) {
+          next.endDate = '';
+        }
+        return next;
+      });
+    }
+    if (activeDateField === 'end') {
+      setSearchData((prev) => ({ ...prev, endDate: value }));
+    }
+    closeDateModal();
+  };
+
+  const clearActiveDate = () => {
+    if (activeDateField === 'start') {
+      setSearchData((prev) => ({ ...prev, startDate: '', endDate: '' }));
+    }
+    if (activeDateField === 'end') {
+      setSearchData((prev) => ({ ...prev, endDate: '' }));
+    }
+    closeDateModal();
+  };
+
+  const monthLabel = (date) =>
+    date.toLocaleDateString(i18n.language, { month: 'long', year: 'numeric' });
+
   const isSearchFormValid =
-    Boolean(searchData.location) && Boolean(searchData.startDate) && Boolean(searchData.endDate);
+    Boolean(searchData.location) && Boolean(searchData.startDate) && Boolean(searchData.endDate) &&
+    searchData.startDate !== searchData.endDate;
 
   const handleSearch = (e) => {
     e.preventDefault();
     if (!isSearchFormValid) return;
+
+    if (searchData.startDate < todayInputValue) return;
+    if (searchData.endDate < (searchData.startDate || todayInputValue)) return;
+
     const params = new URLSearchParams();
     if (searchData.location) params.append('location', searchData.location);
     if (searchData.startDate) params.append('startDate', searchData.startDate);
@@ -228,7 +313,17 @@ const brands = [
 
 
   // Get the first 6 unreserved cars as "featured" from the server
-  const featuredCars = allCars.filter(car => !car.reserved).slice(0, 6);
+  const getCarKey = (car) => car?.id ?? car?._id;
+  const featuredCars = allCars
+    .filter((car) => !car.reserved)
+    .reduce((acc, car) => {
+      const key = getCarKey(car);
+      if (!key || acc.seen.has(key)) return acc;
+      acc.seen.add(key);
+      acc.items.push(car);
+      return acc;
+    }, { items: [], seen: new Set() }).items
+    .slice(0, 8);
 
  
   
@@ -336,12 +431,12 @@ const brands = [
                       onChange={(e) => setSearchData({ ...searchData, location: e.target.value })}
                       className={`search-field-input ${selectWithIconClassName}`}
                     >
-                      <option>Casablanca</option>
-                      <option>Rabat</option>
-                      <option>Marrakech</option>
-                      <option>Fès</option>
-                      <option>Tanger</option>
-                      <option>Agadir</option>
+                      <option value="casablanca">{t('common:cities.casablanca')}</option>
+                      <option value="rabat">{t('common:cities.rabat')}</option>
+                      <option value="marrakech">{t('common:cities.marrakech')}</option>
+                      <option value="fes">{t('common:cities.fes')}</option>
+                      <option value="tanger">{t('common:cities.tanger')}</option>
+                      <option value="agadir">{t('common:cities.agadir')}</option>
                     </select>
                     <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" aria-hidden>
                       <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9l6 6 6-6" /></svg>
@@ -360,9 +455,10 @@ const brands = [
                     </span>
                     <input
                       id="search-start"
-                      type="date"
+                      type="text"
+                      readOnly
                       value={searchData.startDate}
-                      onChange={(e) => setSearchData({ ...searchData, startDate: e.target.value })}
+                      onClick={() => openDateModal('start')}
                       className={`search-date-input ${inputWithIconClassName}`}
                     />
                     {!searchData.startDate && (
@@ -384,9 +480,10 @@ const brands = [
                     </span>
                     <input
                       id="search-end"
-                      type="date"
+                      type="text"
+                      readOnly
                       value={searchData.endDate}
-                      onChange={(e) => setSearchData({ ...searchData, endDate: e.target.value })}
+                      onClick={() => openDateModal('end')}
                       className={`search-date-input ${inputWithIconClassName}`}
                     />
                     {!searchData.endDate && (
@@ -414,6 +511,139 @@ const brands = [
           </div>
         </div>
       </section>
+
+      {dateModalOpen && (
+        <div className="fixed inset-0 z-[60]">
+          <button
+            type="button"
+            aria-label="Close"
+            onClick={closeDateModal}
+            className="absolute inset-0 bg-slate-950/40 backdrop-blur-[2px]"
+          />
+          <div className="absolute left-1/2 top-1/2 w-[92vw] max-w-sm -translate-x-1/2 -translate-y-1/2">
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl overflow-hidden">
+              <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-slate-900 truncate">
+                    {activeDateField === 'start' ? t('form.startDate') : t('form.endDate')}
+                  </p>
+                  <p className="text-xs text-slate-500 truncate">{monthLabel(calendarMonth)}</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={closeDateModal}
+                  className="inline-flex items-center justify-center w-9 h-9 rounded-xl hover:bg-slate-100 text-slate-600"
+                >
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M18 6 6 18" />
+                    <path d="M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="px-4 py-3 flex items-center justify-between">
+                <button
+                  type="button"
+                  onClick={() => setCalendarMonth((prev) => new Date(prev.getFullYear(), prev.getMonth() - 1, 1))}
+                  className="inline-flex items-center justify-center w-10 h-10 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700"
+                >
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M15 18l-6-6 6-6" />
+                  </svg>
+                </button>
+                <div className="text-sm font-bold text-slate-900">
+                  {monthLabel(calendarMonth)}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setCalendarMonth((prev) => new Date(prev.getFullYear(), prev.getMonth() + 1, 1))}
+                  className="inline-flex items-center justify-center w-10 h-10 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700"
+                >
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M9 18l6-6-6-6" />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="px-4 pb-4">
+                <div className="grid grid-cols-7 gap-1 text-[11px] font-semibold text-slate-500 mb-2">
+                  {t('common:calendar.shortDays', { returnObjects: true }).map((d) => (
+                    <div key={d} className="text-center py-1">{d}</div>
+                  ))}
+                </div>
+
+                <div className="grid grid-cols-7 gap-1">
+                  {(() => {
+                    const firstOfMonth = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth(), 1);
+                    const startDay = firstOfMonth.getDay();
+                    const gridStart = new Date(firstOfMonth);
+                    gridStart.setDate(firstOfMonth.getDate() - startDay);
+
+                    const selectedValue =
+                      activeDateField === 'start' ? searchData.startDate : searchData.endDate;
+                    const selectedDate = parseInputDate(selectedValue);
+
+                    const cells = [];
+                    for (let i = 0; i < 42; i++) {
+                      const cellDate = new Date(gridStart);
+                      cellDate.setDate(gridStart.getDate() + i);
+
+                      const inMonth = cellDate.getMonth() === calendarMonth.getMonth();
+                      const disabled = minSelectableDate ? cellDate < minSelectableDate : false;
+                      const isSelected =
+                        selectedDate && toInputDate(selectedDate) === toInputDate(cellDate);
+
+                      const base =
+                        'h-10 w-10 mx-auto rounded-xl text-sm font-semibold transition flex items-center justify-center';
+                      const classes = disabled
+                        ? `${base} text-slate-300 cursor-not-allowed`
+                        : isSelected
+                          ? `${base} bg-red-600 text-white shadow-sm`
+                          : inMonth
+                            ? `${base} text-slate-800 hover:bg-red-50 hover:text-red-700`
+                            : `${base} text-slate-400 hover:bg-slate-50`;
+
+                      cells.push(
+                        <button
+                          key={toInputDate(cellDate)}
+                          type="button"
+                          disabled={disabled}
+                          onClick={() => selectDate(cellDate)}
+                          className={classes}
+                        >
+                          {cellDate.getDate()}
+                        </button>
+                      );
+                    }
+                    return cells;
+                  })()}
+                </div>
+
+                <div className="mt-4 flex items-center justify-between">
+                  <button
+                    type="button"
+                    onClick={clearActiveDate}
+                    className="text-sm font-semibold text-slate-600 hover:text-slate-900"
+                  >
+                    {t('actions.clear')}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => selectDate(parseInputDate(minSelectableInputValue) || new Date())}
+                    className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-red-600 text-white font-semibold hover:bg-red-700"
+                  >
+                    {t('actions.today')}
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M5 12h14" />
+                      <path d="M12 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Brand Logos Marquee */}
       <div className="bg-white py-12 sm:py-16 border-b border-slate-100 overflow-hidden">
@@ -572,74 +802,6 @@ const brands = [
           )}
         </div>
 
-       
-        <div className="mt-6">
-          {!loading && !error && featuredCars.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {featuredCars.map((car, index) => (
-              <article
-                key={`right-2-${car.id}-${index}`}
-                className="w-full"              >
-                <div 
-                  onClick={() => navigate(`/cars/${car.id}`)} 
-                  className="block group cursor-pointer"
-                >
-                  <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-lg hover:border-slate-300 transition-all duration-300">
-                    <div className="aspect-[4/3] bg-slate-100 overflow-hidden rounded-t-2xl relative">
-                      <img src={car.image.startsWith('http') ? car.image : `http://localhost:5000${car.image}`} alt={car.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                      {!car.available && (
-                        <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px] flex items-center justify-center">
-                          <span className="bg-red-600 text-white px-3 py-1 rounded font-bold text-sm shadow-lg rotate-[-5deg]">{t('vehicles.unavailable')}</span>
-                        </div>
-                      )}
-                      {car.reserved && car.available && (
-                        <div className="absolute inset-0 bg-[#F01023]/40 backdrop-blur-[2px] flex items-center justify-center">
-                          <span className="bg-[#F01023] text-white px-3 py-1 rounded font-bold text-sm shadow-lg rotate-[-5deg]">{t('vehicles.reserved')}</span>
-                        </div>
-                      )}
-                    </div>
-                    <div className="p-4">
-                      <div className="flex justify-between items-start gap-2 mb-3">
-                        <div>
-                          <h3 className="text-lg font-semibold text-slate-800 group-hover:text-red-600 transition-colors">{car.name}</h3>
-                          <p className="text-sm text-slate-500">{car.category}</p>
-                        </div>
-                        <p className="text-lg font-bold text-red-600 shrink-0">{formatPrice(car.price)}</p>
-                      </div>
-                      <ul className="flex flex-wrap gap-x-3 text-sm text-slate-600 mb-3">
-                        <li className="flex items-center gap-1"><IconUsers className="w-4 h-4 text-slate-500 shrink-0" /><span>{car.seats} {t('vehicles.specs.seatsShort')}</span></li>
-                        <li className="flex items-center gap-1"><IconCog className="w-4 h-4 text-slate-500 shrink-0" /><span>{t(`vehicles.specs.${car.transmission.toLowerCase()}`)}</span></li>
-                        <li className="flex items-center gap-1"><IconFuel className="w-4 h-4 text-slate-500 shrink-0" /><span>{t(`vehicles.specs.${car.fuel.toLowerCase()}`)}</span></li>
-                      </ul>
-                      <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-100">
-                        <span className="text-[#101424] font-semibold text-sm underline underline-offset-4 hover:opacity-80 transition-opacity">
-                          {t('actions.details')}
-                        </span>
-                        <button 
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            if (car.available && !car.reserved) {
-                              navigate(`/booking?car=${car.id}`);
-                            }
-                          }}
-                          className={`inline-flex items-center gap-1 font-bold text-sm underline underline-offset-4 transition-opacity ${
-                            car.available && !car.reserved
-                              ? 'text-red-600 hover:opacity-80'
-                              : 'text-slate-400 cursor-not-allowed no-underline'
-                          }`}
-                        >
-                          {car.available && !car.reserved ? t('common:actions.book') : t('cars:car.reserved')}
-                          <IconArrowRight className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
-          )}
-        </div>
       </section>
 
       {/* Family Comfort Section */}

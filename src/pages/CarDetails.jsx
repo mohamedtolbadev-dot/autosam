@@ -3,8 +3,8 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useCars } from '../context/CarContext';
 import { useCurrency } from '../context/CurrencyContext';
+import { isValidCarId } from '../utils/security';
 
-// Utility function to calculate tiered pricing options
 const getRentalOptions = (pricePerDay) => {
   const tiers = [
     { days: 1, factor: 1 },
@@ -20,13 +20,14 @@ const getRentalOptions = (pricePerDay) => {
   }));
 };
 
-// Inline SVG icons (aligned with Home.jsx / Cars.jsx)
+// SVG Icons
 const IconCar = ({ className = 'w-8 h-8' }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H8.5a1 1 0 0 0-.8.4L5 11l-.16.01a1 1 0 0 0-.84.99V16h3" />
     <path d="M17 21H7a2 2 0 0 1-2-2v-3h14v3a2 2 0 0 1-2 2Z" />
   </svg>
 );
+
 const IconUsers = ({ className = 'w-5 h-5' }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
@@ -34,12 +35,14 @@ const IconUsers = ({ className = 'w-5 h-5' }) => (
     <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
   </svg>
 );
+
 const IconCog = ({ className = 'w-5 h-5' }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <circle cx="12" cy="12" r="3" />
     <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
   </svg>
 );
+
 const IconFuel = ({ className = 'w-5 h-5' }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <line x1="3" y1="22" x2="15" y2="22" />
@@ -48,33 +51,39 @@ const IconFuel = ({ className = 'w-5 h-5' }) => (
     <path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 6" />
   </svg>
 );
+
 const IconShield = ({ className = 'w-5 h-5' }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
   </svg>
 );
+
 const IconMapPin = ({ className = 'w-5 h-5' }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
     <circle cx="12" cy="10" r="3" />
   </svg>
 );
+
 const IconCalendar = ({ className = 'w-5 h-5' }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
     <path d="M16 2v4M8 2v4M3 10h18" />
   </svg>
 );
+
 const IconArrowLeft = ({ className = 'w-5 h-5' }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M19 12H5M12 19l-7-7 7-7" />
   </svg>
 );
+
 const IconCheck = ({ className = 'w-5 h-5' }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M20 6L9 17l-5-5" />
   </svg>
 );
+
 const IconDoor = ({ className = 'w-5 h-5' }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M3 21h18M3 3v18h18V3M9 9v6M15 9v6" />
@@ -86,21 +95,23 @@ const CarDetails = () => {
   const navigate = useNavigate();
   const { selectedCar, fetchCarById, loading, error } = useCars();
   const { formatPrice } = useCurrency();
-  const { t } = useTranslation(['cars', 'common', 'booking']);
+  const { t, i18n } = useTranslation(['cars', 'common', 'booking']);
   
   const car = selectedCar;
-  const rentalOptions = car ? getRentalOptions(car.price) : [];
 
   const [activeImage, setActiveImage] = useState(null);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [currentMobileIndex, setCurrentMobileIndex] = useState(0);
 
   // Load car on mount
   useEffect(() => {
-    if (id) {
+    if (id && isValidCarId(id)) {
       fetchCarById(id);
+    } else if (id && !isValidCarId(id)) {
+      navigate('/cars');
     }
-  }, [id, fetchCarById]);
+  }, [id, fetchCarById, navigate]);
 
   // Set initial active image when car is loaded
   useEffect(() => {
@@ -140,6 +151,19 @@ const CarDetails = () => {
     setCurrentImageIndex((prev) => (prev - 1 + allImages.length) % allImages.length);
   };
 
+  // Mobile navigation
+  const nextMobileImage = () => {
+    const nextIndex = (currentMobileIndex + 1) % allImages.length;
+    setCurrentMobileIndex(nextIndex);
+    setActiveImage(allImages[nextIndex]);
+  };
+
+  const prevMobileImage = () => {
+    const prevIndex = (currentMobileIndex - 1 + allImages.length) % allImages.length;
+    setCurrentMobileIndex(prevIndex);
+    setActiveImage(allImages[prevIndex]);
+  };
+
   // Handle keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -158,8 +182,96 @@ const CarDetails = () => {
     endDate: ''
   });
 
+  const getTodayInputValue = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const todayInputValue = getTodayInputValue();
+
+  const [dateModalOpen, setDateModalOpen] = useState(false);
+  const [activeDateField, setActiveDateField] = useState(null);
+  const [calendarMonth, setCalendarMonth] = useState(() => {
+    const d = new Date();
+    return new Date(d.getFullYear(), d.getMonth(), 1);
+  });
+
+  const parseInputDate = (value) => {
+    if (!value) return null;
+    const [y, m, d] = value.split('-').map(Number);
+    if (!y || !m || !d) return null;
+    return new Date(y, m - 1, d);
+  };
+
+  const toInputDate = (date) => {
+    if (!date) return '';
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  };
+
+  const openDateModal = (field) => {
+    setActiveDateField(field);
+    const current = field === 'start' ? rentalForm.startDate : rentalForm.endDate;
+    const currentDate = parseInputDate(current);
+    const base = currentDate || new Date();
+    setCalendarMonth(new Date(base.getFullYear(), base.getMonth(), 1));
+    setDateModalOpen(true);
+  };
+
+  const closeDateModal = () => {
+    setDateModalOpen(false);
+    setActiveDateField(null);
+  };
+
+  const minSelectableInputValue =
+    activeDateField === 'end' ? (rentalForm.startDate || todayInputValue) : todayInputValue;
+  const minSelectableDate = parseInputDate(minSelectableInputValue);
+
+  const selectDate = (date) => {
+    const value = toInputDate(date);
+    if (activeDateField === 'start') {
+      setRentalForm((prev) => {
+        const next = { ...prev, startDate: value };
+        if (next.endDate && value && next.endDate < value) {
+          next.endDate = '';
+        }
+        return next;
+      });
+    }
+    if (activeDateField === 'end') {
+      setRentalForm((prev) => ({ ...prev, endDate: value }));
+    }
+    closeDateModal();
+  };
+
+  const clearActiveDate = () => {
+    if (activeDateField === 'start') {
+      setRentalForm((prev) => ({ ...prev, startDate: '', endDate: '' }));
+    }
+    if (activeDateField === 'end') {
+      setRentalForm((prev) => ({ ...prev, endDate: '' }));
+    }
+    closeDateModal();
+  };
+
+  const monthLabel = (date) =>
+    date.toLocaleDateString(i18n.language, { month: 'long', year: 'numeric' });
+
+  const isDateRangeValid =
+    rentalForm.startDate >= todayInputValue &&
+    rentalForm.endDate >= (rentalForm.startDate || todayInputValue);
+
   const isRentalFormValid =
-    Boolean(rentalForm.pickupLocation) && Boolean(rentalForm.startDate) && Boolean(rentalForm.endDate);
+    Boolean(rentalForm.pickupLocation) &&
+    Boolean(rentalForm.startDate) &&
+    Boolean(rentalForm.endDate) &&
+    rentalForm.startDate !== rentalForm.endDate &&
+    isDateRangeValid;
 
   // Loading state
   if (loading) {
@@ -216,6 +328,8 @@ const CarDetails = () => {
     );
   }
 
+  const additionalImages = car.images?.filter(img => img !== car.image) || [];
+
   return (
     <div className="min-h-screen bg-slate-50 min-w-0 overflow-x-hidden">
       {/* Breadcrumb */}
@@ -226,75 +340,148 @@ const CarDetails = () => {
             className="inline-flex items-center gap-2 text-slate-600 hover:text-red-600 font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 rounded-lg text-sm sm:text-base"
           >
             <IconArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
-            <span className="hidden sm:inline">{t('common:actions.back')}</span>
-            <span className="sm:hidden">{t('common:actions.back')}</span>
+            <span>{t('common:actions.back')}</span>
           </button>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 sm:px-6 max-w-6xl py-4 sm:py-6 lg:py-8 min-w-0">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-          {/* Main content */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Main image + thumbnails */}
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-              <div className="aspect-[16/10] sm:aspect-[4/3] max-h-[300px] sm:max-h-[380px] bg-slate-100 flex items-center justify-center relative overflow-hidden cursor-pointer group" onClick={() => openLightbox(0)}>
-                {activeImage ? (
-                  <>
-                    <img
-                      src={activeImage.startsWith('http') ? activeImage : `http://localhost:5000${activeImage}`}
-                      alt={car.name}
-                      className="w-full h-full object-contain transition-all duration-500"
-                    />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
-                      <div className="opacity-0 group-hover:opacity-100 transition-opacity bg-white/90 backdrop-blur-sm rounded-full p-3 shadow-lg">
-                        <svg className="w-6 h-6 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
-                        </svg>
-                      </div>
-                    </div>
-                  </>
-                ) : (
-                  <IconCar className="w-20 h-20 sm:w-24 sm:h-24 text-slate-300" />
-                )}
-              </div>
-              <div className="grid grid-cols-4 gap-1.5 sm:gap-2 p-2 sm:p-3 border-t border-slate-100">
-                {/* Main image thumbnail */}
-                {car.image && (
-                  <button 
-                    onClick={() => { setActiveImage(car.image); openLightbox(0); }}
-                    className={`aspect-video bg-slate-100 rounded-lg sm:rounded-xl flex items-center justify-center overflow-hidden border-2 transition-all ${activeImage === car.image ? 'border-red-600' : 'border-transparent opacity-70 hover:opacity-100'}`}
+      <div className="container mx-auto px-4 sm:px-6 max-w-6xl py-4 sm:py-6 lg:py-8 min-w-0 space-y-6">
+        {/* Image Gallery - Mobile & Desktop */}
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          {/* Mobile: Single image with counter and arrows */}
+          <div className="md:hidden relative aspect-[4/3] bg-slate-100 overflow-hidden">
+            {activeImage ? (
+              <>
+                <img
+                  src={activeImage.startsWith('http') ? activeImage : `http://localhost:5000${activeImage}`}
+                  alt={car.name}
+                  className="w-full h-full object-cover"
+                  onClick={() => openLightbox(currentMobileIndex)}
+                />
+                {/* Counter */}
+                <div className="absolute top-3 right-3 px-3 py-1.5 bg-black/60 text-white text-sm font-semibold rounded-full">
+                  {currentMobileIndex + 1} / {allImages.length}
+                </div>
+                {/* Left arrow */}
+                {allImages.length > 1 && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      prevMobileImage();
+                    }}
+                    className="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-white/90 hover:bg-white rounded-full shadow-lg text-slate-800"
                   >
-                    <img 
-                      src={car.image.startsWith('http') ? car.image : `http://localhost:5000${car.image}`} 
-                      alt="Main thumbnail" 
-                      className="w-full h-full object-cover" 
-                    />
+                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M15 18l-6-6 6-6" />
+                    </svg>
                   </button>
                 )}
-                
-                {/* Additional thumbnails - filter out main image to avoid duplication */}
-                {car.images && car.images.length > 0 && (
-                  car.images
-                    .filter(img => img !== car.image)
-                    .slice(0, 3)
-                    .map((img, index) => (
-                    <button 
-                      key={index} 
-                      onClick={() => { setActiveImage(img); openLightbox(index + 1); }}
-                      className={`aspect-video bg-slate-100 rounded-lg sm:rounded-xl flex items-center justify-center overflow-hidden border-2 transition-all ${activeImage === img ? 'border-red-600' : 'border-transparent opacity-70 hover:opacity-100'}`}
-                    >
-                      <img 
-                        src={img.startsWith('http') ? img : `http://localhost:5000${img}`} 
-                        alt={`Image ${index + 1}`} 
-                        className="w-full h-full object-cover" 
-                      />
-                    </button>
-                  ))
+                {/* Right arrow */}
+                {allImages.length > 1 && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      nextMobileImage();
+                    }}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-white/90 hover:bg-white rounded-full shadow-lg text-slate-800"
+                  >
+                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M9 18l6-6-6-6" />
+                    </svg>
+                  </button>
                 )}
+              </>
+            ) : (
+              <div className="w-full h-full flex items-center justify-center">
+                <IconCar className="w-20 h-20 text-slate-300" />
               </div>
+            )}
+          </div>
+
+          {/* Desktop: Grid layout */}
+          <div className="hidden md:grid md:grid-cols-5 gap-2 p-2">
+            {/* Main large image - takes 3 columns */}
+            <div className="md:col-span-3 relative aspect-[4/3] md:aspect-auto md:h-full bg-slate-100 rounded-xl overflow-hidden cursor-pointer group" onClick={() => openLightbox(0)}>
+              {activeImage ? (
+                <>
+                  <img
+                    src={activeImage.startsWith('http') ? activeImage : `http://localhost:5000${activeImage}`}
+                    alt={car.name}
+                    className="w-full h-full object-cover transition-all duration-500"
+                  />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+                </>
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <IconCar className="w-20 h-20 sm:w-24 sm:h-24 text-slate-300" />
+                </div>
+              )}
             </div>
 
+            {/* Right side - 2 stacked images */}
+            <div className="md:col-span-2 grid grid-rows-2 gap-2">
+              {/* First additional image */}
+              {additionalImages[0] ? (
+                <div 
+                  className="relative aspect-[16/9] md:aspect-auto bg-slate-100 rounded-xl overflow-hidden cursor-pointer group"
+                  onClick={() => openLightbox(1)}
+                >
+                  <img
+                    src={additionalImages[0].startsWith('http') ? additionalImages[0] : `http://localhost:5000${additionalImages[0]}`}
+                    alt="Image 1"
+                    className="w-full h-full object-cover transition-all duration-500"
+                  />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+                </div>
+              ) : (
+                <div className="relative aspect-[16/9] md:aspect-auto bg-slate-100 rounded-xl overflow-hidden flex items-center justify-center">
+                  <IconCar className="w-12 h-12 text-slate-200" />
+                </div>
+              )}
+
+              {/* Second additional image with View all photos */}
+              <div 
+                className="relative aspect-[16/9] md:aspect-auto bg-slate-100 rounded-xl overflow-hidden cursor-pointer group"
+                onClick={() => openLightbox(2)}
+              >
+                {additionalImages[1] ? (
+                  <img
+                    src={additionalImages[1].startsWith('http') ? additionalImages[1] : `http://localhost:5000${additionalImages[1]}`}
+                    alt="Image 2"
+                    className="w-full h-full object-cover transition-all duration-500"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <IconCar className="w-12 h-12 text-slate-200" />
+                  </div>
+                )}
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openLightbox(0);
+                    }}
+                    className="inline-flex items-center gap-2 bg-white/90 hover:bg-white text-slate-800 px-4 py-2 rounded-xl font-semibold text-sm transition-all shadow-lg"
+                  >
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="3" width="7" height="7" />
+                      <rect x="14" y="3" width="7" height="7" />
+                      <rect x="14" y="14" width="7" height="7" />
+                      <rect x="3" y="14" width="7" height="7" />
+                    </svg>
+                    Afficher toutes les photos
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Two Column Layout: Details + Booking Sidebar */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+          {/* Car Details - Left Column */}
+          <div className="lg:col-span-2 space-y-6">
             {/* Vehicle details */}
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-5 lg:p-6">
               <div className="flex flex-col sm:flex-row sm:flex-wrap justify-between items-start gap-3 sm:gap-4 mb-4">
@@ -345,7 +532,7 @@ const CarDetails = () => {
                 {car.description}
               </p>
 
-              {/* Specs — icons and colors aligned */}
+              {/* Specs */}
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-4 mb-5 sm:mb-6">
                 <div className="flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3 lg:p-4 bg-slate-50 rounded-xl border border-slate-100">
                   <div className="inline-flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 lg:w-10 lg:h-10 bg-red-50 text-red-600 rounded-xl shrink-0">
@@ -413,7 +600,7 @@ const CarDetails = () => {
             </div>
           </div>
 
-          {/* Booking Sidebar */}
+          {/* Booking Sidebar - Right Column */}
           <div className="lg:col-span-1 lg:order-last">
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-5 lg:p-6 lg:sticky lg:top-4">
               <div className="text-center mb-4 sm:mb-6 pb-4 sm:pb-6 border-b border-slate-100">
@@ -448,10 +635,12 @@ const CarDetails = () => {
                     {t('booking:form.startDate')}
                   </label>
                   <input
-                    type="date"
+                    type="text"
+                    readOnly
                     name="startDate"
+                    placeholder="Date de début"
                     value={rentalForm.startDate}
-                    onChange={(e) => setRentalForm({ ...rentalForm, startDate: e.target.value })}
+                    onClick={() => openDateModal('start')}
                     className={`${inputBaseClassName} text-sm`}
                   />
                 </div>
@@ -461,10 +650,12 @@ const CarDetails = () => {
                     {t('booking:form.endDate')}
                   </label>
                   <input
-                    type="date"
+                    type="text"
+                    readOnly
                     name="endDate"
+                    placeholder="Date de fin"
                     value={rentalForm.endDate}
-                    onChange={(e) => setRentalForm({ ...rentalForm, endDate: e.target.value })}
+                    onClick={() => openDateModal('end')}
                     className={`${inputBaseClassName} text-sm`}
                   />
                 </div>
@@ -496,31 +687,167 @@ const CarDetails = () => {
           </div>
         </div>
       </div>
+
+      {/* Date Modal */}
+      {dateModalOpen && (
+        <div className="fixed inset-0 z-[60]">
+          <button
+            type="button"
+            aria-label="Close"
+            onClick={closeDateModal}
+            className="absolute inset-0 bg-slate-950/40 backdrop-blur-[2px]"
+          />
+
+          <div className="absolute left-1/2 top-1/2 w-[92vw] max-w-sm -translate-x-1/2 -translate-y-1/2">
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl overflow-hidden">
+              <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-slate-900 truncate">
+                    {activeDateField === 'start' ? t('booking:form.startDate') : t('booking:form.endDate')}
+                  </p>
+                  <p className="text-xs text-slate-500 truncate">{monthLabel(calendarMonth)}</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={closeDateModal}
+                  className="inline-flex items-center justify-center w-9 h-9 rounded-xl hover:bg-slate-100 text-slate-600"
+                >
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M18 6 6 18" />
+                    <path d="M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="px-4 py-3 flex items-center justify-between">
+                <button
+                  type="button"
+                  onClick={() => setCalendarMonth((prev) => new Date(prev.getFullYear(), prev.getMonth() - 1, 1))}
+                  className="inline-flex items-center justify-center w-10 h-10 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700"
+                >
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M15 18l-6-6 6-6" />
+                  </svg>
+                </button>
+                <div className="text-sm font-bold text-slate-900">
+                  {monthLabel(calendarMonth)}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setCalendarMonth((prev) => new Date(prev.getFullYear(), prev.getMonth() + 1, 1))}
+                  className="inline-flex items-center justify-center w-10 h-10 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700"
+                >
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M9 18l6-6-6-6" />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="px-4 pb-4">
+                <div className="grid grid-cols-7 gap-1 text-[11px] font-semibold text-slate-500 mb-2">
+                  {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((d) => (
+                    <div key={d} className="text-center py-1">{d}</div>
+                  ))}
+                </div>
+
+                <div className="grid grid-cols-7 gap-1">
+                  {(() => {
+                    const firstOfMonth = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth(), 1);
+                    const startDay = firstOfMonth.getDay();
+                    const gridStart = new Date(firstOfMonth);
+                    gridStart.setDate(firstOfMonth.getDate() - startDay);
+
+                    const selectedValue =
+                      activeDateField === 'start' ? rentalForm.startDate : rentalForm.endDate;
+                    const selectedDate = parseInputDate(selectedValue);
+
+                    const cells = [];
+                    for (let i = 0; i < 42; i++) {
+                      const cellDate = new Date(gridStart);
+                      cellDate.setDate(gridStart.getDate() + i);
+
+                      const inMonth = cellDate.getMonth() === calendarMonth.getMonth();
+                      const disabled = minSelectableDate ? cellDate < minSelectableDate : false;
+                      const isSelected =
+                        selectedDate && toInputDate(selectedDate) === toInputDate(cellDate);
+
+                      const base =
+                        'h-10 w-10 mx-auto rounded-xl text-sm font-semibold transition flex items-center justify-center';
+                      const classes = disabled
+                        ? `${base} text-slate-300 cursor-not-allowed`
+                        : isSelected
+                          ? `${base} bg-red-600 text-white shadow-sm`
+                          : inMonth
+                            ? `${base} text-slate-800 hover:bg-red-50 hover:text-red-700`
+                            : `${base} text-slate-400 hover:bg-slate-50`;
+
+                      cells.push(
+                        <button
+                          key={toInputDate(cellDate)}
+                          type="button"
+                          disabled={disabled}
+                          onClick={() => selectDate(cellDate)}
+                          className={classes}
+                        >
+                          {cellDate.getDate()}
+                        </button>
+                      );
+                    }
+                    return cells;
+                  })()}
+                </div>
+
+                <div className="mt-4 flex items-center justify-between">
+                  <button
+                    type="button"
+                    onClick={clearActiveDate}
+                    className="text-sm font-semibold text-slate-600 hover:text-slate-900"
+                  >
+                    {t('actions.clear')}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => selectDate(parseInputDate(minSelectableInputValue) || new Date())}
+                    className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-red-600 text-white font-semibold hover:bg-red-700"
+                  >
+                    {t('actions.today')}
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M5 12h14" />
+                      <path d="M12 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Lightbox Modal */}
       {lightboxOpen && allImages.length > 0 && (
-        <div 
+        <div
           className="fixed inset-0 z-50 bg-black/95 backdrop-blur-sm flex items-center justify-center"
           onClick={closeLightbox}
         >
-          {/* Close button */}
           <button
             onClick={closeLightbox}
             className="absolute top-4 right-4 sm:top-6 sm:right-6 z-10 p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors"
           >
-            <svg className="w-6 h-6 sm:w-8 sm:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            <svg className="w-6 h-6 sm:w-8 sm:h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
 
-          {/* Image counter */}
           <div className="absolute top-4 left-4 sm:top-6 sm:left-6 z-10 px-4 py-2 bg-white/10 rounded-full text-white text-sm font-medium">
             {currentImageIndex + 1} / {allImages.length}
           </div>
 
-          {/* Previous button */}
           {allImages.length > 1 && (
             <button
-              onClick={(e) => { e.stopPropagation(); prevImage(); }}
+              onClick={(e) => {
+                e.stopPropagation();
+                prevImage();
+              }}
               className="absolute left-4 sm:left-6 z-10 p-3 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors"
             >
               <svg className="w-6 h-6 sm:w-8 sm:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -529,24 +856,27 @@ const CarDetails = () => {
             </button>
           )}
 
-          {/* Main image */}
-          <div 
+          <div
             className="relative w-full h-full flex items-center justify-center px-16 sm:px-20"
             onClick={(e) => e.stopPropagation()}
           >
             <img
-              src={allImages[currentImageIndex]?.startsWith('http') 
-                ? allImages[currentImageIndex] 
-                : `http://localhost:5000${allImages[currentImageIndex]}`}
+              src={
+                allImages[currentImageIndex]?.startsWith('http')
+                  ? allImages[currentImageIndex]
+                  : `http://localhost:5000${allImages[currentImageIndex]}`
+              }
               alt={`Image ${currentImageIndex + 1}`}
               className="max-w-full max-h-[85vh] object-contain"
             />
           </div>
 
-          {/* Next button */}
           {allImages.length > 1 && (
             <button
-              onClick={(e) => { e.stopPropagation(); nextImage(); }}
+              onClick={(e) => {
+                e.stopPropagation();
+                nextImage();
+              }}
               className="absolute right-4 sm:right-6 z-10 p-3 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors"
             >
               <svg className="w-6 h-6 sm:w-8 sm:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -555,15 +885,19 @@ const CarDetails = () => {
             </button>
           )}
 
-          {/* Thumbnail strip */}
           {allImages.length > 1 && (
             <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2 px-4 py-2 bg-black/50 rounded-2xl overflow-x-auto max-w-[90vw]">
               {allImages.map((img, index) => (
                 <button
                   key={index}
-                  onClick={(e) => { e.stopPropagation(); setCurrentImageIndex(index); }}
+                  onClick={(e) => {
+                    e.stopPropagation() ;
+                    setCurrentImageIndex(index);
+                  }}
                   className={`shrink-0 w-12 h-12 sm:w-16 sm:h-16 rounded-lg overflow-hidden border-2 transition-all ${
-                    currentImageIndex === index ? 'border-red-500' : 'border-transparent opacity-60 hover:opacity-100'
+                    currentImageIndex === index
+                      ? 'border-red-500'
+                      : 'border-transparent opacity-60 hover:opacity-100'
                   }`}
                 >
                   <img

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdmin } from '../context/AdminContext';
 import AdminLayout from '../components/AdminLayout';
@@ -39,14 +39,102 @@ const AdminDashboard = () => {
     return months[monthNum - 1];
   };
 
+  // Notifications state
+  const [notifications, setNotifications] = useState([]);
+  const [seenBookingIds, setSeenBookingIds] = useState(() => {
+    const saved = localStorage.getItem('seenBookingIds');
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  // Save seen booking IDs to localStorage
+  useEffect(() => {
+    localStorage.setItem('seenBookingIds', JSON.stringify(seenBookingIds));
+  }, [seenBookingIds]);
+
+  // Detect new bookings and create notifications
+  useEffect(() => {
+    if (recentBookings.length > 0) {
+      const newBookings = recentBookings.filter(
+        booking => !seenBookingIds.includes(booking.id)
+      );
+      
+      if (newBookings.length > 0) {
+        const newNotifications = newBookings.map(booking => ({
+          id: booking.id,
+          bookingId: booking.id,
+          message: `Réservation #${booking.id} - ${booking.first_name} ${booking.last_name}`,
+          details: `${booking.car_name} - ${formatCurrency(booking.total_price)}`,
+          timestamp: new Date(),
+          isNew: true
+        }));
+        
+        setNotifications(prev => {
+          const existingIds = new Set(prev.map(n => n.id));
+          const uniqueNew = newNotifications.filter(n => !existingIds.has(n.id));
+          return [...uniqueNew, ...prev].slice(0, 10);
+        });
+      }
+    }
+  }, [recentBookings, seenBookingIds]);
+
+  // Polling every 10 seconds for real-time updates
   useEffect(() => {
     if (initializing) return;
-    if (!isAuthenticated) {
-      navigate('/admin/login');
-      return;
-    }
+    if (!isAuthenticated) return;
+    
     fetchDashboard();
-  }, [initializing, isAuthenticated, navigate, fetchDashboard]);
+    
+    const interval = setInterval(() => {
+      fetchDashboard();
+    }, 10000);
+    
+    return () => clearInterval(interval);
+  }, [initializing, isAuthenticated, fetchDashboard]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const markAsSeen = (bookingId) => {
+    setSeenBookingIds(prev => [...prev, bookingId]);
+    setNotifications(prev => 
+      prev.map(n => n.id === bookingId ? { ...n, isNew: false } : n)
+    );
+  };
+
+  const markAllAsSeen = () => {
+    const allIds = notifications.map(n => n.id);
+    setSeenBookingIds(prev => [...new Set([...prev, ...allIds])]);
+    setNotifications(prev => prev.map(n => ({ ...n, isNew: false })));
+  };
+
+  const removeNotification = (id) => {
+    setNotifications(prev => prev.filter(n => n.id !== id));
+  };
+
+  const viewBookingDetails = (bookingId) => {
+    markAsSeen(bookingId);
+    setIsDropdownOpen(false);
+    navigate(`/admin/bookings?id=${bookingId}`);
+  };
+
+  const unreadCount = notifications.filter(n => n.isNew).length;
+
+  // Auth redirect check
+  useEffect(() => {
+    if (!initializing && !isAuthenticated) {
+      navigate('/admin/login');
+    }
+  }, [initializing, isAuthenticated, navigate]);
 
   if (initializing) {
     return (
@@ -61,9 +149,103 @@ const AdminDashboard = () => {
   return (
     <AdminLayout>
       <div className="p-4 sm:p-6 lg:p-8">
-        <div className="mb-6 sm:mb-8">
-          <h1 className="text-xl sm:text-2xl font-bold text-slate-800">Tableau de bord</h1>
-          <p className="text-sm sm:text-base text-slate-500">Bienvenue, {admin?.username}. Voici les dernières informations.</p>
+        {/* Header with Notification Bell */}
+        <div className="mb-6 sm:mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-xl sm:text-2xl font-bold text-slate-800">Tableau de bord</h1>
+            <p className="text-sm sm:text-base text-slate-500">Bienvenue, {admin?.username}. Voici les dernières informations.</p>
+          </div>
+          
+          {/* Notification Bell */}
+          <div className="relative" ref={dropdownRef}>
+            <button
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              className="relative p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+              </svg>
+              {unreadCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full animate-pulse">
+                  {unreadCount > 9 ? '9+' : unreadCount}
+                </span>
+              )}
+            </button>
+            
+            {/* Dropdown Menu */}
+            {isDropdownOpen && (
+              <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-lg border border-slate-200 z-50 max-h-96 overflow-hidden">
+                <div className="p-4 border-b border-slate-100 flex items-center justify-between">
+                  <h3 className="font-semibold text-slate-800">
+                    Notifications ({notifications.length})
+                  </h3>
+                  {unreadCount > 0 && (
+                    <button
+                      onClick={markAllAsSeen}
+                      className="text-xs text-red-600 hover:text-red-700 font-medium"
+                    >
+                      Tout marquer comme lu
+                    </button>
+                  )}
+                </div>
+                
+                <div className="max-h-72 overflow-y-auto">
+                  {notifications.length === 0 ? (
+                    <div className="p-4 text-center text-slate-500 text-sm">
+                      Aucune notification
+                    </div>
+                  ) : (
+                    notifications.map((notification) => (
+                      <div
+                        key={notification.id}
+                        className={`p-4 border-b border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors ${
+                          notification.isNew ? 'bg-red-50/50' : ''
+                        }`}
+                        onClick={() => viewBookingDetails(notification.bookingId)}
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className={`w-2 h-2 rounded-full mt-2 ${notification.isNew ? 'bg-red-500 animate-pulse' : 'bg-slate-300'}`} />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-slate-800">{notification.message}</p>
+                            <p className="text-xs text-slate-500 mt-1">{notification.details}</p>
+                            <p className="text-xs text-slate-400 mt-1">
+                              {notification.timestamp.toLocaleTimeString('fr-FR')}
+                            </p>
+                          </div>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              removeNotification(notification.id);
+                            }}
+                            className="text-slate-400 hover:text-slate-600 shrink-0"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+                
+                {notifications.length > 0 && (
+                  <div className="p-3 border-t border-slate-100 bg-slate-50">
+                    <button
+                      onClick={() => {
+                        markAllAsSeen();
+                        navigate('/admin/bookings');
+                        setIsDropdownOpen(false);
+                      }}
+                      className="w-full text-center text-sm text-red-600 hover:text-red-700 font-medium"
+                    >
+                      Voir toutes les réservations →
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
 
         {loading ? (
@@ -144,140 +326,85 @@ const AdminDashboard = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {/* Réservations récentes */}
-              <div className="lg:col-span-2 bg-white rounded-xl border border-slate-200 shadow-sm">
-                <div className="p-6 border-b border-slate-200 flex justify-between items-center">
-                  <h2 className="text-lg font-bold text-slate-800">Réservations récentes</h2>
-                  <button 
-                    onClick={() => navigate('/admin/bookings')}
-                    className="text-red-600 hover:text-red-700 font-medium text-sm"
-                  >
-                    Voir tout →
-                  </button>
-                </div>
-                <div className="overflow-x-auto -mx-4 sm:mx-0">
-                  <table className="w-full min-w-[500px]">
-                    <thead className="bg-slate-50">
-                      <tr>
-                        <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">ID</th>
-                        <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Client</th>
-                        <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase hidden sm:table-cell">Voiture</th>
-                        <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Total</th>
-                        <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Statut</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-200">
-                      {recentBookings.slice(0, 5).map((booking) => (
-                        <tr key={booking.id} className="hover:bg-slate-50">
-                          <td className="px-4 sm:px-6 py-3 sm:py-4 text-sm text-slate-600">#{booking.id}</td>
-                          <td className="px-4 sm:px-6 py-3 sm:py-4">
-                            <div className="text-sm font-medium text-slate-800">{booking.first_name} {booking.last_name}</div>
-                            <div className="text-xs sm:text-sm text-slate-500">{booking.email}</div>
-                            <div className="text-xs text-slate-500 sm:hidden">{booking.car_name}</div>
-                          </td>
-                          <td className="px-4 sm:px-6 py-3 sm:py-4 text-sm text-slate-600 hidden sm:table-cell">{booking.car_name}</td>
-                          <td className="px-4 sm:px-6 py-3 sm:py-4 text-sm font-medium text-slate-800">{formatCurrency(booking.total_price)}</td>
-                          <td className="px-4 sm:px-6 py-3 sm:py-4">
-                            <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                              booking.status === 'confirmed' ? 'bg-green-100 text-green-800' :
-                              booking.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                              booking.status === 'cancelled' ? 'bg-red-100 text-red-800' :
-                              'bg-blue-100 text-blue-800'
-                            }`}>
-                              {booking.status === 'confirmed' ? 'Confirmée' :
-                               booking.status === 'pending' ? 'En attente' :
-                               booking.status === 'cancelled' ? 'Annulée' : 'Terminée'}
-                            </span>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {/* Top 5 Voitures */}
+              <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+                <h3 className="text-lg font-bold text-slate-800 mb-4">Top 5 Voitures</h3>
+                <div className="space-y-3">
+                  {topCars.slice(0, 5).map((car, index) => (
+                    <div key={car.id} className="flex items-center gap-3">
+                      <span className="w-6 h-6 bg-red-100 text-red-600 rounded-full flex items-center justify-center text-xs font-bold">
+                        {index + 1}
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-slate-800 truncate">{car.name}</p>
+                        <p className="text-xs text-slate-500">{car.category}</p>
+                      </div>
+                      <span className="text-sm font-semibold text-slate-700 shrink-0">{car.booking_count} rés.</span>
+                    </div>
+                  ))}
                 </div>
               </div>
 
-              {/* Sidebar Analytics */}
-              <div className="space-y-8">
-                {/* Top Voitures */}
-                <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
-                  <h3 className="text-lg font-bold text-slate-800 mb-4">Top 5 Voitures</h3>
-                  <div className="space-y-3">
-                    {topCars.slice(0, 5).map((car, index) => (
-                      <div key={car.id} className="flex items-center gap-3">
-                        <span className="w-6 h-6 bg-red-100 text-red-600 rounded-full flex items-center justify-center text-xs font-bold">
-                          {index + 1}
-                        </span>
-                        <div className="flex-1">
-                          <p className="text-sm font-medium text-slate-800">{car.name}</p>
-                          <p className="text-xs text-slate-500">{car.category}</p>
+              {/* Top Locations */}
+              <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+                <h3 className="text-lg font-bold text-slate-800 mb-4">Lieux populaires</h3>
+                <div className="space-y-3">
+                  {topLocations.slice(0, 5).map((location, index) => (
+                    <div key={index} className="flex items-center justify-between gap-2">
+                      <span className="text-sm text-slate-700 truncate">{location.pickup_location}</span>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <div className="w-16 h-2 bg-slate-100 rounded-full overflow-hidden">
+                          <div 
+                            className="h-full bg-red-500 rounded-full"
+                            style={{ width: `${(location.count / topLocations[0].count) * 100}%` }}
+                          ></div>
                         </div>
-                        <span className="text-sm font-semibold text-slate-700">{car.booking_count} rés.</span>
+                        <span className="text-sm text-slate-500 w-6">{location.count}</span>
                       </div>
-                    ))}
-                  </div>
+                    </div>
+                  ))}
                 </div>
+              </div>
 
-                {/* Top Locations */}
-                <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
-                  <h3 className="text-lg font-bold text-slate-800 mb-4">Lieux populaires</h3>
-                  <div className="space-y-3">
-                    {topLocations.slice(0, 5).map((location, index) => (
-                      <div key={index} className="flex items-center justify-between">
-                        <span className="text-sm text-slate-700">{location.pickup_location}</span>
-                        <div className="flex items-center gap-2">
-                          <div className="w-24 h-2 bg-slate-100 rounded-full overflow-hidden">
-                            <div 
-                              className="h-full bg-red-500 rounded-full"
-                              style={{ width: `${(location.count / topLocations[0].count) * 100}%` }}
-                            ></div>
-                          </div>
-                          <span className="text-sm text-slate-500 w-8">{location.count}</span>
-                        </div>
-                      </div>
-                    ))}
+              {/* Répartition des statuts */}
+              <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+                <h3 className="text-lg font-bold text-slate-800 mb-4">Répartition</h3>
+                <div className="space-y-3">
+                  <div>
+                    <div className="flex justify-between text-sm mb-1">
+                      <span className="text-slate-600">En attente</span>
+                      <span className="font-medium">{stats.pendingBookings}</span>
+                    </div>
+                    <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                      <div className="h-full bg-yellow-500 rounded-full" style={{ width: `${(stats.pendingBookings / stats.totalBookings) * 100 || 0}%` }}></div>
+                    </div>
                   </div>
-                </div>
-
-                {/* Répartition des statuts */}
-                <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
-                  <h3 className="text-lg font-bold text-slate-800 mb-4">Répartition</h3>
-                  <div className="space-y-4">
-                    <div>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span className="text-slate-600">En attente</span>
-                        <span className="font-medium">{stats.pendingBookings}</span>
-                      </div>
-                      <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                        <div className="h-full bg-yellow-500 rounded-full" style={{ width: `${(stats.pendingBookings / stats.totalBookings) * 100 || 0}%` }}></div>
-                      </div>
+                  <div>
+                    <div className="flex justify-between text-sm mb-1">
+                      <span className="text-slate-600">Confirmées</span>
+                      <span className="font-medium">{stats.confirmedBookings}</span>
                     </div>
-                    <div>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span className="text-slate-600">Confirmées</span>
-                        <span className="font-medium">{stats.confirmedBookings}</span>
-                      </div>
-                      <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                        <div className="h-full bg-green-500 rounded-full" style={{ width: `${(stats.confirmedBookings / stats.totalBookings) * 100 || 0}%` }}></div>
-                      </div>
+                    <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                      <div className="h-full bg-green-500 rounded-full" style={{ width: `${(stats.confirmedBookings / stats.totalBookings) * 100 || 0}%` }}></div>
                     </div>
-                    <div>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span className="text-slate-600">Terminées</span>
-                        <span className="font-medium">{stats.completedBookings}</span>
-                      </div>
-                      <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                        <div className="h-full bg-blue-500 rounded-full" style={{ width: `${(stats.completedBookings / stats.totalBookings) * 100 || 0}%` }}></div>
-                      </div>
+                  </div>
+                  <div>
+                    <div className="flex justify-between text-sm mb-1">
+                      <span className="text-slate-600">Terminées</span>
+                      <span className="font-medium">{stats.completedBookings}</span>
                     </div>
-                    <div>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span className="text-slate-600">Annulées</span>
-                        <span className="font-medium">{stats.cancelledBookings}</span>
-                      </div>
-                      <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                        <div className="h-full bg-red-500 rounded-full" style={{ width: `${(stats.cancelledBookings / stats.totalBookings) * 100 || 0}%` }}></div>
-                      </div>
+                    <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                      <div className="h-full bg-blue-500 rounded-full" style={{ width: `${(stats.completedBookings / stats.totalBookings) * 100 || 0}%` }}></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex justify-between text-sm mb-1">
+                      <span className="text-slate-600">Annulées</span>
+                      <span className="font-medium">{stats.cancelledBookings}</span>
+                    </div>
+                    <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                      <div className="h-full bg-red-500 rounded-full" style={{ width: `${(stats.cancelledBookings / stats.totalBookings) * 100 || 0}%` }}></div>
                     </div>
                   </div>
                 </div>

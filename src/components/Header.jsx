@@ -145,7 +145,7 @@ const Header = () => {
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
-                  <span className="hidden xl:inline">{customer?.first_name || 'Mon compte'}</span>
+                  <span className="hidden xl:inline">{customer?.first_name || t('booking:header.myAccount')}</span>
                   <svg className={`w-4 h-4 transition-transform ${showUserMenu ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
@@ -161,7 +161,7 @@ const Header = () => {
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                       </svg>
-                      Mes réservations
+                      {t('booking:header.myBookings')}
                     </Link>
                     <button
                       onClick={() => {
@@ -173,7 +173,7 @@ const Header = () => {
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                       </svg>
-                      Déconnexion
+                      {t('booking:header.logout')}
                     </button>
                   </div>
                 )}
@@ -184,14 +184,14 @@ const Header = () => {
                   onClick={() => setShowLoginModal(true)}
                   className="text-sm font-medium text-slate-600 hover:text-red-600 transition-colors"
                 >
-                  Connexion
+                  {t('booking:header.login')}
                 </button>
                 <span className="text-slate-300">|</span>
                 <button
                   onClick={() => setShowRegisterModal(true)}
                   className="px-5 py-2.5 bg-red-600 text-white text-sm font-bold rounded-full hover:bg-red-700 transition-all duration-300 shadow-lg shadow-red-100 hover:shadow-red-200"
                 >
-                  Inscription
+                  {t('booking:header.register')}
                 </button>
               </div>
             )}
@@ -222,7 +222,7 @@ const Header = () => {
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                       </svg>
-                      Mes réservations
+                      {t('booking:header.myBookings')}
                     </Link>
                     <button
                       onClick={() => {
@@ -234,7 +234,7 @@ const Header = () => {
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                       </svg>
-                      Déconnexion
+                      {t('booking:header.logout')}
                     </button>
                   </div>
                 )}
@@ -283,7 +283,7 @@ const Header = () => {
         <div className="absolute top-full left-4 right-4 mt-2 bg-white rounded-3xl shadow-2xl border border-slate-100 md:hidden animate-in slide-in-from-top-4 fade-in duration-300 max-h-[calc(100vh-100px)] overflow-y-auto z-50">
           <nav className="flex flex-col p-4 gap-1">
             <div className="px-4 py-2 mb-2">
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Menu</p>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">{t('booking:header.menu')}</p>
             </div>
             {navLinks.map(({ to, label, icon }) => (
               <NavLink
@@ -314,7 +314,7 @@ const Header = () => {
                     </svg>
                   </div>
                   <div>
-                    <p className="text-xs font-medium text-slate-400">Bienvenue,</p>
+                    <p className="text-xs font-medium text-slate-400">{t('booking:header.welcome')}</p>
                     <p className="text-sm font-bold text-slate-800">{customer?.first_name}</p>
                   </div>
                 </div>
@@ -328,7 +328,7 @@ const Header = () => {
                     <svg className="w-5 h-5 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                     </svg>
-                    <span className="font-bold text-sm">Mes réservations</span>
+                    <span className="font-bold text-sm">{t('booking:header.myBookings')}</span>
                   </Link>
                   <button
                     onClick={() => {
@@ -340,7 +340,7 @@ const Header = () => {
                     <svg className="w-5 h-5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                     </svg>
-                    <span className="font-bold text-sm">Déconnexion</span>
+                    <span className="font-bold text-sm">{t('booking:header.logout')}</span>
                   </button>
                 </div>
               </div>
@@ -353,7 +353,7 @@ const Header = () => {
                   }}
                   className="flex items-center justify-center gap-2 px-4 py-4 rounded-2xl bg-slate-100 text-slate-700 font-bold text-sm hover:bg-slate-200 transition-all"
                 >
-                  Connexion
+                  {t('booking:header.login')}
                 </button>
                 <button
                   onClick={() => {
@@ -362,7 +362,7 @@ const Header = () => {
                   }}
                   className="flex items-center justify-center gap-2 px-4 py-4 rounded-2xl bg-red-600 text-white font-bold text-sm shadow-lg shadow-red-200 hover:bg-red-700 transition-all"
                 >
-                  Inscription
+                  {t('booking:header.register')}
                 </button>
               </div>
             )}

@@ -1,5 +1,7 @@
 const db = require('../config/db');
 
+const { v4: uuidv4 } = require('uuid');
+
 const Car = {
     // Check if car has active bookings (pending or confirmed)
     isReserved: async (carId) => {
@@ -87,11 +89,12 @@ const Car = {
         const finalPrice = price_per_day || price;
         const finalImage = image_url || image;
         const finalYear = year_model || year;
-        const [result] = await db.query(
-            'INSERT INTO cars (name, category, price_per_day, seats, transmission, fuel, image_url, year_model, doors, description, features) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            [name, category, finalPrice, seats, transmission, fuel, finalImage, finalYear, doors, description, JSON.stringify(features)]
+        const carId = uuidv4();
+        await db.query(
+            'INSERT INTO cars (id, name, category, price_per_day, seats, transmission, fuel, image_url, year_model, doors, description, features) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [carId, name, category, finalPrice, seats, transmission, fuel, finalImage, finalYear, doors, description, JSON.stringify(features)]
         );
-        return result.insertId;
+        return carId;
     }
 };
 

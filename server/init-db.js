@@ -27,10 +27,10 @@ async function initializeDatabase() {
     await connection.query('DROP TABLE IF EXISTS car_images');
     await connection.query('DROP TABLE IF EXISTS cars');
     
-    // Créer la table cars avec le schéma corrigé
+    // Créer la table cars avec UUID
     await connection.query(`
       CREATE TABLE cars (
-        id INT AUTO_INCREMENT PRIMARY KEY,
+        id CHAR(36) PRIMARY KEY,
         name VARCHAR(100) NOT NULL,
         category ENUM('Économique', 'Compacte', 'SUV', 'Luxe') NOT NULL,
         price_per_day DECIMAL(10, 2) NOT NULL,
@@ -47,16 +47,16 @@ async function initializeDatabase() {
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
       )
     `);
-    console.log('Table cars recréée avec le nouveau schéma');
+    console.log('Table cars recréée avec UUID');
 
     // Supprimer et recréer la table bookings pour assurer la bonne structure
     await connection.query('DROP TABLE IF EXISTS bookings');
     
-    // Créer la table bookings
+    // Créer la table bookings avec UUID pour car_id
     await connection.query(`
       CREATE TABLE bookings (
         id INT AUTO_INCREMENT PRIMARY KEY,
-        car_id INT NOT NULL,
+        car_id CHAR(36) NOT NULL,
         user_id INT,
         first_name VARCHAR(100) NOT NULL,
         last_name VARCHAR(100) NOT NULL,
@@ -74,7 +74,7 @@ async function initializeDatabase() {
         FOREIGN KEY (car_id) REFERENCES cars(id)
       )
     `);
-    console.log('Table bookings recréée avec succès');
+    console.log('Table bookings recréée avec UUID pour car_id');
 
     // Créer la table users pour l'authentification
     await connection.query(`
@@ -103,11 +103,11 @@ async function initializeDatabase() {
       console.log('Note: colonnes déjà présentes ou erreur migration:', err.message);
     }
 
-    // Créer la table car_images pour les images secondaires
+    // Créer la table car_images pour les images secondaires avec UUID
     await connection.query(`
       CREATE TABLE IF NOT EXISTS car_images (
         id INT AUTO_INCREMENT PRIMARY KEY,
-        car_id INT NOT NULL,
+        car_id CHAR(36) NOT NULL,
         image_url VARCHAR(500) NOT NULL,
         is_primary BOOLEAN DEFAULT FALSE,
         display_order INT DEFAULT 0,
@@ -115,7 +115,7 @@ async function initializeDatabase() {
         FOREIGN KEY (car_id) REFERENCES cars(id) ON DELETE CASCADE
       )
     `);
-    console.log('Table car_images créée/vérifiée');
+    console.log('Table car_images créée/vérifiée avec UUID');
 
     // Vérifier si des données existent
     const [rows] = await connection.query('SELECT COUNT(*) as count FROM cars');
@@ -179,13 +179,111 @@ async function initializeDatabase() {
           doors: 5,
           description: 'Le Hyundai Tucson SUV offre espace et confort pour toute la famille.',
           features: JSON.stringify(['Climatisation automatique', 'Bluetooth', 'Toit panoramique'])
+        },
+        {
+          name: 'Toyota Yaris',
+          category: 'Économique',
+          price_per_day: 320,
+          seats: 5,
+          transmission: 'Automatique',
+          fuel: 'Hybride',
+          available: true,
+          image_url: 'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=1200&q=80',
+          year_model: 2024,
+          doors: 5,
+          description: 'Une citadine hybride fiable, idéale pour la ville avec une consommation réduite.',
+          features: JSON.stringify(['Climatisation', 'Bluetooth', 'Caméra de recul', 'CarPlay/Android Auto'])
+        },
+        {
+          name: 'Peugeot 208',
+          category: 'Compacte',
+          price_per_day: 350,
+          seats: 5,
+          transmission: 'Manuelle',
+          fuel: 'Essence',
+          available: true,
+          image_url: 'https://images.unsplash.com/photo-1619767886558-efdc259cde1e?auto=format&fit=crop&w=1200&q=80',
+          year_model: 2024,
+          doors: 5,
+          description: 'Design moderne et conduite agile, parfaite pour les déplacements urbains.',
+          features: JSON.stringify(['Écran tactile', 'Radar de recul', 'LED', 'Régulateur de vitesse'])
+        },
+        {
+          name: 'Volkswagen Golf',
+          category: 'Compacte',
+          price_per_day: 420,
+          seats: 5,
+          transmission: 'Automatique',
+          fuel: 'Diesel',
+          available: true,
+          image_url: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80',
+          year_model: 2023,
+          doors: 5,
+          description: 'Compacte premium polyvalente avec un excellent confort sur route.',
+          features: JSON.stringify(['CarPlay/Android Auto', 'Radar de recul', 'Régulateur de vitesse', 'Bluetooth'])
+        },
+        {
+          name: 'Kia Sportage',
+          category: 'SUV',
+          price_per_day: 600,
+          seats: 5,
+          transmission: 'Automatique',
+          fuel: 'Diesel',
+          available: true,
+          image_url: 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=1200&q=80',
+          year_model: 2024,
+          doors: 5,
+          description: 'SUV confortable et spacieux, parfait pour les longs trajets.',
+          features: JSON.stringify(['Climatisation', 'Bluetooth', 'Caméra de recul', 'Toit panoramique'])
+        },
+        {
+          name: 'Nissan Qashqai',
+          category: 'SUV',
+          price_per_day: 650,
+          seats: 5,
+          transmission: 'Automatique',
+          fuel: 'Essence',
+          available: true,
+          image_url: 'https://images.unsplash.com/photo-1603386329225-868f9b1d1f6b?auto=format&fit=crop&w=1200&q=80',
+          year_model: 2023,
+          doors: 5,
+          description: 'SUV moderne avec une conduite souple et des équipements de sécurité.',
+          features: JSON.stringify(['Aide au stationnement', 'Bluetooth', 'Régulateur adaptatif', 'Lane Assist'])
+        },
+        {
+          name: 'Tesla Model 3',
+          category: 'Luxe',
+          price_per_day: 1600,
+          seats: 5,
+          transmission: 'Automatique',
+          fuel: 'Électrique',
+          available: true,
+          image_url: 'https://images.unsplash.com/photo-1549924231-f129b911e442?auto=format&fit=crop&w=1200&q=80',
+          year_model: 2024,
+          doors: 4,
+          description: 'Berline électrique haut de gamme avec autonomie et technologie avancées.',
+          features: JSON.stringify(['Autopilot', 'Navigation', 'Caméra 360', 'Sièges chauffants'])
+        },
+        {
+          name: 'BMW Série 3',
+          category: 'Luxe',
+          price_per_day: 1800,
+          seats: 5,
+          transmission: 'Automatique',
+          fuel: 'Diesel',
+          available: true,
+          image_url: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=1200&q=80',
+          year_model: 2023,
+          doors: 4,
+          description: 'Une berline premium pour un confort maximal et une expérience de conduite sportive.',
+          features: JSON.stringify(['Intérieur cuir', 'Radar de recul', 'Bluetooth', 'Régulateur de vitesse'])
         }
       ];
 
       for (const car of initialCars) {
         await connection.query(
-          `INSERT INTO cars (name, category, price_per_day, seats, transmission, fuel, available, image_url, year_model, doors, description, features) 
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          `INSERT INTO cars (id, name, category, price_per_day, seats, transmission, fuel, available, image_url, year_model, doors, description, features) 
+           VALUES (UUID(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
           [car.name, car.category, car.price_per_day, car.seats, car.transmission, car.fuel, car.available, car.image_url, car.year_model, car.doors, car.description, car.features]
         );
       }

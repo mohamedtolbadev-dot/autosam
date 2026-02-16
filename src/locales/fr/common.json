@@ -28,6 +28,17 @@
     "fr": "Français",
     "en": "English"
   },
+  "cities": {
+    "casablanca": "Casablanca",
+    "rabat": "Rabat",
+    "marrakech": "Marrakech",
+    "fes": "Fès",
+    "tanger": "Tanger",
+    "agadir": "Agadir"
+  },
+  "calendar": {
+    "shortDays": ["Di", "Lu", "Ma", "Me", "Je", "Ve", "Sa"]
+  },
   "footer": {
     "copyright": "© 2024 Location Maroc. Tous droits réservés."
   }

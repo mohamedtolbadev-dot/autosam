@@ -130,9 +130,31 @@ const AdminCars = () => {
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
-    if (files.length > 0) {
-      setSelectedFiles(files);
-      const previews = files.map(file => URL.createObjectURL(file));
+    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+    const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    
+    const validFiles = [];
+    const errors = [];
+    
+    files.forEach(file => {
+      if (!ALLOWED_TYPES.includes(file.type)) {
+        errors.push(`${file.name}: Type non autorisé (seuls JPEG, PNG, GIF, WebP sont acceptés)`);
+        return;
+      }
+      if (file.size > MAX_FILE_SIZE) {
+        errors.push(`${file.name}: Fichier trop volumineux (max 5MB)`);
+        return;
+      }
+      validFiles.push(file);
+    });
+    
+    if (errors.length > 0) {
+      alert(errors.join('\n'));
+    }
+    
+    if (validFiles.length > 0) {
+      setSelectedFiles(validFiles);
+      const previews = validFiles.map(file => URL.createObjectURL(file));
       setPreviewUrls(previews);
     }
   };

@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useCars } from '../context/CarContext';
 import { useCurrency } from '../context/CurrencyContext';
+import { isValidCarId } from '../utils/security';
 
 // --- NOUVELLES ICÔNES ---
 const IconHeart = ({ className = 'w-5 h-5', filled }) => (
@@ -128,13 +129,17 @@ const Cars = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('recommended'); // 'priceAsc', 'priceDesc', 'recommended'
 
-  // Persistance des favoris (localStorage)
+  // Persistance des favoris (localStorage) - filtrer les anciens IDs numériques
   useEffect(() => {
     try {
       const raw = window.localStorage.getItem('favorites');
       if (!raw) return;
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) setFavorites(parsed);
+      if (Array.isArray(parsed)) {
+        // Filtrer uniquement les IDs UUID valides (ignorer les anciens IDs numériques)
+        const validFavorites = parsed.filter(id => isValidCarId(id));
+        setFavorites(validFavorites);
+      }
     } catch {
       // ignore
     }
@@ -165,6 +170,10 @@ const Cars = () => {
   // Logique principale de filtrage et tri (optimisée avec useMemo)
   const processedCars = useMemo(() => {
     let result = allCarsData.filter(car => {
+      // Filter out booked/reserved cars - only show available cars
+      const carStatus = car.status?.toLowerCase?.() || '';
+      if (carStatus === 'booked' || carStatus === 'reserved' || car.reserved === true) return false;
+      
       // Filtres existants
       if (filters.category !== 'all' && car.category !== filters.category) return false;
       if (filters.transmission !== 'all' && car.transmission !== filters.transmission) return false;
@@ -215,7 +224,7 @@ const Cars = () => {
     }
 
     return result;
-  }, [filters, searchQuery, sortBy, favorites, showOnlyFavorites]);
+  }, [allCarsData, filters, searchQuery, sortBy, favorites, showOnlyFavorites]);
 
   const displayedCars = processedCars.slice(0, visibleCount);
 
@@ -483,17 +492,6 @@ const Cars = () => {
                 )}
             </div>
 
-            {/* Loading State */}
-            {loading && (
-              <div className="bg-white rounded-xl border border-dashed border-slate-300 p-12 text-center">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-slate-50 text-red-500 rounded-full mb-4 animate-pulse">
-                  <IconCar className="w-8 h-8" />
-                </div>
-                <h3 className="text-lg font-semibold text-slate-900 mb-1">{t('loading.title')}</h3>
-                <p className="text-slate-500">{t('loading.subtitle')}</p>
-              </div>
-            )}
-
             {/* Error State */}
             {error && !loading && (
               <div className="bg-white rounded-xl border border-red-200 p-12 text-center">
@@ -540,9 +538,9 @@ const Cars = () => {
                     className={`group bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-0.5 hover:border-red-100 transition-all duration-300 ${viewMode === 'list' ? 'flex flex-col sm:flex-row' : 'flex flex-col'}`}
                   >
                     {/* Image Section */}
-                    <div className={`relative bg-slate-100 flex items-center justify-center overflow-hidden ${viewMode === 'list' ? 'sm:w-64 shrink-0 aspect-[4/3] sm:aspect-auto' : 'aspect-[4/3] h-48'}`}>
+                    <div className={`relative bg-slate-100 flex items-center justify-center overflow-hidden p-3 ${viewMode === 'list' ? 'sm:w-56 shrink-0 aspect-[4/3] sm:aspect-auto' : 'aspect-[4/3] h-40'}`}>
                         {car.image ? (
-                            <img src={car.image.startsWith('http') ? car.image : `http://localhost:5000${car.image}`} alt={car.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                            <img src={car.image.startsWith('http') ? car.image : `http://localhost:5000${car.image}`} alt={car.name} className="w-full h-full object-contain group-hover:scale-[1.03] transition-transform duration-500" />
                         ) : (
                             <IconCar className="w-12 h-12 text-slate-300" />
                         )}

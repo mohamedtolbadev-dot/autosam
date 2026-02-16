@@ -11,8 +11,6 @@ import CarDetails from './pages/CarDetails';
 import Booking from './pages/Booking';
 import About from './pages/About';
 import Contact from './pages/Contact';
-import CustomerLogin from './pages/CustomerLogin';
-import CustomerRegister from './pages/CustomerRegister';
 import MyBookings from './pages/MyBookings';
 import NotFound from './pages/NotFound';
 import AdminLogin from './pages/AdminLogin';
@@ -51,8 +49,6 @@ function Layout() {
             <Route path="/booking" element={<Booking />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
-            <Route path="/login" element={<CustomerLogin />} />
-            <Route path="/register" element={<CustomerRegister />} />
             <Route path="/my-bookings" element={<MyBookings />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />

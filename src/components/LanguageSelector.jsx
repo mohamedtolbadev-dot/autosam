@@ -42,7 +42,6 @@ const LanguageSelector = ({ scrolled = false }) => {
         aria-expanded={isOpen}
         aria-label="Sélectionner une langue"
       >
-        <span className="text-lg">{currentLanguage.flag}</span>
         <span className="font-semibold text-sm uppercase">{currentLanguage.code}</span>
         <svg
           className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`}
@@ -70,7 +69,6 @@ const LanguageSelector = ({ scrolled = false }) => {
                     : 'hover:bg-slate-50 text-slate-700'
                 }`}
               >
-                <span className="text-xl">{lang.flag}</span>
                 <div className="flex-1">
                   <p className="font-semibold text-sm">{lang.name}</p>
                 </div>

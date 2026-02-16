@@ -27,3 +27,27 @@ exports.createCar = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+exports.updateCar = async (req, res) => {
+    try {
+        const car = await Car.getById(req.params.id);
+        if (!car) return res.status(404).json({ message: 'Véhicule non trouvé' });
+        
+        await Car.update(req.params.id, req.body);
+        res.json({ message: 'Véhicule mis à jour', id: req.params.id, ...req.body });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+exports.deleteCar = async (req, res) => {
+    try {
+        const car = await Car.getById(req.params.id);
+        if (!car) return res.status(404).json({ message: 'Véhicule non trouvé' });
+        
+        await Car.delete(req.params.id);
+        res.json({ message: 'Véhicule supprimé' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};

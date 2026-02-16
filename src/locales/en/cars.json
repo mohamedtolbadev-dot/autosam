@@ -138,5 +138,9 @@
     "fuel": "Fuel"
   },
   "from": "From",
-  "perDay": "/day"
+  "perDay": "/day",
+  "actions": {
+    "clear": "Clear",
+    "today": "Today"
+  }
 }

@@ -16,7 +16,9 @@
   "form": {
     "yourInfo": "Vos informations",
     "startDate": "Date de début",
+    "startDatePlaceholder": "Date de début",
     "endDate": "Date de fin",
+    "endDatePlaceholder": "Date de fin",
     "pickup": "Lieu de prise en charge",
     "dropoff": "Lieu de restitution",
     "firstName": "Prénom",
@@ -71,11 +73,22 @@
     "previous": "Précédent",
     "next": "Suivant",
     "confirmBooking": "Confirmer la réservation",
-    "cancel": "Annuler"
+    "cancel": "Annuler",
+    "ok": "OK",
+    "clear": "Effacer",
+    "today": "Aujourd'hui",
+    "login": "Se connecter",
+    "details": "Détails",
+    "bookNow": "Réserver maintenant",
+    "close": "Fermer"
   },
   "messages": {
     "loading": "Chargement...",
     "error": "Une erreur est survenue",
+    "errors": {
+      "loadError": "Erreur lors du chargement des réservations"
+    },
+    "bookingError": "Erreur lors de la réservation: ",
     "success": "Réservation confirmée !",
     "successDesc": "Merci ! Votre réservation a été enregistrée. Vous allez être redirigé vers l'accueil.",
     "confirmInfo": "Vérifiez vos informations. Annulation gratuite jusqu'à 24h avant la prise en charge.",
@@ -83,11 +96,128 @@
     "termsPart2": "conditions générales",
     "terms": "J'accepte les conditions générales"
   },
+  "register": {
+    "title": "Créer un compte",
+    "subtitle": "Suivez vos réservations en temps réel",
+    "fields": {
+      "firstName": "Prénom",
+      "firstNamePlaceholder": "Jean",
+      "lastName": "Nom",
+      "lastNamePlaceholder": "Dupont",
+      "email": "Email",
+      "emailPlaceholder": "votre@email.com",
+      "phone": "Téléphone",
+      "phonePlaceholder": "+212 6XX XXX XXX",
+      "password": "Mot de passe",
+      "confirmPassword": "Confirmer",
+      "passwordHint": "8+ caractères, lettres, chiffres, symboles"
+    },
+    "submit": "Créer mon compte",
+    "creating": "Création...",
+    "haveAccount": "Déjà un compte ?",
+    "login": "Se connecter",
+    "error": "Échec de l'inscription",
+    "errors": {
+      "firstNameRequired": "Prénom requis",
+      "firstNameMin": "Au moins 2 caractères",
+      "lastNameRequired": "Nom requis",
+      "lastNameMin": "Au moins 2 caractères",
+      "emailRequired": "Email requis",
+      "emailInvalid": "Email invalide",
+      "phoneRequired": "Téléphone requis",
+      "phoneInvalid": "Numéro invalide",
+      "passwordRequired": "Mot de passe requis",
+      "passwordMin": "Au moins 8 caractères",
+      "passwordLetter": "Doit contenir des lettres",
+      "passwordNumber": "Doit contenir des chiffres",
+      "passwordSymbol": "Doit contenir un symbole (!@#$...)",
+      "confirmRequired": "Confirmation requise",
+      "passwordMismatch": "Mots de passe différents",
+      "fixErrors": "Veuillez corriger les erreurs"
+    }
+  },
+  "login": {
+    "title": "Connexion client",
+    "subtitle": "Accédez à vos réservations",
+    "fields": {
+      "email": "Email",
+      "emailPlaceholder": "votre@email.com",
+      "password": "Mot de passe",
+      "passwordHint": "8+ caractères, lettres, chiffres, symboles"
+    },
+    "submit": "Se connecter",
+    "loggingIn": "Connexion...",
+    "noAccount": "Pas encore de compte ?",
+    "createAccount": "Créer un compte",
+    "error": "Échec de la connexion",
+    "errors": {
+      "emailRequired": "Email requis",
+      "emailInvalid": "Email invalide",
+      "passwordRequired": "Mot de passe requis",
+      "passwordMin": "Au moins 8 caractères",
+      "passwordLetter": "Doit contenir des lettres",
+      "passwordNumber": "Doit contenir des chiffres",
+      "passwordSymbol": "Doit contenir un symbole (!@#$...)",
+      "fixErrors": "Veuillez corriger les erreurs"
+    }
+  },
+  "header": {
+    "myAccount": "Mon compte",
+    "myBookings": "Mes réservations",
+    "logout": "Déconnexion",
+    "login": "Connexion",
+    "register": "Inscription",
+    "menu": "Menu",
+    "welcome": "Bienvenue,"
+  },
+  "myBookings": {
+    "title": "Mes réservations",
+    "welcome": "Bienvenue, {{name}}. Suivez l'état de vos locations.",
+    "noBookingsTitle": "Aucune réservation",
+    "noBookings": "Vous n'avez pas encore effectué de réservation.",
+    "bookVehicle": "Réserver un véhicule",
+    "discoverCars": "Découvrir nos voitures",
+    "status": {
+      "confirmed": "Confirmée",
+      "pending": "En attente",
+      "cancelled": "Annulée",
+      "completed": "Terminée"
+    },
+    "statusDescription": {
+      "confirmed": "Votre réservation est confirmée. La voiture vous attend à la date prévue.",
+      "pending": "Votre demande est en cours de traitement. Vous recevrez une confirmation par email.",
+      "cancelled": "Cette réservation a été annulée.",
+      "completed": "Location terminée. Merci de nous avoir fait confiance !"
+    },
+    "loginRequired": "Connexion requise",
+    "loginMessage": "Connectez-vous pour voir vos réservations.",
+    "bookingNumber": "Réservation #{{id}}",
+    "codeApplied": "Code {{code}} appliqué (-{{amount}})",
+    "confirmationSent": "Confirmation envoyée !",
+    "checkEmail": "Vérifiez votre email ({{email}}) pour les détails complets de votre réservation.",
+    "dates": "Dates",
+    "fromTo": "Du {{start}} au {{end}}",
+    "pickupLocation": "Lieu de retrait"
+  },
   "included": {
     "title": "Inclus :",
     "allRisk": "Assurance tous risques",
     "unlimited": "Kilométrage illimité",
     "assistance": "Assistance 24/7",
     "cancellation": "Annulation gratuite"
+  },
+  "accountPrompt": {
+    "title": "Créer un compte",
+    "confirmed": "Réservation confirmée !",
+    "bookingNumber": "N°",
+    "benefitsTitle": "Créez un compte pour",
+    "trackBooking": "Suivre votre réservation",
+    "trackDesc": "En temps réel, 24h/24",
+    "notification": "Recevoir une confirmation",
+    "notificationDesc": "Notification dès validation",
+    "modify": "Modifier ou annuler",
+    "modifyDesc": "Gérez votre réservation facilement",
+    "createAccount": "Créer mon compte",
+    "later": "Plus tard"
   }
 }

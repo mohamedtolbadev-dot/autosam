@@ -31,6 +31,16 @@ const AdminBookings = () => {
     fetchAllBookings(filters);
   }, [initializing, isAuthenticated, navigate, fetchAllBookings, filters]);
 
+  // Keep selectedBooking in sync with allBookings when data refreshes
+  useEffect(() => {
+    if (selectedBooking && showModal) {
+      const updatedBooking = allBookings.find(b => b.id === selectedBooking.id);
+      if (updatedBooking) {
+        setSelectedBooking(updatedBooking);
+      }
+    }
+  }, [allBookings]);
+
   if (initializing) {
     return (
       <div className="flex items-center justify-center h-screen bg-slate-50">

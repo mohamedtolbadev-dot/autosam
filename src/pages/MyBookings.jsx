@@ -66,28 +66,11 @@ const MyBookings = () => {
   };
 
   const getStatusLabel = (status) => {
-    switch (status) {
-      case 'confirmed': return 'Confirmée';
-      case 'pending': return 'En attente';
-      case 'cancelled': return 'Annulée';
-      case 'completed': return 'Terminée';
-      default: return status;
-    }
+    return t(`booking:myBookings.status.${status}`) || status;
   };
 
   const getStatusDescription = (status) => {
-    switch (status) {
-      case 'confirmed': 
-        return 'Votre réservation est confirmée. La voiture vous attend à la date prévue.';
-      case 'pending': 
-        return 'Votre demande est en cours de traitement. Vous recevrez une confirmation par email.';
-      case 'cancelled': 
-        return 'Cette réservation a été annulée.';
-      case 'completed': 
-        return 'Location terminée. Merci de nous avoir fait confiance !';
-      default: 
-        return '';
-    }
+    return t(`booking:myBookings.statusDescription.${status}`) || '';
   };
 
   const formatDate = (dateString) => {
@@ -146,18 +129,19 @@ const MyBookings = () => {
       <div className="min-h-screen bg-slate-50 flex items-center justify-center py-12 px-4">
         <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-lg text-center">
           <img src="/imgs/autosam1.jpg" alt="Logo" className="h-12 w-auto mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-slate-800 mb-4">Connexion requise</h2>
-          <p className="text-slate-600 mb-6">Connectez-vous pour voir vos réservations.</p>
+          <h2 className="text-2xl font-bold text-slate-800 mb-4">{t('booking:myBookings.loginRequired')}</h2>
+          <p className="text-slate-600 mb-6">{t('booking:myBookings.loginMessage')}</p>
           <button
             onClick={() => setShowLoginModal(true)}
             className="inline-block bg-red-600 text-white py-3 px-8 rounded-xl font-medium hover:bg-red-700 transition"
           >
-            Se connecter
+            {t('booking:actions.login')}
           </button>
         </div>
       </div>
     );
   }
+  
 
   return (
     <div className="min-h-screen bg-slate-50 py-8 px-4 sm:px-6 lg:px-8">
@@ -195,10 +179,10 @@ const MyBookings = () => {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-2">
-            Mes réservations
+            {t('booking:myBookings.title')}
           </h1>
           <p className="text-slate-600">
-            Bienvenue, {customer?.first_name || customer?.email}. Suivez l'état de vos locations.
+            {t('booking:myBookings.welcome', { name: customer?.first_name || customer?.email })}
           </p>
         </div>
 
@@ -215,13 +199,13 @@ const MyBookings = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
               </svg>
             </div>
-            <h3 className="text-lg font-medium text-slate-800 mb-2">Aucune réservation</h3>
-            <p className="text-slate-600 mb-4">Vous n'avez pas encore effectué de réservation.</p>
+            <h3 className="text-lg font-medium text-slate-800 mb-2">{t('booking:myBookings.noBookingsTitle')}</h3>
+            <p className="text-slate-600 mb-4">{t('booking:myBookings.noBookings')}</p>
             <Link
               to="/cars"
               className="inline-block bg-red-600 text-white py-2 px-6 rounded-lg font-medium hover:bg-red-700 transition"
             >
-              Découvrir nos voitures
+              {t('booking:myBookings.discoverCars')}
             </Link>
           </div>
         ) : (
@@ -233,7 +217,7 @@ const MyBookings = () => {
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
                       <div className="flex items-center gap-3 mb-2">
-                        <span className="text-sm text-slate-500">Réservation #{booking.id}</span>
+                        <span className="text-sm text-slate-500">{t('booking:myBookings.bookingNumber', { id: booking.id })}</span>
                         <span className={`inline-flex px-3 py-1 text-xs font-medium rounded-full border ${getStatusColor(booking.status)}`}>
                           {getStatusLabel(booking.status)}
                         </span>
@@ -245,7 +229,7 @@ const MyBookings = () => {
                       <p className="text-2xl font-bold text-slate-800">{formatPrice(booking.total_price)}</p>
                       {booking.promo_code && (
                         <p className="text-sm text-emerald-600">
-                          Code {booking.promo_code} appliqué (-{formatPrice(booking.discount_amount || 0)})
+                          {t('booking:myBookings.codeApplied', { code: booking.promo_code, amount: formatPrice(booking.discount_amount || 0) })}
                         </p>
                       )}
                     </div>
@@ -276,7 +260,7 @@ const MyBookings = () => {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                       </svg>
                       <span>
-                        <strong>Confirmation envoyée !</strong> Vérifiez votre email ({booking.email}) pour les détails complets de votre réservation.
+                        <strong>{t('booking:myBookings.confirmationSent')}</strong> {t('booking:myBookings.checkEmail', { email: booking.email })}
                       </span>
                     </div>
                   )}
@@ -290,9 +274,9 @@ const MyBookings = () => {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
                       <div>
-                        <p className="text-sm font-medium text-slate-700">Dates</p>
+                        <p className="text-sm font-medium text-slate-700">{t('booking:myBookings.dates')}</p>
                         <p className="text-sm text-slate-600">
-                          Du {formatDate(booking.pickup_date)} au {formatDate(booking.return_date)}
+                          {t('booking:myBookings.fromTo', { start: formatDate(booking.pickup_date), end: formatDate(booking.return_date) })}
                         </p>
                       </div>
                     </div>
@@ -303,7 +287,7 @@ const MyBookings = () => {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                       </svg>
                       <div>
-                        <p className="text-sm font-medium text-slate-700">Lieu de retrait</p>
+                        <p className="text-sm font-medium text-slate-700">{t('booking:myBookings.pickupLocation')}</p>
                         <p className="text-sm text-slate-600">{booking.pickup_location}</p>
                       </div>
                     </div>
@@ -320,10 +304,10 @@ const MyBookings = () => {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                     </svg>
-                    Voir les détails
+                    {t('booking:myBookings.viewDetails')}
                   </button>
                   <span className="text-xs text-slate-500">
-                    Réservé le {formatDate(booking.created_at)}
+                    {t('booking:myBookings.bookedOn', { date: formatDate(booking.created_at) })}
                   </span>
                 </div>
               </div>
@@ -339,7 +323,7 @@ const MyBookings = () => {
               {/* Modal Header */}
               <div className="sticky top-0 bg-white border-b border-slate-200 p-6 flex justify-between items-center">
                 <div>
-                  <h2 className="text-xl font-bold text-slate-800">Détails de la réservation</h2>
+                  <h2 className="text-xl font-bold text-slate-800">{t('booking:myBookings.detailsModal.title')}</h2>
                   <p className="text-sm text-slate-500">#{selectedBooking.id}</p>
                 </div>
                 <button
@@ -357,9 +341,9 @@ const MyBookings = () => {
                 {/* Status Banner */}
                 <div className={`p-4 rounded-lg border ${getStatusColor(selectedBooking.status)}`}>
                   <div className="flex items-center justify-between">
-                    <span className="font-semibold">Statut: {getStatusLabel(selectedBooking.status)}</span>
+                    <span className="font-semibold">{t('booking:myBookings.detailsModal.status')}: {getStatusLabel(selectedBooking.status)}</span>
                     <span className="text-sm">
-                      Réservée le {formatDate(selectedBooking.created_at)}
+                      {t('booking:myBookings.bookedOn', { date: formatDate(selectedBooking.created_at) })}
                     </span>
                   </div>
                 </div>
@@ -371,7 +355,7 @@ const MyBookings = () => {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
                     </svg>
-                    Véhicule
+                    {t('booking:myBookings.detailsModal.vehicle')}
                   </h3>
                   <div className="flex gap-4 items-start">
                     {selectedBooking.car_image && (
@@ -385,9 +369,9 @@ const MyBookings = () => {
                       </div>
                     )}
                     <div className="flex-1">
-                      <p className="text-sm text-slate-500">Modèle</p>
+                      <p className="text-sm text-slate-500">{t('booking:myBookings.detailsModal.model')}</p>
                       <p className="font-medium text-slate-800">{selectedBooking.car_name}</p>
-                      <p className="text-sm text-slate-500 mt-2">Catégorie</p>
+                      <p className="text-sm text-slate-500 mt-2">{t('booking:myBookings.detailsModal.category')}</p>
                       <p className="font-medium text-slate-800">{selectedBooking.car_category}</p>
                     </div>
                   </div>
@@ -399,25 +383,25 @@ const MyBookings = () => {
                     <svg className="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
-                    Détails de la location
+                    {t('booking:myBookings.detailsModal.rentalDetails')}
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <p className="text-sm text-slate-500">Date de départ</p>
+                      <p className="text-sm text-slate-500">{t('booking:myBookings.detailsModal.startDate')}</p>
                       <p className="font-medium text-slate-800">{formatDate(selectedBooking.pickup_date)}</p>
                       <p className="text-sm text-slate-600">{selectedBooking.pickup_time}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-slate-500">Date de retour</p>
+                      <p className="text-sm text-slate-500">{t('booking:myBookings.detailsModal.endDate')}</p>
                       <p className="font-medium text-slate-800">{formatDate(selectedBooking.return_date)}</p>
                       <p className="text-sm text-slate-600">{selectedBooking.return_time}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-slate-500">Lieu de retrait</p>
+                      <p className="text-sm text-slate-500">{t('booking:myBookings.pickupLocation')}</p>
                       <p className="font-medium text-slate-800">{selectedBooking.pickup_location}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-slate-500">Lieu de retour</p>
+                      <p className="text-sm text-slate-500">{t('booking:myBookings.returnLocation')}</p>
                       <p className="font-medium text-slate-800">{selectedBooking.dropoff_location || selectedBooking.pickup_location}</p>
                     </div>
                   </div>
@@ -429,28 +413,28 @@ const MyBookings = () => {
                     <svg className="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    Détail du prix
+                    {t('booking:myBookings.detailsModal.priceDetails')}
                   </h3>
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
-                      <span className="text-slate-600">Location véhicule</span>
+                      <span className="text-slate-600">{t('booking:myBookings.detailsModal.vehicleRental')}</span>
                       <span className="font-medium">{formatPrice(selectedBooking.rental_price || selectedBooking.total_price)}</span>
                     </div>
                     {selectedBooking.insurance_price > 0 && (
                       <div className="flex justify-between text-sm">
-                        <span className="text-slate-600">Assurance premium</span>
+                        <span className="text-slate-600">{t('booking:myBookings.detailsModal.premiumInsurance')}</span>
                         <span className="font-medium">{formatPrice(selectedBooking.insurance_price)}</span>
                       </div>
                     )}
                     {selectedBooking.options_price > 0 && (
                       <div className="flex justify-between text-sm">
-                        <span className="text-slate-600">Options</span>
+                        <span className="text-slate-600">{t('booking:myBookings.detailsModal.options')}</span>
                         <span className="font-medium">{formatPrice(selectedBooking.options_price)}</span>
                       </div>
                     )}
                     <div className="border-t border-slate-200 pt-2 mt-2">
                       <div className="flex justify-between">
-                        <span className="font-semibold text-slate-800">Total</span>
+                        <span className="font-semibold text-slate-800">{t('booking:summary.total')}</span>
                         <span className="font-bold text-lg text-red-600">{formatPrice(selectedBooking.total_price)}</span>
                       </div>
                     </div>
@@ -463,20 +447,20 @@ const MyBookings = () => {
                     <svg className="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
-                    Vos coordonnées
+                    {t('booking:myBookings.detailsModal.customerInfo')}
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <p className="text-sm text-slate-500">Nom complet</p>
+                      <p className="text-sm text-slate-500">{t('booking:myBookings.detailsModal.fullName')}</p>
                       <p className="font-medium text-slate-800">{selectedBooking.first_name} {selectedBooking.last_name}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-slate-500">Email</p>
+                      <p className="text-sm text-slate-500">{t('booking:myBookings.detailsModal.email')}</p>
                       <p className="font-medium text-slate-800">{selectedBooking.email}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-slate-500">Téléphone</p>
-                      <p className="font-medium text-slate-800">{selectedBooking.phone || 'Non renseigné'}</p>
+                      <p className="text-sm text-slate-500">{t('booking:myBookings.detailsModal.phone')}</p>
+                      <p className="font-medium text-slate-800">{selectedBooking.phone || t('booking:myBookings.detailsModal.notProvided')}</p>
                     </div>
                   </div>
                 </div>
@@ -488,7 +472,7 @@ const MyBookings = () => {
                       <svg className="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                       </svg>
-                      Notes
+                      {t('booking:myBookings.detailsModal.notes')}
                     </h3>
                     <p className="text-sm text-slate-600 italic">"{selectedBooking.notes}"</p>
                   </div>
@@ -501,7 +485,7 @@ const MyBookings = () => {
                   onClick={closeDetailsModal}
                   className="px-6 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition"
                 >
-                  Fermer
+                  {t('booking:actions.close')}
                 </button>
               </div>
             </div>
@@ -511,7 +495,7 @@ const MyBookings = () => {
         {/* Back to home */}
         <div className="mt-8 text-center">
           <Link to="/" className="text-slate-600 hover:text-slate-800 font-medium">
-            ← Retour à l'accueil
+            ← {t('booking:myBookings.backToHome')}
           </Link>
         </div>
       </div>

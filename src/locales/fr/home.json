@@ -106,7 +106,9 @@
     "retry": "Réessayer",
     "details": "Détail",
     "seeFamilyVehicles": "Voir les véhicules familiaux",
-    "needAdvice": "Besoin de conseils ?"
+    "needAdvice": "Besoin de conseils ?",
+    "clear": "Effacer",
+    "today": "Aujourd'hui"
   },
   "steps": {
     "step1": {

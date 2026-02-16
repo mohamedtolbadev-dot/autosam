@@ -35,7 +35,6 @@ const CurrencySelector = ({ scrolled = false }) => {
         aria-expanded={isOpen}
         aria-label="Sélectionner une devise"
       >
-        <span className="text-lg">{currentCurrency.flag}</span>
         <span className="font-semibold text-sm">{currency}</span>
         <svg
           className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`}
@@ -66,7 +65,6 @@ const CurrencySelector = ({ scrolled = false }) => {
                     : 'hover:bg-slate-50 text-slate-700'
                 }`}
               >
-                <span className="text-xl">{curr.flag}</span>
                 <div className="flex-1">
                   <p className="font-semibold text-sm">{curr.code}</p>
                   <p className="text-xs text-slate-500">{curr.name}</p>

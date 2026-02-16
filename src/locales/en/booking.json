@@ -18,7 +18,9 @@
     "pickup": "Pickup location",
     "dropoff": "Drop-off location",
     "startDate": "Start date",
+    "startDatePlaceholder": "Start date",
     "endDate": "End date",
+    "endDatePlaceholder": "End date",
     "firstName": "First name",
     "firstNamePlaceholder": "Ex: John",
     "lastName": "Last name",
@@ -71,11 +73,18 @@
     "previous": "Previous",
     "next": "Next",
     "confirmBooking": "Confirm booking",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "ok": "OK",
+    "clear": "Clear",
+    "today": "Today",
+    "login": "Login",
+    "details": "Details",
+    "bookNow": "Book now"
   },
   "messages": {
     "loading": "Loading...",
     "error": "An error occurred",
+    "bookingError": "Error during booking: ",
     "success": "Booking confirmed!",
     "successDesc": "Thank you! Your booking has been saved. You will be redirected to the home page.",
     "confirmInfo": "Please verify your information. Free cancellation up to 24 hours before pickup.",
@@ -83,11 +92,155 @@
     "termsPart2": "terms and conditions",
     "terms": "I accept the terms and conditions"
   },
+  "myBookings": {
+    "title": "My Bookings",
+    "welcome": "Welcome, {{name}}. Track the status of your rentals.",
+    "noBookings": "You don't have any bookings yet.",
+    "noBookingsTitle": "No bookings",
+    "bookVehicle": "Book a vehicle",
+    "discoverCars": "Discover our cars",
+    "bookingNumber": "Booking #{{id}}",
+    "codeApplied": "Code {{code}} applied (-{{amount}})",
+    "confirmationSent": "Confirmation sent!",
+    "checkEmail": "Check your email ({{email}}) for complete reservation details.",
+    "dates": "Dates",
+    "fromTo": "From {{start}} to {{end}}",
+    "pickupLocation": "Pickup location",
+    "returnLocation": "Return location",
+    "bookedOn": "Booked on {{date}}",
+    "viewDetails": "View details",
+    "backToHome": "Back to home",
+    "detailsModal": {
+      "title": "Booking details",
+      "status": "Status",
+      "vehicle": "Vehicle",
+      "model": "Model",
+      "category": "Category",
+      "rentalDetails": "Rental details",
+      "startDate": "Start date",
+      "endDate": "Return date",
+      "priceDetails": "Price details",
+      "vehicleRental": "Vehicle rental",
+      "premiumInsurance": "Premium insurance",
+      "options": "Options",
+      "customerInfo": "Your contact details",
+      "fullName": "Full name",
+      "email": "Email",
+      "phone": "Phone",
+      "notProvided": "Not provided",
+      "notes": "Notes"
+    },
+    "status": {
+      "confirmed": "Confirmed",
+      "pending": "Pending",
+      "cancelled": "Cancelled",
+      "completed": "Completed"
+    },
+    "statusDescription": {
+      "confirmed": "Your booking is confirmed. The car awaits you on the scheduled date.",
+      "pending": "Your request is being processed. You will receive a confirmation by email.",
+      "cancelled": "This booking has been cancelled.",
+      "completed": "Rental completed. Thank you for trusting us!"
+    },
+    "loginRequired": "Login required",
+    "loginMessage": "Please log in to view your bookings.",
+    "errors": {
+      "loadError": "Error loading bookings"
+    }
+  },
   "included": {
     "title": "Included:",
     "allRisk": "All-risk insurance",
     "unlimited": "Unlimited mileage",
     "assistance": "24/7 assistance",
     "cancellation": "Free cancellation"
+  },
+  "accountPrompt": {
+    "title": "Create an account",
+    "confirmed": "Booking confirmed!",
+    "bookingNumber": "No.",
+    "benefitsTitle": "Create an account to",
+    "trackBooking": "Track your booking",
+    "trackDesc": "Real-time, 24/7",
+    "notification": "Receive confirmation",
+    "notificationDesc": "Notification upon validation",
+    "modify": "Modify or cancel",
+    "modifyDesc": "Manage your booking easily",
+    "createAccount": "Create my account",
+    "later": "Later"
+  },
+  "register": {
+    "title": "Create an account",
+    "subtitle": "Track your reservations in real-time",
+    "fields": {
+      "firstName": "First name",
+      "firstNamePlaceholder": "John",
+      "lastName": "Last name",
+      "lastNamePlaceholder": "Smith",
+      "email": "Email",
+      "emailPlaceholder": "your@email.com",
+      "phone": "Phone",
+      "phonePlaceholder": "+1 234 567 890",
+      "password": "Password",
+      "confirmPassword": "Confirm",
+      "passwordHint": "8+ characters, letters, numbers, symbols"
+    },
+    "submit": "Create my account",
+    "creating": "Creating...",
+    "haveAccount": "Already have an account?",
+    "login": "Log in",
+    "error": "Registration failed",
+    "errors": {
+      "firstNameRequired": "First name required",
+      "firstNameMin": "At least 2 characters",
+      "lastNameRequired": "Last name required",
+      "lastNameMin": "At least 2 characters",
+      "emailRequired": "Email required",
+      "emailInvalid": "Invalid email",
+      "phoneRequired": "Phone required",
+      "phoneInvalid": "Invalid number",
+      "passwordRequired": "Password required",
+      "passwordMin": "At least 8 characters",
+      "passwordLetter": "Must contain letters",
+      "passwordNumber": "Must contain numbers",
+      "passwordSymbol": "Must contain a symbol (!@#$...)",
+      "confirmRequired": "Confirmation required",
+      "passwordMismatch": "Passwords don't match",
+      "fixErrors": "Please fix the errors"
+    }
+  },
+  "login": {
+    "title": "Customer Login",
+    "subtitle": "Access your reservations",
+    "fields": {
+      "email": "Email",
+      "emailPlaceholder": "your@email.com",
+      "password": "Password",
+      "passwordHint": "8+ characters, letters, numbers, symbols"
+    },
+    "submit": "Log in",
+    "loggingIn": "Logging in...",
+    "noAccount": "Don't have an account?",
+    "createAccount": "Create an account",
+    "error": "Login failed",
+    "errors": {
+      "emailRequired": "Email required",
+      "emailInvalid": "Invalid email",
+      "passwordRequired": "Password required",
+      "passwordMin": "At least 8 characters",
+      "passwordLetter": "Must contain letters",
+      "passwordNumber": "Must contain numbers",
+      "passwordSymbol": "Must contain a symbol (!@#$...)",
+      "fixErrors": "Please fix the errors"
+    }
+  },
+  "header": {
+    "myAccount": "My account",
+    "myBookings": "My reservations",
+    "logout": "Logout",
+    "login": "Login",
+    "register": "Register",
+    "menu": "Menu",
+    "welcome": "Welcome,"
   }
 }

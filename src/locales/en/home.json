@@ -102,7 +102,9 @@
     "retry": "Retry",
     "details": "Details",
     "seeFamilyVehicles": "View family vehicles",
-    "needAdvice": "Need advice?"
+    "needAdvice": "Need advice?",
+    "clear": "Clear",
+    "today": "Today"
   },
   "steps": {
     "step1": {
