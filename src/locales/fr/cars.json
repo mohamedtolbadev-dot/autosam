@@ -95,6 +95,8 @@
   },
   "search": {
     "yourSearch": "Votre recherche :",
+    "pickup": "Prise en charge",
+    "dropoff": "Restitution",
     "placeholder": "Rechercher (ex: Clio, Dacia...)"
   },
   "empty": {

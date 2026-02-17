@@ -151,7 +151,7 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }) => {
       />
       
       {/* Modal Content */}
-      <div className="relative w-full max-w-[420px] bg-white rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 fade-in duration-300 max-h-[90vh] overflow-y-auto scrollbar-hide">
+      <div className="relative w-full max-w-[560px] bg-white rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 fade-in duration-300 max-h-[90vh] overflow-y-auto scrollbar-hide">
         <button 
           onClick={onClose}
           className="absolute top-3 right-3 p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors z-10"

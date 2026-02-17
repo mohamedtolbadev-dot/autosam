@@ -72,6 +72,7 @@ const Booking = () => {
   
   const carId = searchParams.get('car');
   const searchLocation = searchParams.get('location');
+  const searchDropoffLocation = searchParams.get('dropoffLocation');
   const searchStartDate = searchParams.get('startDate');
   const searchEndDate = searchParams.get('endDate');
 
@@ -97,7 +98,7 @@ const Booking = () => {
     phone: '',
     licenseNumber: '',
     pickupLocation: searchLocation || 'Casablanca',
-    dropoffLocation: searchLocation || 'Casablanca',
+    dropoffLocation: searchDropoffLocation || 'Casablanca',
     pickupDate: searchStartDate || '',
     dropoffDate: searchEndDate || '',
     additionalDriver: false,

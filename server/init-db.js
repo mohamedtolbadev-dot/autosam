@@ -64,6 +64,7 @@ async function initializeDatabase() {
         phone VARCHAR(50) NOT NULL,
         license_number VARCHAR(50),
         pickup_location VARCHAR(100) NOT NULL,
+        dropoff_location VARCHAR(100) NOT NULL,
         pickup_date DATE NOT NULL,
         return_date DATE NOT NULL,
         total_price INT NOT NULL,

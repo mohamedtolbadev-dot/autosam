@@ -197,7 +197,8 @@
     "checkEmail": "Vérifiez votre email ({{email}}) pour les détails complets de votre réservation.",
     "dates": "Dates",
     "fromTo": "Du {{start}} au {{end}}",
-    "pickupLocation": "Lieu de retrait"
+    "pickupLocation": "Lieu de retrait",
+    "backToHome": "Retour à l'accueil"
   },
   "included": {
     "title": "Inclus :",

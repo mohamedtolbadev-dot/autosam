@@ -54,9 +54,8 @@ const Header = () => {
       </svg>
     ) },
     { to: '/cars', label: t('nav.cars'), icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
+      <svg className="w-5 h-5" viewBox="0 0 640 640" fill="currentColor">
+        <path d="M199.2 181.4L173.1 256L466.9 256L440.8 181.4C436.3 168.6 424.2 160 410.6 160L229.4 160C215.8 160 203.7 168.6 199.2 181.4zM103.6 260.8L138.8 160.3C152.3 121.8 188.6 96 229.4 96L410.6 96C451.4 96 487.7 121.8 501.2 160.3L536.4 260.8C559.6 270.4 576 293.3 576 320L576 512C576 529.7 561.7 544 544 544L512 544C494.3 544 480 529.7 480 512L480 480L160 480L160 512C160 529.7 145.7 544 128 544L96 544C78.3 544 64 529.7 64 512L64 320C64 293.3 80.4 270.4 103.6 260.8zM192 368C192 350.3 177.7 336 160 336C142.3 336 128 350.3 128 368C128 385.7 142.3 400 160 400C177.7 400 192 385.7 192 368zM480 400C497.7 400 512 385.7 512 368C512 350.3 497.7 336 480 336C462.3 336 448 350.3 448 368C448 385.7 462.3 400 480 400z" />
       </svg>
     ) },
     { to: '/about', label: t('nav.about'), icon: (
@@ -280,7 +279,7 @@ const Header = () => {
 
       {/* Mobile Menu avec animation simple */}
       {mobileOpen && (
-        <div className="absolute top-full left-4 right-4 mt-2 bg-white rounded-3xl shadow-2xl border border-slate-100 md:hidden animate-in slide-in-from-top-4 fade-in duration-300 max-h-[calc(100vh-100px)] overflow-y-auto z-50">
+        <div className="fixed inset-x-0 top-[60px] mx-2 sm:mx-4 bg-white rounded-3xl shadow-2xl border border-slate-100 md:hidden animate-in slide-in-from-top-4 fade-in duration-300 max-h-[calc(100vh-80px)] overflow-y-auto z-50">
           <nav className="flex flex-col p-4 gap-1">
             <div className="px-4 py-2 mb-2">
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">{t('booking:header.menu')}</p>
@@ -290,15 +289,15 @@ const Header = () => {
                 key={to}
                 to={to}
                 className={({ isActive }) => 
-                  `flex items-center gap-4 px-4 py-3.5 rounded-2xl text-base font-bold transition-all ${
+                  `flex items-center gap-4 px-4 py-4 rounded-2xl text-lg font-bold transition-all ${
                     isActive 
                       ? 'bg-red-50 text-red-600' 
                       : 'text-slate-600 hover:bg-slate-50'
                   }`
                 }
               >
-                <span className="opacity-70">{icon}</span>
-                {label}
+                <span className="opacity-70 w-6">{icon}</span>
+                <span>{label}</span>
               </NavLink>
             ))}
             
@@ -306,16 +305,16 @@ const Header = () => {
             
             {/* Mobile Auth Section */}
             {isAuthenticated ? (
-              <div className="bg-slate-50 rounded-2xl p-4 mb-2">
+              <div className="bg-slate-50 rounded-2xl p-4 mb-2 mt-2">
                 <div className="flex items-center gap-3 mb-4 px-2">
-                  <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-red-600">
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center text-red-600">
+                    <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <p className="text-xs font-medium text-slate-400">{t('booking:header.welcome')}</p>
-                    <p className="text-sm font-bold text-slate-800">{customer?.first_name}</p>
+                    <p className="text-base font-bold text-slate-800 truncate">{customer?.first_name || customer?.email}</p>
                   </div>
                 </div>
                 
@@ -345,14 +344,17 @@ const Header = () => {
                 </div>
               </div>
             ) : (
-              <div className="grid grid-cols-2 gap-3 mb-2">
+              <div className="grid grid-cols-2 gap-3 mb-2 mt-3">
                 <button
                   onClick={() => {
                     setMobileOpen(false);
                     setShowLoginModal(true);
                   }}
-                  className="flex items-center justify-center gap-2 px-4 py-4 rounded-2xl bg-slate-100 text-slate-700 font-bold text-sm hover:bg-slate-200 transition-all"
+                  className="flex items-center justify-center gap-2 px-4 py-4 rounded-2xl bg-slate-100 text-slate-700 font-bold text-base hover:bg-slate-200 transition-all"
                 >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
                   {t('booking:header.login')}
                 </button>
                 <button
@@ -360,8 +362,11 @@ const Header = () => {
                     setMobileOpen(false);
                     setShowRegisterModal(true);
                   }}
-                  className="flex items-center justify-center gap-2 px-4 py-4 rounded-2xl bg-red-600 text-white font-bold text-sm shadow-lg shadow-red-200 hover:bg-red-700 transition-all"
+                  className="flex items-center justify-center gap-2 px-4 py-4 rounded-2xl bg-red-600 text-white font-bold text-base shadow-lg shadow-red-200 hover:bg-red-700 transition-all"
                 >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                  </svg>
                   {t('booking:header.register')}
                 </button>
               </div>

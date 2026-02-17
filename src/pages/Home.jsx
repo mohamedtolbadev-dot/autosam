@@ -96,6 +96,7 @@ const Home = () => {
 
   const [searchData, setSearchData] = useState({
     location: 'Casablanca',
+    dropoffLocation: 'Casablanca',
     startDate: '',
     endDate: ''
   });
@@ -292,6 +293,7 @@ const steps = [
 
     const params = new URLSearchParams();
     if (searchData.location) params.append('location', searchData.location);
+    if (searchData.dropoffLocation) params.append('dropoffLocation', searchData.dropoffLocation);
     if (searchData.startDate) params.append('startDate', searchData.startDate);
     if (searchData.endDate) params.append('endDate', searchData.endDate);
     navigate(`/cars?${params.toString()}`);
@@ -415,8 +417,8 @@ const brands = [
         <div className="container mx-auto max-w-5xl min-w-0">
           <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-slate-200 p-4 sm:p-5 md:p-6">
             <form onSubmit={handleSearch} className="space-y-1">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-                {/* Location */}
+              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-5">
+                {/* Pickup Location */}
                 <div className="flex flex-col">
                   <label htmlFor="search-location" className="text-sm font-medium text-slate-700 mb-2">
                     {t('form.pickupLocation')}
@@ -431,12 +433,96 @@ const brands = [
                       onChange={(e) => setSearchData({ ...searchData, location: e.target.value })}
                       className={`search-field-input ${selectWithIconClassName}`}
                     >
-                      <option value="casablanca">{t('common:cities.casablanca')}</option>
-                      <option value="rabat">{t('common:cities.rabat')}</option>
-                      <option value="marrakech">{t('common:cities.marrakech')}</option>
-                      <option value="fes">{t('common:cities.fes')}</option>
-                      <option value="tanger">{t('common:cities.tanger')}</option>
-                      <option value="agadir">{t('common:cities.agadir')}</option>
+                      <option value="">{t('form.pickupLocation')}</option>
+                      <optgroup label={t('common:cities.casablanca')}>
+                        <option value="casa_airport">{t('common:cities.districts.casa_airport')}</option>
+                        <option value="casa_downtown">{t('common:cities.districts.casa_downtown')}</option>
+                        <option value="casa_casa_port">{t('common:cities.districts.casa_casa_port')}</option>
+                        <option value="casa_ain_diab">{t('common:cities.districts.casa_ain_diab')}</option>
+                      </optgroup>
+                      <optgroup label={t('common:cities.rabat')}>
+                        <option value="rabat_airport">{t('common:cities.districts.rabat_airport')}</option>
+                        <option value="rabat_downtown">{t('common:cities.districts.rabat_downtown')}</option>
+                        <option value="rabat_agdal">{t('common:cities.districts.rabat_agdal')}</option>
+                        <option value="rabat_hassan">{t('common:cities.districts.rabat_hassan')}</option>
+                      </optgroup>
+                      <optgroup label={t('common:cities.marrakech')}>
+                        <option value="marrakech_airport">{t('common:cities.districts.marrakech_airport')}</option>
+                        <option value="marrakech_downtown">{t('common:cities.districts.marrakech_downtown')}</option>
+                        <option value="marrakech_gueliz">{t('common:cities.districts.marrakech_gueliz')}</option>
+                        <option value="marrakech_palm">{t('common:cities.districts.marrakech_palm')}</option>
+                      </optgroup>
+                      <optgroup label={t('common:cities.fes')}>
+                        <option value="fes_airport">{t('common:cities.districts.fes_airport')}</option>
+                        <option value="fes_downtown">{t('common:cities.districts.fes_downtown')}</option>
+                        <option value="fes_medina">{t('common:cities.districts.fes_medina')}</option>
+                      </optgroup>
+                      <optgroup label={t('common:cities.tanger')}>
+                        <option value="tanger_airport">{t('common:cities.districts.tanger_airport')}</option>
+                        <option value="tanger_downtown">{t('common:cities.districts.tanger_downtown')}</option>
+                        <option value="tanger_port">{t('common:cities.districts.tanger_port')}</option>
+                      </optgroup>
+                      <optgroup label={t('common:cities.agadir')}>
+                        <option value="agadir_airport">{t('common:cities.districts.agadir_airport')}</option>
+                        <option value="agadir_downtown">{t('common:cities.districts.agadir_downtown')}</option>
+                        <option value="agadir_marina">{t('common:cities.districts.agadir_marina')}</option>
+                      </optgroup>
+                    </select>
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" aria-hidden>
+                      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9l6 6 6-6" /></svg>
+                    </span>
+                  </div>
+                </div>
+
+                {/* Dropoff Location */}
+                <div className="flex flex-col">
+                  <label htmlFor="search-dropoff" className="text-sm font-medium text-slate-700 mb-2">
+                    {t('form.dropoffLocation')}
+                  </label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" aria-hidden>
+                      <IconMapPin className="w-5 h-5" />
+                    </span>
+                    <select
+                      id="search-dropoff"
+                      value={searchData.dropoffLocation}
+                      onChange={(e) => setSearchData({ ...searchData, dropoffLocation: e.target.value })}
+                      className={`search-field-input ${selectWithIconClassName}`}
+                    >
+                      <option value="">{t('form.dropoffLocation')}</option>
+                      <optgroup label={t('common:cities.casablanca')}>
+                        <option value="casa_airport">{t('common:cities.districts.casa_airport')}</option>
+                        <option value="casa_downtown">{t('common:cities.districts.casa_downtown')}</option>
+                        <option value="casa_casa_port">{t('common:cities.districts.casa_casa_port')}</option>
+                        <option value="casa_ain_diab">{t('common:cities.districts.casa_ain_diab')}</option>
+                      </optgroup>
+                      <optgroup label={t('common:cities.rabat')}>
+                        <option value="rabat_airport">{t('common:cities.districts.rabat_airport')}</option>
+                        <option value="rabat_downtown">{t('common:cities.districts.rabat_downtown')}</option>
+                        <option value="rabat_agdal">{t('common:cities.districts.rabat_agdal')}</option>
+                        <option value="rabat_hassan">{t('common:cities.districts.rabat_hassan')}</option>
+                      </optgroup>
+                      <optgroup label={t('common:cities.marrakech')}>
+                        <option value="marrakech_airport">{t('common:cities.districts.marrakech_airport')}</option>
+                        <option value="marrakech_downtown">{t('common:cities.districts.marrakech_downtown')}</option>
+                        <option value="marrakech_gueliz">{t('common:cities.districts.marrakech_gueliz')}</option>
+                        <option value="marrakech_palm">{t('common:cities.districts.marrakech_palm')}</option>
+                      </optgroup>
+                      <optgroup label={t('common:cities.fes')}>
+                        <option value="fes_airport">{t('common:cities.districts.fes_airport')}</option>
+                        <option value="fes_downtown">{t('common:cities.districts.fes_downtown')}</option>
+                        <option value="fes_medina">{t('common:cities.districts.fes_medina')}</option>
+                      </optgroup>
+                      <optgroup label={t('common:cities.tanger')}>
+                        <option value="tanger_airport">{t('common:cities.districts.tanger_airport')}</option>
+                        <option value="tanger_downtown">{t('common:cities.districts.tanger_downtown')}</option>
+                        <option value="tanger_port">{t('common:cities.districts.tanger_port')}</option>
+                      </optgroup>
+                      <optgroup label={t('common:cities.agadir')}>
+                        <option value="agadir_airport">{t('common:cities.districts.agadir_airport')}</option>
+                        <option value="agadir_downtown">{t('common:cities.districts.agadir_downtown')}</option>
+                        <option value="agadir_marina">{t('common:cities.districts.agadir_marina')}</option>
+                      </optgroup>
                     </select>
                     <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" aria-hidden>
                       <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9l6 6 6-6" /></svg>

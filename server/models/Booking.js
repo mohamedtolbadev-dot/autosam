@@ -54,6 +54,7 @@ const Booking = {
             phone,
             license_number,
             pickup_location,
+            dropoff_location,
             pickup_date,
             return_date,
             total_price,
@@ -63,9 +64,9 @@ const Booking = {
         
         const [result] = await db.query(
             `INSERT INTO bookings 
-             (car_id, user_id, first_name, last_name, email, phone, license_number, pickup_location, pickup_date, return_date, total_price, status, notes) 
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [car_id, user_id || null, first_name, last_name, email, phone, license_number || null, pickup_location, pickup_date, return_date, total_price, status, notes]
+             (car_id, user_id, first_name, last_name, email, phone, license_number, pickup_location, dropoff_location, pickup_date, return_date, total_price, status, notes) 
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [car_id, user_id || null, first_name, last_name, email, phone, license_number || null, pickup_location, dropoff_location, pickup_date, return_date, total_price, status, notes]
         );
         return result.insertId;
     },

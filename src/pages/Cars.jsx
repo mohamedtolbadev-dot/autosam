@@ -154,6 +154,7 @@ const Cars = () => {
   }, [favorites]);
 
   const searchLocation = searchParams.get('location');
+  const searchDropoffLocation = searchParams.get('dropoffLocation');
   const searchStartDate = searchParams.get('startDate');
   const searchEndDate = searchParams.get('endDate');
 
@@ -255,13 +256,19 @@ const Cars = () => {
       {/* Barre de recherche active & Contrôles principaux - Chevauchement Header */}
       <div className="container mx-auto px-4 sm:px-6 max-w-6xl -mt-16 relative z-20 mb-8">
         {/* Résumé Recherche Contextuelle */}
-        {(searchLocation || searchStartDate || searchEndDate) && (
+        {(searchLocation || searchDropoffLocation || searchStartDate || searchEndDate) && (
             <div className="bg-slate-800 text-slate-200 p-4 rounded-t-xl flex flex-wrap items-center gap-4 text-sm border-b border-slate-700">
                 <span className="text-slate-400 uppercase text-xs font-bold tracking-wider">{t('search.yourSearch')}</span>
                 {searchLocation && (
                     <div className="flex items-center gap-2">
                         <IconMapPin className="w-4 h-4 text-red-400" />
-                        <span>{searchLocation}</span>
+                        <span>{t('search.pickup')}: {searchLocation}</span>
+                    </div>
+                )}
+                {searchDropoffLocation && (
+                    <div className="flex items-center gap-2">
+                        <IconMapPin className="w-4 h-4 text-red-400" />
+                        <span>{t('search.dropoff')}: {searchDropoffLocation}</span>
                     </div>
                 )}
                 {(searchStartDate || searchEndDate) && (
@@ -636,7 +643,13 @@ const Cars = () => {
                       >
                         <div className="flex gap-2 w-full sm:w-auto">
                           <Link
-                            to={`/cars/${car.id}`}
+                            to={
+                              `/cars/${car.id}` +
+                              (searchLocation ? `?location=${searchLocation}` : '') +
+                              (searchDropoffLocation ? `${searchLocation ? '&' : '?'}dropoffLocation=${searchDropoffLocation}` : '') +
+                              (searchStartDate ? `${searchLocation || searchDropoffLocation ? '&' : '?'}startDate=${searchStartDate}` : '') +
+                              (searchEndDate ? `${searchLocation || searchDropoffLocation || searchStartDate ? '&' : '?'}endDate=${searchEndDate}` : '')
+                            }
                             aria-label={t('car.details') || 'Voir les détails'}
                             className="inline-flex items-center justify-center px-1 py-2.5 rounded-lg border border-transparent text-[#101424] bg-transparent underline underline-offset-4 hover:opacity-80 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 text-sm font-medium"
                           >
@@ -647,6 +660,7 @@ const Cars = () => {
                               car.available && !car.reserved
                                 ? `/booking?car=${car.id}` +
                                   (searchLocation ? `&location=${searchLocation}` : '') +
+                                  (searchDropoffLocation ? `&dropoffLocation=${searchDropoffLocation}` : '') +
                                   (searchStartDate ? `&startDate=${searchStartDate}` : '') +
                                   (searchEndDate ? `&endDate=${searchEndDate}` : '')
                                 : '#'
