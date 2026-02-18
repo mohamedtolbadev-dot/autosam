@@ -1,0 +1,14 @@
+node_modules
+npm-debug.log
+.env
+.env.local
+.env.*.local
+uploads/*.jpg
+uploads/*.png
+uploads/*.jpeg
+uploads/*.gif
+!uploads/.gitkeep
+.DS_Store
+.vscode
+*.log
+*.tmp
