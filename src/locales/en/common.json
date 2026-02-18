@@ -36,6 +36,11 @@
     "tanger": "Tangier",
     "agadir": "Agadir"
   },
+  "locations": {
+    "airport": "Airport",
+    "cityCenter": "City Center",
+    "trainStation": "Train Station"
+  },
   "calendar": {
     "shortDays": ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"]
   },

@@ -552,11 +552,7 @@ const Cars = () => {
                             <IconCar className="w-12 h-12 text-slate-300" />
                         )}
                         
-                        {/* Tags Flottants */}
-                        <div className="absolute top-3 left-3 flex flex-col gap-1">
-                             {car.price < 350 && <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm border border-emerald-200 uppercase tracking-wide">{t('car.ecoDeal')}</span>}
-                             {car.category === 'Luxe' && <span className="inline-flex items-center gap-1 bg-slate-900 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm uppercase tracking-wide">{t('car.premium')}</span>}
-                        </div>
+                        
                         
                         {/* Bouton Favoris */}
                         <button 

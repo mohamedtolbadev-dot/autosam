@@ -5,14 +5,19 @@ const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 require('dotenv').config();
 
+// Debug: Log email configuration
+console.log('📧 Email Config:');
+console.log('  AGENCY_EMAIL:', process.env.AGENCY_EMAIL || 'NOT SET');
+console.log('  EMAIL_USER:', process.env.EMAIL_USER || 'NOT SET');
+
 const app = express();
 
 // CORS middleware - MUST be first to handle preflight requests
 const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:3000',
-  'https://autosimo.ma',
-  'https://www.autosimo.ma'
+  'https://autosam.ma',
+  'https://www.autosam.ma'
 ];
 
 app.use(cors({
@@ -58,8 +63,12 @@ app.use('/api/auth/register', authLimiter);
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-// Serve static files from uploads folder
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// Serve static files from uploads folder with CORS headers
+app.use('/uploads', (req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+  next();
+}, express.static(path.join(__dirname, 'uploads')));
 
 // Routes
 app.use('/api/auth', require('./routes/authRoutes'));
@@ -82,7 +91,7 @@ app.use((err, req, res, next) => {
 
 // Basic Route
 app.get('/', (req, res) => {
-    res.json({ message: 'Bienvenue sur l\'API de AutoSimo' });
+    res.json({ message: 'Bienvenue sur l\'API de AutoSam' });
 });
 
 // Port

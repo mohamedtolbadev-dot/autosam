@@ -63,6 +63,7 @@
     "days": "jours",
     "total": "Total",
     "included": "Inclus",
+    "perDay": "/jour",
     "promo": {
       "placeholder": "Code promo",
       "apply": "Appliquer",

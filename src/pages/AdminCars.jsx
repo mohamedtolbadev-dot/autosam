@@ -34,6 +34,8 @@ const AdminCars = () => {
   const [previewUrls, setPreviewUrls] = useState([]);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedCar, setSelectedCar] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const carsPerPage = 10;
 
   useEffect(() => {
     if (initializing) return;
@@ -166,9 +168,14 @@ const AdminCars = () => {
     setPreviewUrls(newPreviews);
   };
 
-  const handleShowDetails = (car) => {
-    setSelectedCar(car);
-    setShowDetailModal(true);
+  // Pagination logic
+  const indexOfLastCar = currentPage * carsPerPage;
+  const indexOfFirstCar = indexOfLastCar - carsPerPage;
+  const currentCars = allCars.slice(indexOfFirstCar, indexOfLastCar);
+  const totalPages = Math.ceil(allCars.length / carsPerPage);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
   };
 
   const categories = ['Économique', 'Compacte', 'Berline', 'SUV', 'Premium', 'Luxe'];
@@ -224,7 +231,7 @@ const AdminCars = () => {
                       </td>
                     </tr>
                   ) : (
-                    allCars.map((car) => (
+                    currentCars.map((car) => (
                       <tr key={car.id} className="hover:bg-slate-50">
                         <td className="px-2 sm:px-6 py-3 sm:py-4">
                           <div className="flex items-center gap-2 sm:gap-3">
@@ -295,6 +302,41 @@ const AdminCars = () => {
             </div>
           )}
         </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex justify-center items-center gap-2 mt-6">
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="px-3 py-1.5 text-sm bg-white border border-slate-200 rounded-lg hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
+            >
+              ← Précédent
+            </button>
+            
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                onClick={() => handlePageChange(page)}
+                className={`px-3 py-1.5 text-sm rounded-lg transition ${
+                  currentPage === page
+                    ? 'bg-red-600 text-white'
+                    : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+            
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="px-3 py-1.5 text-sm bg-white border border-slate-200 rounded-lg hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
+            >
+              Suivant →
+            </button>
+          </div>
+        )}
 
         {/* Modal */}
         {showModal && (

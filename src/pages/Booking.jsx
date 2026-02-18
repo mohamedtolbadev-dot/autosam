@@ -49,6 +49,28 @@ const IconCreditCard = ({ className = 'w-5 h-5' }) => (
     <path d="M1 10h22" />
   </svg>
 );
+
+// Helper function to format location keys to human-readable names
+const formatLocation = (locationKey, t) => {
+  if (!locationKey) return '';
+  const [city, location] = locationKey.split('_');
+  const cityNames = {
+    casablanca: t('common:cities.casablanca'),
+    marrakech: t('common:cities.marrakech'),
+    rabat: t('common:cities.rabat'),
+    tangier: t('common:cities.tangier'),
+    agadir: t('common:cities.agadir'),
+    fes: t('common:cities.fes')
+  };
+  const locationTypes = {
+    airport: t('common:locations.airport'),
+    cityCenter: t('common:locations.cityCenter'),
+    trainStation: t('common:locations.trainStation')
+  };
+  const cityName = cityNames[city] || city;
+  const locationType = locationTypes[location] || location;
+  return `${cityName} - ${locationType}`;
+};
 const IconShield = ({ className = 'w-5 h-5' }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
@@ -251,6 +273,7 @@ const Booking = () => {
           email: formData.email,
           phone: formData.phone,
           pickup_location: formData.pickupLocation,
+          dropoff_location: formData.dropoffLocation,
           pickup_date: formData.pickupDate,
           return_date: formData.dropoffDate,
           total_price: calculateTotal(),
@@ -498,7 +521,7 @@ const Booking = () => {
                 <div className="flex-1 min-w-0">
                   <p className="font-semibold text-slate-800 text-sm sm:text-base truncate">{car.name}</p>
                   <p className="text-xs sm:text-sm text-slate-500">{car.category}</p>
-                  <p className="text-[10px] sm:text-xs text-slate-500 mt-0.5 sm:mt-1">{formData.pickupLocation} → {formData.dropoffLocation}</p>
+                  <p className="text-[10px] sm:text-xs text-slate-500 mt-0.5 sm:mt-1">{formatLocation(formData.pickupLocation, t)} → {formatLocation(formData.dropoffLocation, t)}</p>
                 </div>
               </div>
 
@@ -586,23 +609,35 @@ const Booking = () => {
                     <div>
                       <label className="flex items-center gap-2 text-xs sm:text-sm font-medium text-slate-700 mb-1.5 sm:mb-2"><IconMapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500" />{t('form.pickup')} *</label>
                       <select name="pickupLocation" value={formData.pickupLocation} onChange={handleChange} className={`${selectBaseClassName} text-sm sm:text-base`}>
-                        <option value="casablanca">{t('common:cities.casablanca')}</option>
-                        <option value="rabat">{t('common:cities.rabat')}</option>
-                        <option value="marrakech">{t('common:cities.marrakech')}</option>
-                        <option value="fes">{t('common:cities.fes')}</option>
-                        <option value="tanger">{t('common:cities.tanger')}</option>
-                        <option value="agadir">{t('common:cities.agadir')}</option>
+                        <option value="casablanca_airport">{t('common:cities.casablanca')} - {t('common:locations.airport')}</option>
+                        <option value="casablanca_city">{t('common:cities.casablanca')} - {t('common:locations.cityCenter')}</option>
+                        <option value="casablanca_train">{t('common:cities.casablanca')} - {t('common:locations.trainStation')}</option>
+                        <option value="rabat_airport">{t('common:cities.rabat')} - {t('common:locations.airport')}</option>
+                        <option value="rabat_city">{t('common:cities.rabat')} - {t('common:locations.cityCenter')}</option>
+                        <option value="rabat_train">{t('common:cities.rabat')} - {t('common:locations.trainStation')}</option>
+                        <option value="marrakech_airport">{t('common:cities.marrakech')} - {t('common:locations.airport')}</option>
+                        <option value="marrakech_city">{t('common:cities.marrakech')} - {t('common:locations.cityCenter')}</option>
+                        <option value="marrakech_train">{t('common:cities.marrakech')} - {t('common:locations.trainStation')}</option>
+                        <option value="fes_airport">{t('common:cities.fes')} - {t('common:locations.airport')}</option>
+                        <option value="fes_city">{t('common:cities.fes')} - {t('common:locations.cityCenter')}</option>
+                        <option value="fes_train">{t('common:cities.fes')} - {t('common:locations.trainStation')}</option>
                       </select>
                     </div>
                     <div>
                       <label className="flex items-center gap-2 text-xs sm:text-sm font-medium text-slate-700 mb-1.5 sm:mb-2"><IconMapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500" />{t('form.dropoff')} *</label>
                       <select name="dropoffLocation" value={formData.dropoffLocation} onChange={handleChange} className={`${selectBaseClassName} text-sm sm:text-base`}>
-                        <option value="casablanca">{t('common:cities.casablanca')}</option>
-                        <option value="rabat">{t('common:cities.rabat')}</option>
-                        <option value="marrakech">{t('common:cities.marrakech')}</option>
-                        <option value="fes">{t('common:cities.fes')}</option>
-                        <option value="tanger">{t('common:cities.tanger')}</option>
-                        <option value="agadir">{t('common:cities.agadir')}</option>
+                        <option value="casablanca_airport">{t('common:cities.casablanca')} - {t('common:locations.airport')}</option>
+                        <option value="casablanca_city">{t('common:cities.casablanca')} - {t('common:locations.cityCenter')}</option>
+                        <option value="casablanca_train">{t('common:cities.casablanca')} - {t('common:locations.trainStation')}</option>
+                        <option value="rabat_airport">{t('common:cities.rabat')} - {t('common:locations.airport')}</option>
+                        <option value="rabat_city">{t('common:cities.rabat')} - {t('common:locations.cityCenter')}</option>
+                        <option value="rabat_train">{t('common:cities.rabat')} - {t('common:locations.trainStation')}</option>
+                        <option value="marrakech_airport">{t('common:cities.marrakech')} - {t('common:locations.airport')}</option>
+                        <option value="marrakech_city">{t('common:cities.marrakech')} - {t('common:locations.cityCenter')}</option>
+                        <option value="marrakech_train">{t('common:cities.marrakech')} - {t('common:locations.trainStation')}</option>
+                        <option value="fes_airport">{t('common:cities.fes')} - {t('common:locations.airport')}</option>
+                        <option value="fes_city">{t('common:cities.fes')} - {t('common:locations.cityCenter')}</option>
+                        <option value="fes_train">{t('common:cities.fes')} - {t('common:locations.trainStation')}</option>
                       </select>
                     </div>
                   </div>
@@ -629,7 +664,7 @@ const Booking = () => {
                         <div className="flex-1 min-w-0">
                           <div className="flex flex-wrap justify-between items-start gap-2">
                             <div className="min-w-0"><p className="font-semibold text-slate-800 text-sm sm:text-base">{t('options.gps.title')}</p><p className="text-xs sm:text-sm text-slate-600">{t('options.gps.desc')}</p></div>
-                            <p className="text-red-600 font-bold text-sm sm:text-base">+{formatPrice(50)}{t('currency.perDay')}</p>
+                            <p className="text-red-600 font-bold text-sm sm:text-base">+{formatPrice(50)}{t('summary.perDay')}</p>
                           </div>
                         </div>
                       </label>
@@ -640,7 +675,7 @@ const Booking = () => {
                         <div className="flex-1 min-w-0">
                           <div className="flex flex-wrap justify-between items-start gap-2">
                             <div className="min-w-0"><p className="font-semibold text-slate-800 text-sm sm:text-base">{t('options.childSeat.title')}</p><p className="text-xs sm:text-sm text-slate-600">{t('options.childSeat.desc')}</p></div>
-                            <p className="text-red-600 font-bold text-sm sm:text-base">+{formatPrice(30)}/jour</p>
+                            <p className="text-red-600 font-bold text-sm sm:text-base">+{formatPrice(30)}{t('summary.perDay')}</p>
                           </div>
                         </div>
                       </label>
@@ -662,7 +697,7 @@ const Booking = () => {
                       <div className="flex-1 min-w-0">
                         <div className="flex flex-wrap justify-between items-start gap-2">
                           <div className="min-w-0"><p className="font-semibold text-slate-800 text-sm sm:text-base">{t('insurance.premium.title')}</p><p className="text-xs sm:text-sm text-slate-600">{t('insurance.premium.desc')}</p></div>
-                          <p className="text-red-600 font-bold text-sm sm:text-base">+{formatPrice(100)}{t('currency.perDay')}</p>
+                          <p className="text-red-600 font-bold text-sm sm:text-base">+{formatPrice(100)}{t('summary.perDay')}</p>
                         </div>
                       </div>
                     </label>

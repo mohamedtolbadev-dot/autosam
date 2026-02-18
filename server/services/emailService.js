@@ -1,11 +1,10 @@
 const nodemailer = require('nodemailer');
 
-// Create transporter using SMTP configuration
 const createTransporter = () => {
     return nodemailer.createTransport({
         host: process.env.SMTP_HOST || 'smtp.gmail.com',
         port: process.env.SMTP_PORT || 587,
-        secure: false, // true for 465, false for other ports
+        secure: false,
         auth: {
             user: process.env.SMTP_USER || process.env.EMAIL_USER,
             pass: process.env.SMTP_PASS || process.env.EMAIL_PASS
@@ -13,232 +12,253 @@ const createTransporter = () => {
     });
 };
 
-// Styles configuration for reuse
-const mainStyles = `
-    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: #f3f4f6; }
-    .wrapper { width: 100%; table-layout: fixed; background-color: #f3f4f6; padding-bottom: 40px; }
-    .webkit { max-width: 600px; background-color: #ffffff; margin: 0 auto; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-    .header { padding: 30px 20px; text-align: center; }
-    .content { padding: 0 30px 30px 30px; color: #4b5563; line-height: 1.6; }
-    .info-table { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
-    .info-row td { padding: 12px; background-color: #f9fafb; border: 1px solid #e5e7eb; }
-    .info-row td:first-child { border-radius: 8px 0 0 8px; border-right: none; font-weight: 600; color: #374151; width: 40%; }
-    .info-row td:last-child { border-radius: 0 8px 8px 0; border-left: none; color: #111827; text-align: right; }
-    .price-box { background-color: #fef2f2; border: 1px dashed #dc2626; color: #dc2626; padding: 15px; border-radius: 8px; text-align: center; font-size: 20px; font-weight: bold; margin: 25px 0; }
-    .button { display: inline-block; background-color: #dc2626; color: #ffffff; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; margin-top: 10px; font-size: 16px; box-shadow: 0 2px 4px rgba(220, 38, 38, 0.2); }
-    .footer { text-align: center; padding: 20px; color: #9ca3af; font-size: 13px; background-color: #f9fafb; border-top: 1px solid #e5e7eb; }
-    .status-badge { display: inline-block; padding: 8px 20px; border-radius: 50px; font-weight: bold; font-size: 14px; margin-bottom: 20px; }
+const baseStyles = `
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; color: #333; }
+    .wrapper { width: 100%; padding: 40px 0; }
+    .container { max-width: 560px; margin: 0 auto; background-color: #ffffff; border-radius: 6px; overflow: hidden; }
+    .header { padding: 28px 20px; text-align: center; border-bottom: 1px solid #e5e5e5; }
+    .header h1 { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: 3px; color: #111; }
+    .content { padding: 32px 36px; color: #444; font-size: 15px; line-height: 1.7; }
+    .label { font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: #999; margin-bottom: 16px; }
+    .divider { border: none; border-top: 1px solid #ebebeb; margin: 24px 0; }
+    .info-table { width: 100%; border-collapse: collapse; }
+    .info-table tr td { padding: 10px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+    .info-table tr:last-child td { border-bottom: none; }
+    .info-table td:first-child { color: #888; width: 45%; }
+    .info-table td:last-child { font-weight: 500; color: #111; text-align: right; }
+    .total-row td { font-size: 16px; font-weight: 700; color: #111; padding-top: 16px !important; border-top: 2px solid #e5e5e5 !important; border-bottom: none !important; }
+    .btn { display: inline-block; padding: 12px 28px; border-radius: 5px; font-size: 14px; font-weight: 600; text-decoration: none; letter-spacing: 0.5px; }
+    .btn-dark { background-color: #111; color: #ffffff; }
+    .footer { text-align: center; padding: 24px 20px; color: #aaa; font-size: 12px; border-top: 1px solid #ebebeb; background-color: #fafafa; line-height: 1.8; }
+    .footer a { color: #555; text-decoration: none; }
 `;
 
-// Send booking confirmation email
+// 1. Notification agence - nouvelle réservation
+exports.sendNewBookingNotification = async (bookingData, carDetails) => {
+    try {
+        const transporter = createTransporter();
+        const agencyEmail = process.env.AGENCY_EMAIL || process.env.EMAIL_USER;
+        const { first_name, last_name, email, phone, pickup_location, dropoff_location, pickup_date, return_date, total_price, notes } = bookingData;
+
+        const emailContent = `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>${baseStyles}</style>
+</head>
+<body>
+<div class="wrapper">
+    <div class="container">
+        <div class="header">
+            <h1>AUTOSAM</h1>
+        </div>
+
+        <div class="content">
+            <p class="label">Nouvelle demande</p>
+            <p style="margin: 0 0 24px 0; color: #333;">Un client vient de soumettre une demande de réservation.</p>
+
+            <hr class="divider">
+
+            <p class="label" style="margin-top: 0;">Client</p>
+            <table class="info-table">
+                <tr><td>Nom</td><td>${first_name} ${last_name}</td></tr>
+                <tr><td>Email</td><td>${email}</td></tr>
+                <tr><td>Téléphone</td><td>${phone}</td></tr>
+            </table>
+
+            <hr class="divider">
+
+            <p class="label" style="margin-top: 0;">Véhicule</p>
+            ${carDetails ? `
+            <table class="info-table">
+                <tr><td>Modèle</td><td>${carDetails.brand} ${carDetails.model} (${carDetails.year})</td></tr>
+                <tr><td>Prix / jour</td><td>${carDetails.price_per_day} MAD</td></tr>
+            </table>
+            ` : '<p style="color:#888; font-size:14px;">Informations non disponibles</p>'}
+
+            <hr class="divider">
+
+            <p class="label" style="margin-top: 0;">Réservation</p>
+            <table class="info-table">
+                <tr><td>Prise en charge</td><td>${pickup_location}</td></tr>
+                <tr><td>Restitution</td><td>${dropoff_location}</td></tr>
+                <tr><td>Date départ</td><td>${pickup_date}</td></tr>
+                <tr><td>Date retour</td><td>${return_date}</td></tr>
+                ${notes ? `<tr><td>Notes</td><td>${notes}</td></tr>` : ''}
+                <tr class="total-row"><td>Total</td><td>${total_price} MAD</td></tr>
+            </table>
+
+            <div style="text-align: center; margin-top: 32px;">
+                <a href="tel:${phone}" class="btn btn-dark">Appeler le client</a>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>© ${new Date().getFullYear()} AUTOSAM — Notification automatique</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>`;
+
+        await transporter.sendMail({
+            from: `"AUTOSAM" <${process.env.EMAIL_USER}>`,
+            to: agencyEmail,
+            subject: `Nouvelle réservation — ${first_name} ${last_name}`,
+            html: emailContent
+        });
+
+        console.log(`✅ Email agence envoyé : ${agencyEmail}`);
+        return { success: true };
+    } catch (error) {
+        console.error('❌ Erreur email agence:', error);
+        return { success: false, error: error.message };
+    }
+};
+
+// 2. Confirmation client
 exports.sendBookingConfirmation = async (bookingData) => {
     try {
         const transporter = createTransporter();
-        
-        const { email, first_name, last_name, car_name, pickup_date, return_date, pickup_location, total_price, id } = bookingData;
-        
+        const { email, first_name, car_name, pickup_date, return_date, pickup_location, total_price } = bookingData;
+
         const emailContent = `
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>${mainStyles}</style>
+    <style>${baseStyles}</style>
 </head>
 <body>
-    <div class="wrapper">
-        <br>
-        <div class="webkit">
-            <div class="header" style="background-color: #dc2626;">
-                <h1 style="margin: 0; color: #ffffff; font-size: 24px; letter-spacing: 1px;">AUTOSIMO</h1>
-            </div>
+<div class="wrapper">
+    <div class="container">
+        <div class="header">
+            <h1>AUTOSAM</h1>
+        </div>
 
-            <div class="content">
-                <div style="text-align: center; margin-top: 30px;">
-                    <div style="background-color: #dcfce7; color: #166534; display: inline-block; padding: 10px 20px; border-radius: 50px; font-weight: bold; margin-bottom: 15px;">
-                        ✓ Réservation Confirmée
-                    </div>
-                    <h2 style="margin: 0 0 10px 0; color: #111827;">Bonjour ${first_name},</h2>
-                    <p style="margin: 0; color: #6b7280;">Votre voyage commence ici ! Voici les détails.</p>
-                </div>
+        <div class="content">
+            <p style="margin: 0 0 6px 0; font-size: 18px; font-weight: 600; color: #111;">Bonjour ${first_name},</p>
+            <p style="margin: 0 0 28px 0; color: #666;">Votre demande de réservation a bien été reçue. Nous vous contacterons prochainement pour confirmation.</p>
 
-                <div style="margin-top: 30px;">
-                    <h3 style="color: #374151; font-size: 16px; border-bottom: 2px solid #f3f4f6; padding-bottom: 10px;">
-                        Détails de la commande #${id}
-                    </h3>
-                    
-                    <table class="info-table">
-                        <tr class="info-row">
-                            <td>🚗 Voiture</td>
-                            <td><strong>${car_name}</strong></td>
-                        </tr>
-                        <tr class="info-row">
-                            <td>📅 Départ</td>
-                            <td>${new Date(pickup_date).toLocaleDateString('fr-FR')}</td>
-                        </tr>
-                        <tr class="info-row">
-                            <td>📅 Retour</td>
-                            <td>${new Date(return_date).toLocaleDateString('fr-FR')}</td>
-                        </tr>
-                        <tr class="info-row">
-                            <td>📍 Lieu</td>
-                            <td>${pickup_location}</td>
-                        </tr>
-                    </table>
+            <hr class="divider" style="margin-top: 0;">
 
-                    <div class="price-box">
-                        Total: ${total_price} MAD
-                    </div>
+            <p class="label" style="margin-top: 0;">Détails de la réservation</p>
+            <table class="info-table">
+                <tr><td>Véhicule</td><td>${car_name}</td></tr>
+                <tr><td>Date départ</td><td>${new Date(pickup_date).toLocaleDateString('fr-FR')}</td></tr>
+                <tr><td>Date retour</td><td>${new Date(return_date).toLocaleDateString('fr-FR')}</td></tr>
+                <tr><td>Lieu</td><td>${pickup_location}</td></tr>
+                <tr class="total-row"><td>Total</td><td>${total_price} MAD</td></tr>
+            </table>
 
-                    <div style="text-align: center; margin-top: 30px;">
-                        <a href="${process.env.CLIENT_URL || 'http://localhost:5173'}/my-bookings" class="button">
-                            Gérer ma réservation
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="footer">
-                <p style="margin-bottom: 10px;">Merci de faire confiance à <strong>AUTOSIMO</strong></p>
-                <p>
-                    Besoin d'aide ? Contactez-nous :<br>
-                    <a href="mailto:contact@autosimo.ma" style="color: #dc2626; text-decoration: none;">contact@autosimo.ma</a>
-                </p>
-                <p style="margin-top: 20px; font-size: 11px;">
-                    © ${new Date().getFullYear()} AUTOSIMO. Tous droits réservés.
-                </p>
+            <div style="text-align: center; margin-top: 32px;">
+                <a href="${process.env.CLIENT_URL || 'http://localhost:5173'}/my-bookings" class="btn btn-dark">Voir ma réservation</a>
             </div>
         </div>
-        <br>
+
+        <div class="footer">
+            <p>Merci de faire confiance à AUTOSAM</p>
+            <p>Questions ? <a href="mailto:contact@autosam.ma">contact@autosam.ma</a></p>
+            <p style="margin-top: 12px;">© ${new Date().getFullYear()} AUTOSAM</p>
+        </div>
     </div>
+</div>
 </body>
-</html>
-        `;
-        
-        const mailOptions = {
-            from: `"AUTOSIMO" <${process.env.EMAIL_USER}>`,
+</html>`;
+
+        await transporter.sendMail({
+            from: `"AUTOSAM" <${process.env.EMAIL_USER}>`,
             to: email,
-            subject: `✓ Réservation #${id} confirmée - AUTOSIMO`,
+            subject: `Demande de réservation reçue — AUTOSAM`,
             html: emailContent
-        };
-        
-        await transporter.sendMail(mailOptions);
-        console.log(`✓ Email de confirmation envoyé à ${email}`);
+        });
+
+        console.log(`✅ Email confirmation envoyé : ${email}`);
         return true;
     } catch (error) {
-        console.error('Erreur lors de l\'envoi de l\'email:', error);
+        console.error('❌ Erreur email confirmation:', error);
         return false;
     }
 };
 
-// Send status update email
+// 3. Mise à jour statut (couleur appliquée selon le statut uniquement)
 exports.sendStatusUpdate = async (bookingData, newStatus) => {
     try {
         const transporter = createTransporter();
-        
-        const { email, first_name, last_name, car_name, id } = bookingData;
-        
-        // Configuration visually improved for each status
+        const { email, first_name, car_name } = bookingData;
+
         const statusConfig = {
-            confirmed: { 
-                label: 'Confirmée', 
-                bgColor: '#dcfce7', // Light Green
-                textColor: '#166534', // Dark Green
-                headerColor: '#16a34a',
-                icon: '✓' 
-            },
-            cancelled: { 
-                label: 'Annulée', 
-                bgColor: '#fee2e2', // Light Red
-                textColor: '#991b1b', // Dark Red
-                headerColor: '#dc2626',
-                icon: '✕' 
-            },
-            completed: { 
-                label: 'Terminée', 
-                bgColor: '#dbeafe', // Light Blue
-                textColor: '#1e40af', // Dark Blue
-                headerColor: '#2563eb',
-                icon: '🏁' 
-            },
-            pending: { 
-                label: 'En attente', 
-                bgColor: '#fef9c3', // Light Yellow
-                textColor: '#854d0e', // Dark Yellow
-                headerColor: '#ca8a04',
-                icon: '⏳' 
-            }
+            confirmed: { label: 'Confirmée',   color: '#16a34a', bg: '#f0fdf4', border: '#bbf7d0' },
+            cancelled:  { label: 'Annulée',    color: '#dc2626', bg: '#fef2f2', border: '#fecaca' },
+            completed:  { label: 'Terminée',   color: '#2563eb', bg: '#eff6ff', border: '#bfdbfe' },
+            pending:    { label: 'En attente', color: '#d97706', bg: '#fffbeb', border: '#fde68a' }
         };
-        
-        const currentStatus = statusConfig[newStatus] || statusConfig.pending;
-        
+
+        const status = statusConfig[newStatus] || statusConfig.pending;
+
         const emailContent = `
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>${mainStyles}</style>
+    <style>${baseStyles}</style>
 </head>
 <body>
-    <div class="wrapper">
-        <br>
-        <div class="webkit">
-            <div class="header" style="background-color: ${currentStatus.headerColor};">
-                 <h1 style="margin: 0; color: #ffffff; font-size: 24px;">AUTOSIMO</h1>
-            </div>
-            
-            <div class="content" style="text-align: center; padding-top: 40px;">
-                <div class="status-badge" style="background-color: ${currentStatus.bgColor}; color: ${currentStatus.textColor};">
-                    ${currentStatus.icon} Réservation ${currentStatus.label}
-                </div>
+<div class="wrapper">
+    <div class="container">
+        <div class="header">
+            <h1>AUTOSAM</h1>
+        </div>
 
-                <h2 style="margin: 20px 0 10px 0; color: #1f2937;">Mise à jour de statut</h2>
-                
-                <p style="font-size: 16px; margin-bottom: 30px;">
-                    Bonjour <strong>${first_name}</strong>,<br><br>
-                    Le statut de votre réservation <strong>#${id}</strong> pour la voiture <br>
-                    <strong style="color: ${currentStatus.headerColor}; font-size: 18px;">${car_name}</strong><br>
-                    a été modifié.
-                </p>
+        <div class="content">
+            <p style="margin: 0 0 6px 0; font-size: 18px; font-weight: 600; color: #111;">Bonjour ${first_name},</p>
+            <p style="margin: 0 0 28px 0; color: #666;">Le statut de votre réservation pour le véhicule <strong>${car_name}</strong> a été mis à jour.</p>
 
-                <div style="background-color: #f9fafb; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                    <p style="margin: 0; font-size: 14px; color: #6b7280;">Nouveau statut</p>
-                    <p style="margin: 5px 0 0 0; font-size: 20px; font-weight: bold; color: ${currentStatus.headerColor};">
-                        ${currentStatus.label.toUpperCase()}
-                    </p>
-                </div>
-
-                <div style="margin-top: 40px;">
-                    <a href="${process.env.CLIENT_URL || 'http://localhost:5173'}/my-bookings" class="button" style="background-color: ${currentStatus.headerColor};">
-                        Voir les détails
-                    </a>
-                </div>
+            <div style="
+                background-color: ${status.bg};
+                border: 1px solid ${status.border};
+                border-left: 4px solid ${status.color};
+                border-radius: 5px;
+                padding: 16px 20px;
+                margin: 8px 0 28px 0;
+            ">
+                <p style="margin: 0; font-size: 13px; color: #888; letter-spacing: 1px; text-transform: uppercase; font-weight: 600;">Statut</p>
+                <p style="margin: 4px 0 0 0; font-size: 17px; font-weight: 700; color: ${status.color};">${status.label}</p>
             </div>
 
-            <div class="footer">
-                <p>AUTOSIMO - Location de voitures</p>
-                <p style="font-size: 11px;">Cet email a été envoyé automatiquement.</p>
+            <div style="text-align: center; margin-top: 8px;">
+                <a href="${process.env.CLIENT_URL || 'http://localhost:5173'}/my-bookings"
+                   class="btn"
+                   style="background-color: ${status.color}; color: #fff;">
+                    Voir les détails
+                </a>
             </div>
         </div>
-        <br>
+
+        <div class="footer">
+            <p>AUTOSAM — Location de voitures</p>
+            <p>Cet email a été envoyé automatiquement.</p>
+            <p style="margin-top: 12px;">© ${new Date().getFullYear()} AUTOSAM</p>
+        </div>
     </div>
+</div>
 </body>
-</html>
-        `;
-        
-        const mailOptions = {
-            from: `"AUTOSIMO" <${process.env.EMAIL_USER}>`,
+</html>`;
+
+        await transporter.sendMail({
+            from: `"AUTOSAM" <${process.env.EMAIL_USER}>`,
             to: email,
-            subject: `${currentStatus.icon} Statut réservation #${id}: ${currentStatus.label} - AUTOSIMO`,
+            subject: `Réservation ${status.label} — AUTOSAM`,
             html: emailContent
-        };
-        
-        await transporter.sendMail(mailOptions);
-        console.log(`✓ Email de mise à jour envoyé à ${email}`);
+        });
+
+        console.log(`✅ Email statut envoyé : ${email}`);
         return true;
     } catch (error) {
-        console.error('Erreur lors de l\'envoi de l\'email:', error);
+        console.error('❌ Erreur email statut:', error);
         return false;
     }
 };

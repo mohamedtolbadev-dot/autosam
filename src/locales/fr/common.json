@@ -34,30 +34,12 @@
     "marrakech": "Marrakech",
     "fes": "Fès",
     "tanger": "Tanger",
-    "agadir": "Agadir",
-    "districts": {
-      "casa_airport": "Casablanca - Aéroport Mohammed V",
-      "casa_downtown": "Casablanca - Centre-ville",
-      "casa_casa_port": "Casablanca - Casa-Port",
-      "casa_ain_diab": "Casablanca - Aïn Diab",
-      "rabat_airport": "Rabat - Aéroport",
-      "rabat_downtown": "Rabat - Centre-ville",
-      "rabat_agdal": "Rabat - Agdal",
-      "rabat_hassan": "Rabat - Hassan",
-      "marrakech_airport": "Marrakech - Aéroport",
-      "marrakech_downtown": "Marrakech - Centre-ville/Medina",
-      "marrakech_gueliz": "Marrakech - Gueliz",
-      "marrakech_palm": "Marrakech - Palmeraie",
-      "fes_airport": "Fès - Aéroport",
-      "fes_downtown": "Fès - Centre-ville",
-      "fes_medina": "Fès - Médina",
-      "tanger_airport": "Tanger - Aéroport Ibn Battouta",
-      "tanger_downtown": "Tanger - Centre-ville",
-      "tanger_port": "Tanger - Port",
-      "agadir_airport": "Agadir - Aéroport Al Massira",
-      "agadir_downtown": "Agadir - Centre-ville",
-      "agadir_marina": "Agadir - Marina"
-    }
+    "agadir": "Agadir"
+  },
+  "locations": {
+    "airport": "Aéroport",
+    "cityCenter": "Centre-ville",
+    "trainStation": "Gare"
   },
   "calendar": {
     "shortDays": ["Di", "Lu", "Ma", "Me", "Je", "Ve", "Sa"]

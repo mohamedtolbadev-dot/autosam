@@ -629,39 +629,18 @@ const CarDetails = () => {
                     onChange={(e) => setRentalForm({ ...rentalForm, pickupLocation: e.target.value })}
                   >
                     <option value="">{t('booking:form.pickup')}</option>
-                    <optgroup label={t('common:cities.casablanca')}>
-                      <option value="casa_airport">{t('common:cities.districts.casa_airport')}</option>
-                      <option value="casa_downtown">{t('common:cities.districts.casa_downtown')}</option>
-                      <option value="casa_casa_port">{t('common:cities.districts.casa_casa_port')}</option>
-                      <option value="casa_ain_diab">{t('common:cities.districts.casa_ain_diab')}</option>
-                    </optgroup>
-                    <optgroup label={t('common:cities.rabat')}>
-                      <option value="rabat_airport">{t('common:cities.districts.rabat_airport')}</option>
-                      <option value="rabat_downtown">{t('common:cities.districts.rabat_downtown')}</option>
-                      <option value="rabat_agdal">{t('common:cities.districts.rabat_agdal')}</option>
-                      <option value="rabat_hassan">{t('common:cities.districts.rabat_hassan')}</option>
-                    </optgroup>
-                    <optgroup label={t('common:cities.marrakech')}>
-                      <option value="marrakech_airport">{t('common:cities.districts.marrakech_airport')}</option>
-                      <option value="marrakech_downtown">{t('common:cities.districts.marrakech_downtown')}</option>
-                      <option value="marrakech_gueliz">{t('common:cities.districts.marrakech_gueliz')}</option>
-                      <option value="marrakech_palm">{t('common:cities.districts.marrakech_palm')}</option>
-                    </optgroup>
-                    <optgroup label={t('common:cities.fes')}>
-                      <option value="fes_airport">{t('common:cities.districts.fes_airport')}</option>
-                      <option value="fes_downtown">{t('common:cities.districts.fes_downtown')}</option>
-                      <option value="fes_medina">{t('common:cities.districts.fes_medina')}</option>
-                    </optgroup>
-                    <optgroup label={t('common:cities.tanger')}>
-                      <option value="tanger_airport">{t('common:cities.districts.tanger_airport')}</option>
-                      <option value="tanger_downtown">{t('common:cities.districts.tanger_downtown')}</option>
-                      <option value="tanger_port">{t('common:cities.districts.tanger_port')}</option>
-                    </optgroup>
-                    <optgroup label={t('common:cities.agadir')}>
-                      <option value="agadir_airport">{t('common:cities.districts.agadir_airport')}</option>
-                      <option value="agadir_downtown">{t('common:cities.districts.agadir_downtown')}</option>
-                      <option value="agadir_marina">{t('common:cities.districts.agadir_marina')}</option>
-                    </optgroup>
+                    <option value="casablanca_airport">{t('common:cities.casablanca')} - {t('common:locations.airport')}</option>
+                    <option value="casablanca_city">{t('common:cities.casablanca')} - {t('common:locations.cityCenter')}</option>
+                    <option value="casablanca_train">{t('common:cities.casablanca')} - {t('common:locations.trainStation')}</option>
+                    <option value="rabat_airport">{t('common:cities.rabat')} - {t('common:locations.airport')}</option>
+                    <option value="rabat_city">{t('common:cities.rabat')} - {t('common:locations.cityCenter')}</option>
+                    <option value="rabat_train">{t('common:cities.rabat')} - {t('common:locations.trainStation')}</option>
+                    <option value="marrakech_airport">{t('common:cities.marrakech')} - {t('common:locations.airport')}</option>
+                    <option value="marrakech_city">{t('common:cities.marrakech')} - {t('common:locations.cityCenter')}</option>
+                    <option value="marrakech_train">{t('common:cities.marrakech')} - {t('common:locations.trainStation')}</option>
+                    <option value="fes_airport">{t('common:cities.fes')} - {t('common:locations.airport')}</option>
+                    <option value="fes_city">{t('common:cities.fes')} - {t('common:locations.cityCenter')}</option>
+                    <option value="fes_train">{t('common:cities.fes')} - {t('common:locations.trainStation')}</option>
                   </select>
                 </div>
                 <div>
@@ -675,39 +654,18 @@ const CarDetails = () => {
                     onChange={(e) => setRentalForm({ ...rentalForm, dropoffLocation: e.target.value })}
                   >
                     <option value="">{t('booking:form.dropoff')}</option>
-                    <optgroup label={t('common:cities.casablanca')}>
-                      <option value="casa_airport">{t('common:cities.districts.casa_airport')}</option>
-                      <option value="casa_downtown">{t('common:cities.districts.casa_downtown')}</option>
-                      <option value="casa_casa_port">{t('common:cities.districts.casa_casa_port')}</option>
-                      <option value="casa_ain_diab">{t('common:cities.districts.casa_ain_diab')}</option>
-                    </optgroup>
-                    <optgroup label={t('common:cities.rabat')}>
-                      <option value="rabat_airport">{t('common:cities.districts.rabat_airport')}</option>
-                      <option value="rabat_downtown">{t('common:cities.districts.rabat_downtown')}</option>
-                      <option value="rabat_agdal">{t('common:cities.districts.rabat_agdal')}</option>
-                      <option value="rabat_hassan">{t('common:cities.districts.rabat_hassan')}</option>
-                    </optgroup>
-                    <optgroup label={t('common:cities.marrakech')}>
-                      <option value="marrakech_airport">{t('common:cities.districts.marrakech_airport')}</option>
-                      <option value="marrakech_downtown">{t('common:cities.districts.marrakech_downtown')}</option>
-                      <option value="marrakech_gueliz">{t('common:cities.districts.marrakech_gueliz')}</option>
-                      <option value="marrakech_palm">{t('common:cities.districts.marrakech_palm')}</option>
-                    </optgroup>
-                    <optgroup label={t('common:cities.fes')}>
-                      <option value="fes_airport">{t('common:cities.districts.fes_airport')}</option>
-                      <option value="fes_downtown">{t('common:cities.districts.fes_downtown')}</option>
-                      <option value="fes_medina">{t('common:cities.districts.fes_medina')}</option>
-                    </optgroup>
-                    <optgroup label={t('common:cities.tanger')}>
-                      <option value="tanger_airport">{t('common:cities.districts.tanger_airport')}</option>
-                      <option value="tanger_downtown">{t('common:cities.districts.tanger_downtown')}</option>
-                      <option value="tanger_port">{t('common:cities.districts.tanger_port')}</option>
-                    </optgroup>
-                    <optgroup label={t('common:cities.agadir')}>
-                      <option value="agadir_airport">{t('common:cities.districts.agadir_airport')}</option>
-                      <option value="agadir_downtown">{t('common:cities.districts.agadir_downtown')}</option>
-                      <option value="agadir_marina">{t('common:cities.districts.agadir_marina')}</option>
-                    </optgroup>
+                    <option value="casablanca_airport">{t('common:cities.casablanca')} - {t('common:locations.airport')}</option>
+                    <option value="casablanca_city">{t('common:cities.casablanca')} - {t('common:locations.cityCenter')}</option>
+                    <option value="casablanca_train">{t('common:cities.casablanca')} - {t('common:locations.trainStation')}</option>
+                    <option value="rabat_airport">{t('common:cities.rabat')} - {t('common:locations.airport')}</option>
+                    <option value="rabat_city">{t('common:cities.rabat')} - {t('common:locations.cityCenter')}</option>
+                    <option value="rabat_train">{t('common:cities.rabat')} - {t('common:locations.trainStation')}</option>
+                    <option value="marrakech_airport">{t('common:cities.marrakech')} - {t('common:locations.airport')}</option>
+                    <option value="marrakech_city">{t('common:cities.marrakech')} - {t('common:locations.cityCenter')}</option>
+                    <option value="marrakech_train">{t('common:cities.marrakech')} - {t('common:locations.trainStation')}</option>
+                    <option value="fes_airport">{t('common:cities.fes')} - {t('common:locations.airport')}</option>
+                    <option value="fes_city">{t('common:cities.fes')} - {t('common:locations.cityCenter')}</option>
+                    <option value="fes_train">{t('common:cities.fes')} - {t('common:locations.trainStation')}</option>
                   </select>
                 </div>
                 <div>

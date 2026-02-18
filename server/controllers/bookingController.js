@@ -1,4 +1,6 @@
 const Booking = require('../models/Booking');
+const Car = require('../models/Car');
+const emailService = require('../services/emailService');
 
 exports.getBookings = async (req, res) => {
     try {
@@ -47,6 +49,29 @@ exports.createBooking = async (req, res) => {
         };
         
         const bookingId = await Booking.create(bookingData);
+        
+        // Get car details for email
+        let carDetails = null;
+        try {
+            carDetails = await Car.findById(bookingData.car_id);
+        } catch (err) {
+            console.log('Could not fetch car details for email:', err.message);
+        }
+        
+        // Send notification email to agency
+        emailService.sendNewBookingNotification(
+            { ...bookingData, id: bookingId },
+            carDetails
+        ).then(emailResult => {
+            if (emailResult.success) {
+                console.log('✅ Notification email sent successfully');
+            } else {
+                console.error('❌ Failed to send notification email:', emailResult.error);
+            }
+        }).catch(err => {
+            console.error('❌ Email service error:', err);
+        });
+        
         res.status(201).json({ 
             id: bookingId, 
             ...bookingData,

@@ -81,7 +81,7 @@ const Contact = () => {
             
             {submitted ? (
               <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6 text-center">
-                <div className="w-14 h-14 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <div className="w-14 h-14 bg-emerald-100 rounded-2xl flex items-center justify-center mx-autosam-4">
                   <Send className="w-7 h-7 text-emerald-600" />
                 </div>
                 <h3 className="text-lg font-bold text-emerald-800 mb-2">{t('form.success.title')}</h3>
@@ -247,12 +247,21 @@ const Contact = () => {
         {/* Map Section */}
         <div className="mt-16 max-w-6xl mx-auto">
           <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
-            <div className="h-96 bg-slate-100 rounded-2xl flex items-center justify-center border border-slate-200">
-              <div className="text-center">
-                <MapPin className="w-14 h-14 text-slate-400 mx-auto mb-4" />
-                <p className="text-slate-600 font-medium">{t('map.title')}</p>
-                <p className="text-sm text-slate-500">{t('map.subtitle')}</p>
-              </div>
+            <div className="h-96 rounded-2xl overflow-hidden border border-slate-200">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3323.058438603377!2d-7.632196684475449!3d33.58888918073986!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xda7cd4778a113b1%3A0x2e7d0f0e2e5b3b0!2sCasablanca%2C%20Morocco!5e0!3m2!1sen!2sus!4v1620000000000!5m2!1sen!2sus"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title="Localisation AUTOSAM"
+              />
+            </div>
+            <div className="mt-4 text-center">
+              <p className="text-slate-600 font-medium">{t('map.title')}</p>
+              <p className="text-sm text-slate-500">{t('map.subtitle')}</p>
             </div>
           </div>
         </div>
