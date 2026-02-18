@@ -4,14 +4,15 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "installCommand": "npm install",
-  "rewrites": [
+  "routes": [
     {
-      "source": "/api/(.*)",
-      "destination": "https://server-chi-two-10.vercel.app/api/$1"
+      "src": "/api/(.*)",
+      "dest": "https://server-chi-two-10.vercel.app/api/$1"
     },
     {
-      "source": "/(.*)",
-      "destination": "/"
+      "src": "/[^.]+",
+      "dest": "/index.html",
+      "status": 200
     }
   ]
 }
