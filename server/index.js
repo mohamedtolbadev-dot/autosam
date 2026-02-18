@@ -18,7 +18,7 @@ const allowedOrigins = [
   'http://localhost:3000',
   'https://autosam.ma',
   'https://www.autosam.ma',
-  'https://car-rental-caibmd125-mohamedtolbadev-3412s-projects.vercel.app',
+  'https://autosam-three.vercel.app',
   'https://car-rental-gamma-rosy.vercel.app'
 ];
 

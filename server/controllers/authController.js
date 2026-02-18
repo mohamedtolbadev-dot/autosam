@@ -42,7 +42,7 @@ exports.register = async (req, res) => {
             username,
             email,
             password_hash,
-            role: 'customer',
+            role: 'user',
             first_name,
             last_name,
             phone

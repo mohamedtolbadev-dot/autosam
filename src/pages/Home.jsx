@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useCars } from '../context/CarContext';
@@ -77,6 +77,24 @@ const Home = () => {
   const navigate = useNavigate();
   const { t, i18n, ready } = useTranslation(['home', 'common']);
   const { formatPrice } = useCurrency();
+
+  // Add shimmer animation styles
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes shimmer {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+      }
+      .animate-shimmer {
+        animation: shimmer 1.5s ease-in-out infinite;
+      }
+    `;
+    document.head.appendChild(style);
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
   const inputBaseClassName =
     'w-full rounded-xl px-4 py-3 text-slate-800 placeholder:text-slate-400 bg-white border border-slate-200 shadow-sm focus:ring-2 focus:ring-red-500/40 focus:border-red-500 focus:outline-none transition min-h-11';
   const inputWithIconClassName =
@@ -708,15 +726,46 @@ const brands = [
           </header>
         </div>
         <div className="relative overflow-hidden">
-          {/* Loading State */}
+          {/* Skeleton Loading - Light & Glowing - 2 Rows */}
           {loading && (
-            <div className="flex justify-center py-12">
-              <div className="text-center">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-red-50 text-red-600 rounded-full mb-4 animate-pulse">
-                  <IconCar className="w-8 h-8" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                <div key={i} className="bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm">
+                  {/* Image skeleton with shimmer */}
+                  <div className="aspect-[4/3] bg-gradient-to-r from-slate-100 via-slate-200 to-slate-100 relative overflow-hidden rounded-t-2xl">
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer" />
+                  </div>
+                  <div className="p-4 space-y-3">
+                    {/* Title & Price row */}
+                    <div className="flex justify-between items-start">
+                      <div className="space-y-2">
+                        <div className="h-5 w-28 bg-gradient-to-r from-slate-100 to-slate-200 rounded relative overflow-hidden">
+                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-shimmer" />
+                        </div>
+                        <div className="h-3 w-16 bg-slate-100 rounded" />
+                      </div>
+                      <div className="h-6 w-14 bg-gradient-to-r from-red-50 to-red-100 rounded relative overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/60 to-transparent animate-shimmer" />
+                      </div>
+                    </div>
+                    {/* Specs row */}
+                    <div className="flex gap-2 pt-1">
+                      <div className="h-3 w-12 bg-slate-100 rounded" />
+                      <div className="h-3 w-12 bg-slate-100 rounded" />
+                      <div className="h-3 w-12 bg-slate-100 rounded" />
+                    </div>
+                    {/* Divider */}
+                    <div className="h-px bg-slate-50 my-2" />
+                    {/* Actions row */}
+                    <div className="flex justify-between items-center">
+                      <div className="h-4 w-14 bg-slate-100 rounded" />
+                      <div className="h-4 w-16 bg-gradient-to-r from-red-50 to-red-100 rounded relative overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/60 to-transparent animate-shimmer" />
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <p className="text-slate-600 font-medium">{t('loading.title')}</p>
-              </div>
+              ))}
             </div>
           )}
 
@@ -1062,8 +1111,8 @@ const brands = [
                 </p>
                 <div className="mt-4 flex items-center gap-2">
                   <div className="flex items-center text-amber-500">
-                    {[1, 2, 3, 4, 5].map((n) => (
-                      <IconStar key={n} className="w-4 h-4" filled />
+                    {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                      <IconStar key={i} className="w-4 h-4" filled />
                     ))}
                   </div>
                   <span className="text-xs font-semibold text-slate-500">{t('testimonials.rating')}</span>
