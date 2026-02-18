@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { auth, isAdmin } = require('../middleware/adminAuth');
-const { upload } = require('../middleware/upload');
+const { upload } = require('../middleware/cloudinaryUpload');
 const multer = require('multer');
 const Booking = require('../models/Booking');
 const Car = require('../models/Car');
@@ -334,9 +334,9 @@ router.post('/cars', auth, isAdmin, (req, res, next) => {
     });
 }, async (req, res) => {
     try {
-        // Get uploaded files
+        // Get uploaded files from Cloudinary
         const uploadedFiles = req.files || [];
-        const imageUrls = uploadedFiles.map(file => `/uploads/cars/${file.filename}`);
+        const imageUrls = uploadedFiles.map(file => file.path); // Cloudinary returns URL in file.path
         
         // Prepare car data
         const carData = {
@@ -387,9 +387,9 @@ router.put('/cars/:id', auth, isAdmin, (req, res, next) => {
     });
 }, async (req, res) => {
     try {
-        // Get uploaded files
+        // Get uploaded files from Cloudinary
         const uploadedFiles = req.files || [];
-        const newImageUrls = uploadedFiles.map(file => `/uploads/cars/${file.filename}`);
+        const newImageUrls = uploadedFiles.map(file => file.path); // Cloudinary returns URL in file.path
         
         // Get existing car to check if we need to keep old images
         const [existingCar] = await db.query('SELECT * FROM cars WHERE id = ?', [req.params.id]);

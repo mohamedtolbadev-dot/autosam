@@ -739,8 +739,20 @@ const Booking = () => {
               )}
 
               <div className="flex justify-between mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-slate-200">
-                <button type="button" onClick={() => step > 1 && setStep(step - 1)} className={`px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl font-semibold text-sm sm:text-base transition-colors ${step === 1 ? 'bg-slate-200 text-slate-400 cursor-not-allowed' : 'bg-slate-200 text-slate-700 hover:bg-slate-300 focus:outline-none focus:ring-2 focus:ring-red-500'}`} disabled={step === 1}>{t('actions.previous')}</button>
-                <button type="submit" disabled={step === 1 && !canGoNextFromStep1()} className={`px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl font-semibold text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors ${step === 1 && !canGoNextFromStep1() ? 'bg-slate-200 text-slate-400 cursor-not-allowed' : 'bg-red-600 text-white hover:bg-red-700'}`}>{step === 3 ? t('actions.confirmBooking') : t('actions.next')}</button>
+                <button type="button" onClick={() => step > 1 && setStep(step - 1)} className={`px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl font-semibold text-sm sm:text-base transition-colors ${step === 1 ? 'bg-slate-200 text-slate-400 cursor-not-allowed' : 'bg-slate-200 text-slate-700 hover:bg-slate-300 focus:outline-none focus:ring-2 focus:ring-red-500'}`} disabled={step === 1 || bookingLoading}>{t('actions.previous')}</button>
+                <button type="submit" disabled={(step === 1 && !canGoNextFromStep1()) || bookingLoading} className={`px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl font-semibold text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors flex items-center justify-center gap-2 min-w-[140px] ${(step === 1 && !canGoNextFromStep1()) || bookingLoading ? 'bg-slate-200 text-slate-400 cursor-not-allowed' : 'bg-red-600 text-white hover:bg-red-700'}`}>
+                  {bookingLoading && step === 3 ? (
+                    <>
+                      <svg className="animate-spin h-4 w-4 sm:h-5 sm:w-5" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                      <span>{t('actions.processing') || 'Traitement...'}</span>
+                    </>
+                  ) : (
+                    <span>{step === 3 ? t('actions.confirmBooking') : t('actions.next')}</span>
+                  )}
+                </button>
               </div>
             </form>
 

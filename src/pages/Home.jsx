@@ -78,7 +78,7 @@ const Home = () => {
   const { t, i18n, ready } = useTranslation(['home', 'common']);
   const { formatPrice } = useCurrency();
 
-  // Add shimmer animation styles
+  // Add shimmer & pulse animation styles
   useEffect(() => {
     const style = document.createElement('style');
     style.textContent = `
@@ -86,8 +86,31 @@ const Home = () => {
         0% { transform: translateX(-100%); }
         100% { transform: translateX(100%); }
       }
+      @keyframes pulse-glow {
+        0%, 100% { opacity: 0.3; }
+        50% { opacity: 0.9; }
+      }
+      @keyframes heartbeat {
+        0%, 100% { transform: scale(1); opacity: 0.4; }
+        25% { transform: scale(1.01); opacity: 0.6; }
+        50% { transform: scale(1.02); opacity: 0.8; }
+        75% { transform: scale(1.01); opacity: 0.6; }
+      }
+      @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-2px); }
+      }
       .animate-shimmer {
-        animation: shimmer 1.5s ease-in-out infinite;
+        animation: shimmer 1.2s ease-in-out infinite;
+      }
+      .animate-pulse-glow {
+        animation: pulse-glow 1.8s ease-in-out infinite;
+      }
+      .animate-heartbeat {
+        animation: heartbeat 2s ease-in-out infinite;
+      }
+      .animate-float {
+        animation: float 3s ease-in-out infinite;
       }
     `;
     document.head.appendChild(style);
@@ -726,42 +749,47 @@ const brands = [
           </header>
         </div>
         <div className="relative overflow-hidden">
-          {/* Skeleton Loading - Light & Glowing - 2 Rows */}
+          {/* Skeleton Loading - Advanced Pulsing Design */}
           {loading && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-                <div key={i} className="bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm">
-                  {/* Image skeleton with shimmer */}
-                  <div className="aspect-[4/3] bg-gradient-to-r from-slate-100 via-slate-200 to-slate-100 relative overflow-hidden rounded-t-2xl">
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer" />
+                <div 
+                  key={i} 
+                  className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm animate-float"
+                  style={{ animationDelay: `${i * 0.1}s` }}
+                >
+                  {/* Image skeleton - heartbeat glow effect */}
+                  <div className="aspect-4/3 bg-slate-100 relative overflow-hidden rounded-t-2xl animate-heartbeat">
+                    <div className="absolute inset-0 bg-gradient-to-r from-slate-200 via-slate-300 to-slate-200 opacity-60" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/70 to-transparent animate-shimmer" />
+                    {/* Pulse rings */}
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="w-20 h-20 rounded-full bg-white/20 animate-ping" />
+                    </div>
                   </div>
                   <div className="p-4 space-y-3">
                     {/* Title & Price row */}
-                    <div className="flex justify-between items-start">
-                      <div className="space-y-2">
-                        <div className="h-5 w-28 bg-gradient-to-r from-slate-100 to-slate-200 rounded relative overflow-hidden">
+                    <div className="flex justify-between items-start gap-2">
+                      <div className="space-y-2 flex-1">
+                        <div className="h-5 w-32 bg-slate-200 rounded-lg relative overflow-hidden animate-pulse-glow">
                           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-shimmer" />
                         </div>
-                        <div className="h-3 w-16 bg-slate-100 rounded" />
+                        <div className="h-3 w-20 bg-slate-100 rounded-md" />
                       </div>
-                      <div className="h-6 w-14 bg-gradient-to-r from-red-50 to-red-100 rounded relative overflow-hidden">
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/60 to-transparent animate-shimmer" />
-                      </div>
+                      <div className="h-6 w-20 bg-gradient-to-r from-red-100 to-red-200 rounded-lg animate-pulse-glow" />
                     </div>
-                    {/* Specs row */}
-                    <div className="flex gap-2 pt-1">
-                      <div className="h-3 w-12 bg-slate-100 rounded" />
-                      <div className="h-3 w-12 bg-slate-100 rounded" />
-                      <div className="h-3 w-12 bg-slate-100 rounded" />
+                    {/* Specs row - 3 items */}
+                    <div className="flex gap-3 pt-1">
+                      <div className="h-3 w-14 bg-slate-100 rounded-md" />
+                      <div className="h-3 w-14 bg-slate-100 rounded-md" />
+                      <div className="h-3 w-14 bg-slate-100 rounded-md" />
                     </div>
                     {/* Divider */}
-                    <div className="h-px bg-slate-50 my-2" />
+                    <div className="h-px bg-slate-100" />
                     {/* Actions row */}
-                    <div className="flex justify-between items-center">
-                      <div className="h-4 w-14 bg-slate-100 rounded" />
-                      <div className="h-4 w-16 bg-gradient-to-r from-red-50 to-red-100 rounded relative overflow-hidden">
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/60 to-transparent animate-shimmer" />
-                      </div>
+                    <div className="flex justify-between items-center pt-1">
+                      <div className="h-4 w-16 bg-slate-200 rounded-md" />
+                      <div className="h-4 w-20 bg-gradient-to-r from-red-50 to-red-100 rounded-md animate-pulse-glow" />
                     </div>
                   </div>
                 </div>
@@ -829,8 +857,10 @@ const brands = [
                           <p className="text-sm text-slate-500">{car.category}</p>
                         </div>
                         <div className="text-right shrink-0">
-                          <p className="text-xl font-bold text-red-600">{formatPrice(car.price)}</p>
-                          <p className="text-xs text-slate-500">{t('currency.perDay')}</p>
+                          <div className="inline-flex items-baseline gap-1 bg-gradient-to-r from-red-600 to-red-500 px-3 py-1.5 rounded-lg shadow-sm">
+                            <span className="text-lg font-black text-white">{formatPrice(car.price)}</span>
+                            <span className="text-[10px] font-bold text-white/80">{t('common:currency.perDayShort') || '/j'}</span>
+                          </div>
                         </div>
                       </div>
                       <ul className="flex flex-wrap gap-x-3 gap-y-1 text-sm text-slate-600 mb-3">
@@ -844,28 +874,31 @@ const brands = [
                         </li>
                         <li className="flex items-center gap-1">
                           <IconFuel className="w-4 h-4 text-slate-500 shrink-0" />
-                          <span>{t(`vehicles.specs.${car.fuel.toLowerCase()}`)}</span>
+                          <span>{t(`vehicles.specs.${car.fuel.toLowerCase()}`, car.fuel)}</span>
                         </li>
                       </ul>
-                      <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-100">
-                        <span className="text-[#101424] font-semibold text-sm underline underline-offset-4 hover:opacity-80 transition-opacity">
+                      <div className="mt-auto pt-3 border-t border-slate-100 flex items-center gap-2">
+                        <Link
+                          to={`/cars/${car.id}`}
+                          className="flex-1 py-2 text-center text-sm font-semibold text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 hover:border-slate-300 hover:shadow-sm transition-all duration-200"
+                        >
                           {t('actions.details')}
-                        </span>
-                        <button 
+                        </Link>
+                        <button
                           onClick={(e) => {
                             e.stopPropagation();
                             if (car.available && !car.reserved) {
                               navigate(`/booking?car=${car.id}`);
                             }
                           }}
-                          className={`inline-flex items-center gap-1 font-bold text-sm underline underline-offset-4 transition-opacity ${
+                          className={`flex-1 py-2 text-center text-sm font-bold rounded-xl flex items-center justify-center gap-1 transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 ${
                             car.available && !car.reserved
-                              ? 'text-red-600 hover:opacity-80'
-                              : 'text-slate-400 cursor-not-allowed no-underline'
+                              ? 'bg-gradient-to-r from-[#0F172B] to-[#1e293b] text-white hover:from-[#1e293b] hover:to-[#334155]'
+                              : 'bg-slate-100 text-slate-400 cursor-not-allowed'
                           }`}
                         >
                           {car.available && !car.reserved ? t('common:actions.book') : t('cars:car.reserved')}
-                          <IconArrowRight className="w-4 h-4" />
+                          {car.available && !car.reserved && <IconArrowRight className="w-3.5 h-3.5" />}
                         </button>
                       </div>
                     </div>

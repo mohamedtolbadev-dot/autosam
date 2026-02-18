@@ -178,6 +178,11 @@ const AdminCars = () => {
     setCurrentPage(pageNumber);
   };
 
+  const handleShowDetails = (car) => {
+    setSelectedCar(car);
+    setShowDetailModal(true);
+  };
+
   const categories = ['Économique', 'Compacte', 'Berline', 'SUV', 'Premium', 'Luxe'];
   const transmissions = ['Manuelle', 'Automatique'];
   const fuels = ['Essence', 'Diesel', 'Électrique', 'Hybride'];
