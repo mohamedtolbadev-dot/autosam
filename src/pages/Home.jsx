@@ -758,7 +758,7 @@ const brands = [
                   <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-lg hover:border-slate-300 transition-all duration-300">
                     <div className="aspect-[4/3] bg-slate-100 overflow-hidden rounded-t-2xl relative">
                       <img
-                        src={car.image?.startsWith('http') ? car.image : `http://localhost:5000${car.image || ''}`}
+                        src={car.image?.startsWith('http') ? car.image : `https://server-chi-two-10.vercel.app${car.image || ''}`}
                         alt={car.name}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />

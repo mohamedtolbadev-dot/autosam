@@ -17,7 +17,8 @@ const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:3000',
   'https://autosam.ma',
-  'https://www.autosam.ma'
+  'https://www.autosam.ma',
+  'https://car-rental-caibmd125-mohamedtolbadev-3412s-projects.vercel.app'
 ];
 
 app.use(cors({
@@ -95,7 +96,14 @@ app.get('/', (req, res) => {
 });
 
 // Port
-const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => {
+const PORT = process.env.PORT || 5000;
+
+// For local development
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
     console.log(`Serveur démarré sur le port ${PORT}`);
-});
+  });
+}
+
+// Export for Vercel serverless
+module.exports = app;

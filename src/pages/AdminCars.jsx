@@ -117,9 +117,9 @@ const AdminCars = () => {
     });
     // Show existing images as previews
     if (car.images && car.images.length > 0) {
-      setPreviewUrls(car.images.map(img => img.startsWith('http') ? img : `http://localhost:5000${img}`));
+      setPreviewUrls(car.images.map(img => img.startsWith('http') ? img : `https://server-chi-two-10.vercel.app${img}`));
     } else if (car.image) {
-      setPreviewUrls([car.image.startsWith('http') ? car.image : `http://localhost:5000${car.image}`]);
+      setPreviewUrls([car.image.startsWith('http') ? car.image : `https://server-chi-two-10.vercel.app${car.image}`]);
     }
     setShowModal(true);
   };
@@ -236,7 +236,7 @@ const AdminCars = () => {
                         <td className="px-2 sm:px-6 py-3 sm:py-4">
                           <div className="flex items-center gap-2 sm:gap-3">
                             {car.image ? (
-                              <img src={car.image.startsWith('http') ? car.image : `http://localhost:5000${car.image}`} alt={car.name} className="w-8 h-8 sm:w-12 sm:h-12 rounded-lg object-cover shrink-0" />
+                              <img src={car.image.startsWith('http') ? car.image : `https://server-chi-two-10.vercel.app${car.image}`} alt={car.name} className="w-8 h-8 sm:w-12 sm:h-12 rounded-lg object-cover shrink-0" />
                             ) : (
                               <div className="w-8 h-8 sm:w-12 sm:h-12 bg-slate-200 rounded-lg flex items-center justify-center shrink-0">
                                 <svg className="w-4 h-4 sm:w-6 sm:h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -546,7 +546,7 @@ const AdminCars = () => {
                       {selectedCar.images.map((img, index) => (
                         <div key={index} className="relative">
                           <img
-                            src={img.startsWith('http') ? img : `http://localhost:5000${img}`}
+                            src={img.startsWith('http') ? img : `https://server-chi-two-10.vercel.app${img}`}
                             alt={`Image ${index + 1}`}
                             className="w-full h-32 object-cover rounded-lg border border-slate-200"
                           />
@@ -560,7 +560,7 @@ const AdminCars = () => {
                     </div>
                   ) : selectedCar.image ? (
                     <img
-                      src={selectedCar.image.startsWith('http') ? selectedCar.image : `http://localhost:5000${selectedCar.image}`}
+                      src={selectedCar.image.startsWith('http') ? selectedCar.image : `https://server-chi-two-10.vercel.app${selectedCar.image}`}
                       alt={selectedCar.name}
                       className="w-full max-w-md h-48 object-cover rounded-lg border border-slate-200"
                     />

@@ -361,7 +361,7 @@ const CarDetails = () => {
             {activeImage ? (
               <>
                 <img
-                  src={activeImage.startsWith('http') ? activeImage : `http://localhost:5000${activeImage}`}
+                  src={activeImage.startsWith('http') ? activeImage : `https://server-chi-two-10.vercel.app${activeImage}`}
                   alt={car.name}
                   className="w-full h-full object-cover"
                   onClick={() => openLightbox(currentMobileIndex)}
@@ -413,7 +413,7 @@ const CarDetails = () => {
               {activeImage ? (
                 <>
                   <img
-                    src={activeImage.startsWith('http') ? activeImage : `http://localhost:5000${activeImage}`}
+                    src={activeImage.startsWith('http') ? activeImage : `https://server-chi-two-10.vercel.app${activeImage}`}
                     alt={car.name}
                     className="w-full h-full object-cover transition-all duration-500"
                   />
@@ -435,7 +435,7 @@ const CarDetails = () => {
                   onClick={() => openLightbox(1)}
                 >
                   <img
-                    src={additionalImages[0].startsWith('http') ? additionalImages[0] : `http://localhost:5000${additionalImages[0]}`}
+                    src={additionalImages[0].startsWith('http') ? additionalImages[0] : `https://server-chi-two-10.vercel.app${additionalImages[0]}`}
                     alt="Image 1"
                     className="w-full h-full object-cover transition-all duration-500"
                   />
@@ -454,7 +454,7 @@ const CarDetails = () => {
               >
                 {additionalImages[1] ? (
                   <img
-                    src={additionalImages[1].startsWith('http') ? additionalImages[1] : `http://localhost:5000${additionalImages[1]}`}
+                    src={additionalImages[1].startsWith('http') ? additionalImages[1] : `https://server-chi-two-10.vercel.app${additionalImages[1]}`}
                     alt="Image 2"
                     className="w-full h-full object-cover transition-all duration-500"
                   />
@@ -900,7 +900,7 @@ const CarDetails = () => {
             onClick={(e) => e.stopPropagation()}
           >
             <img
-              src={
+              src={ 
                 allImages[currentImageIndex]?.startsWith('http')
                   ? allImages[currentImageIndex]
                   : `http://localhost:5000${allImages[currentImageIndex]}`

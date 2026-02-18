@@ -547,7 +547,7 @@ const Cars = () => {
                     {/* Image Section */}
                     <div className={`relative bg-slate-100 flex items-center justify-center overflow-hidden p-3 ${viewMode === 'list' ? 'sm:w-56 shrink-0 aspect-[4/3] sm:aspect-auto' : 'aspect-[4/3] h-40'}`}>
                         {car.image ? (
-                            <img src={car.image.startsWith('http') ? car.image : `http://localhost:5000${car.image}`} alt={car.name} className="w-full h-full object-contain group-hover:scale-[1.03] transition-transform duration-500" />
+                            <img src={car.image.startsWith('http') ? car.image : `https://server-chi-two-10.vercel.app${car.image}`} alt={car.name} className="w-full h-full object-contain group-hover:scale-[1.03] transition-transform duration-500" />
                         ) : (
                             <IconCar className="w-12 h-12 text-slate-300" />
                         )}

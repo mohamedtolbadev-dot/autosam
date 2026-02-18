@@ -1,7 +1,7 @@
 const mysql = require('mysql2/promise');
 require('dotenv').config();
 
-const { DB_HOST, DB_USER, DB_PASSWORD, DB_NAME } = process.env;
+const { DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PORT, DB_SSL } = process.env;
 
 async function initializeDatabase() {
   try {
@@ -9,7 +9,9 @@ async function initializeDatabase() {
     const connection = await mysql.createConnection({
       host: DB_HOST || 'localhost',
       user: DB_USER || 'root',
-      password: DB_PASSWORD || ''
+      password: DB_PASSWORD || '',
+      port: parseInt(DB_PORT) || 3306,
+      ssl: DB_SSL === 'true' ? { rejectUnauthorized: false } : false
     });
 
     console.log('Connexion MySQL établie...');
@@ -575,7 +577,7 @@ async function initializeDatabase() {
     }
 
     // Vérifier si l'admin existe déjà
-    const [adminRows] = await connection.query('SELECT COUNT(*) as count FROM users WHERE role = "admin"');
+    const [adminRows] = await connection.query('SELECT COUNT(*) as count FROM users WHERE role = \'admin\'');
     
     if (adminRows[0].count === 0) {
       console.log('Création du compte administrateur initial...');

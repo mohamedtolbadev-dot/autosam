@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL = 'https://server-chi-two-10.vercel.app/api';
 
 /**
  * Fonction API générique pour appeler le backend
