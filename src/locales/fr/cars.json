@@ -120,8 +120,6 @@
     "details": "Voir les détails"
   },
   "cars": {
-    "loading": "Chargement des véhicules...",
-    "loadingDetails": "Chargement des détails...",
     "error": "Erreur de connexion",
     "empty": "Aucun véhicule trouvé",
     "emptyDetails": "Aucun véhicule ne correspond à votre recherche.",

@@ -129,6 +129,24 @@ const Cars = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('recommended'); // 'priceAsc', 'priceDesc', 'recommended'
 
+  // Add shimmer animation styles for skeleton
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes shimmer {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+      }
+      .animate-shimmer {
+        animation: shimmer 1.5s ease-in-out infinite;
+      }
+    `;
+    document.head.appendChild(style);
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
+
   // Persistance des favoris (localStorage) - filtrer les anciens IDs numériques
   useEffect(() => {
     try {
@@ -498,6 +516,70 @@ const Cars = () => {
                   </div>
                 )}
             </div>
+
+            {/* Loading Skeleton - Matches actual car card dimensions */}
+            {loading && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                {[1, 2, 3, 4, 5, 6].map((i) => (
+                  <article key={i} className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm flex flex-col">
+                    {/* Image Section - Same as actual card: aspect-[4/3] h-40, p-3 */}
+                    <div className="relative bg-slate-50 flex items-center justify-center overflow-hidden p-3 aspect-[4/3] h-40">
+                      <div className="w-full h-full bg-gradient-to-r from-slate-100 to-slate-200 rounded-lg relative overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer" />
+                      </div>
+                    </div>
+
+                    {/* Content Section - Same padding p-5 */}
+                    <div className="p-5 flex flex-col flex-1 justify-between">
+                      <div>
+                        {/* Title and Price Row - Same structure as actual card */}
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-2 gap-2 sm:gap-3">
+                          <div className="min-w-0">
+                            {/* Title - text-lg height equivalent */}
+                            <div className="h-6 w-36 bg-gradient-to-r from-slate-100 to-slate-200 rounded relative overflow-hidden mb-1">
+                              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer" />
+                            </div>
+                            {/* Category - text-sm height equivalent */}
+                            <div className="h-4 w-20 bg-slate-100 rounded" />
+                          </div>
+                          <div className="text-right shrink-0">
+                            {/* From label - text-xs */}
+                            <div className="h-3 w-12 bg-slate-100 rounded ml-auto mb-1" />
+                            {/* Price - text-xl height equivalent */}
+                            <div className="h-7 w-24 bg-gradient-to-r from-slate-100 to-slate-200 rounded relative overflow-hidden">
+                              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer" />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Specs Grid - Same structure: grid-cols-2 gap-y-2 gap-x-4 my-4 */}
+                        <div className="grid grid-cols-2 gap-y-2 gap-x-4 my-4">
+                          {[1, 2, 3, 4].map((j) => (
+                            <div key={j} className="flex items-center gap-2">
+                              <div className="w-4 h-4 bg-slate-100 rounded" />
+                              <div className="h-3 w-16 bg-slate-100 rounded" />
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Features Tags - Same structure: flex-wrap gap-1.5 mt-3 */}
+                        <div className="flex flex-wrap gap-1.5 mt-3">
+                          {[1, 2, 3, 4].map((k) => (
+                            <div key={k} className="h-5 w-14 bg-slate-100 rounded" />
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Footer Actions - Same: mt-2 pt-4 border-t border-slate-100 */}
+                      <div className="mt-2 pt-4 border-t border-slate-100 flex flex-col sm:flex-row sm:justify-end gap-3">
+                        <div className="h-5 w-14 bg-slate-100 rounded" />
+                        <div className="h-5 w-20 bg-slate-100 rounded" />
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            )}
 
             {/* Error State */}
             {error && !loading && (

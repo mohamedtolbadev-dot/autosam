@@ -97,6 +97,24 @@ const CarDetails = () => {
   const { selectedCar, fetchCarById, loading, error } = useCars();
   const { formatPrice } = useCurrency();
   const { t, i18n } = useTranslation(['cars', 'common', 'booking']);
+
+  // Add shimmer animation styles
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes shimmer {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+      }
+      .animate-shimmer {
+        animation: shimmer 1.5s ease-in-out infinite;
+      }
+    `;
+    document.head.appendChild(style);
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
   
   const car = selectedCar;
 
@@ -281,16 +299,152 @@ const CarDetails = () => {
     rentalForm.startDate !== rentalForm.endDate &&
     isDateRangeValid;
 
-  // Loading state
+  // Loading state - Skeleton
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
-        <div className="text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-red-50 text-red-600 rounded-full mb-4 animate-pulse">
-            <IconCar className="w-8 h-8" />
+      <div className="min-h-screen bg-slate-50 min-w-0 overflow-x-hidden">
+        {/* Breadcrumb Skeleton */}
+        <div className="bg-white border-b border-slate-200">
+          <div className="container mx-auto px-4 sm:px-6 max-w-6xl py-3 sm:py-4 min-w-0">
+            <div className="h-5 w-20 bg-gradient-to-r from-slate-100 to-slate-200 rounded relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer" />
+            </div>
           </div>
-          <h1 className="text-xl font-bold text-slate-800 mb-2">{t('cars.loading')}</h1>
-          <p className="text-slate-600">{t('cars.loadingDetails')}</p>
+        </div>
+
+        <div className="container mx-auto px-4 sm:px-6 max-w-6xl py-4 sm:py-6 lg:py-8 min-w-0 space-y-6">
+          {/* Image Gallery Skeleton */}
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="md:hidden relative aspect-4/3 bg-gradient-to-r from-slate-100 via-slate-200 to-slate-100 overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer" />
+            </div>
+            <div className="hidden md:grid md:grid-cols-4 gap-2 p-2">
+              {/* Main large image skeleton - takes 3 columns */}
+              <div className="md:col-span-3 relative aspect-4/3 md:aspect-auto md:h-96 bg-gradient-to-r from-slate-100 via-slate-200 to-slate-100 rounded-xl overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer" />
+              </div>
+              {/* Right side skeleton - takes 1 column */}
+              <div className="md:col-span-1 grid grid-rows-2 gap-2">
+                <div className="relative h-full bg-gradient-to-r from-slate-100 to-slate-200 rounded-xl overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer" />
+                </div>
+                <div className="relative h-full bg-gradient-to-r from-slate-100 to-slate-200 rounded-xl overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Two Column Layout Skeleton */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+            {/* Left Column - Details Skeleton */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* Vehicle details skeleton */}
+              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-5 lg:p-6">
+                <div className="flex flex-col sm:flex-row justify-between items-start gap-3 sm:gap-4 mb-4">
+                  <div className="space-y-2 flex-1">
+                    <div className="h-7 w-48 bg-gradient-to-r from-slate-100 to-slate-200 rounded relative overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-shimmer" />
+                    </div>
+                    <div className="h-4 w-32 bg-slate-100 rounded" />
+                    <div className="flex gap-2 mt-2">
+                      <div className="h-6 w-20 bg-slate-100 rounded-full" />
+                      <div className="h-6 w-24 bg-slate-100 rounded-full" />
+                      <div className="h-6 w-16 bg-slate-100 rounded-full" />
+                    </div>
+                  </div>
+                  <div className="space-y-2 shrink-0">
+                    <div className="h-6 w-24 bg-gradient-to-r from-slate-100 to-slate-200 rounded relative overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/60 to-transparent animate-shimmer" />
+                    </div>
+                    <div className="h-8 w-28 bg-gradient-to-r from-slate-100 to-slate-200 rounded relative overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-shimmer" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Description skeleton */}
+                <div className="space-y-2 mb-5 sm:mb-6">
+                  <div className="h-4 w-full bg-slate-100 rounded" />
+                  <div className="h-4 w-11/12 bg-slate-100 rounded" />
+                  <div className="h-4 w-4/5 bg-slate-100 rounded" />
+                </div>
+
+                {/* Specs skeleton */}
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-4 mb-5 sm:mb-6">
+                  {[1, 2, 3, 4].map((i) => (
+                    <div key={i} className="flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3 lg:p-4 bg-slate-50 rounded-xl border border-slate-100">
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-slate-100 to-slate-200 rounded-xl relative overflow-hidden shrink-0">
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/60 to-transparent animate-shimmer" />
+                      </div>
+                      <div className="space-y-1">
+                        <div className="h-3 w-12 bg-slate-100 rounded" />
+                        <div className="h-4 w-8 bg-slate-200 rounded" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Equipment skeleton */}
+                <div className="space-y-3">
+                  <div className="h-5 w-24 bg-slate-200 rounded" />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {[1, 2, 3, 4].map((i) => (
+                      <div key={i} className="flex items-center gap-2">
+                        <div className="w-4 h-4 bg-slate-200 rounded" />
+                        <div className="h-4 w-32 bg-slate-100 rounded" />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Included skeleton */}
+              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-5 lg:p-6">
+                <div className="h-5 w-32 bg-slate-200 rounded mb-3" />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {[1, 2, 3, 4].map((i) => (
+                    <div key={i} className="flex items-start gap-2">
+                      <div className="w-4 h-4 bg-slate-200 rounded mt-0.5" />
+                      <div className="h-4 w-40 bg-slate-100 rounded" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column - Booking Sidebar Skeleton */}
+            <div className="lg:col-span-1 lg:order-last">
+              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-5 lg:p-6">
+                <div className="text-center mb-4 sm:mb-6 pb-4 sm:pb-6 border-b border-slate-100 space-y-2">
+                  <div className="h-3 w-20 bg-slate-100 rounded mx-auto" />
+                  <div className="h-10 w-32 bg-gradient-to-r from-slate-100 to-slate-200 rounded mx-auto relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/60 to-transparent animate-shimmer" />
+                  </div>
+                  <div className="h-3 w-16 bg-slate-100 rounded mx-auto" />
+                </div>
+
+                <div className="space-y-3 sm:space-y-4">
+                  {[1, 2, 3, 4].map((i) => (
+                    <div key={i}>
+                      <div className="flex items-center gap-2 mb-1.5 sm:mb-2">
+                        <div className="w-4 h-4 bg-slate-100 rounded" />
+                        <div className="h-4 w-24 bg-slate-100 rounded" />
+                      </div>
+                      <div className="h-10 w-full bg-gradient-to-r from-slate-100 to-slate-200 rounded-xl relative overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-shimmer" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Button skeleton */}
+                <div className="mt-4 sm:mt-6 h-12 w-full bg-gradient-to-r from-slate-100 to-slate-200 rounded-xl relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/60 to-transparent animate-shimmer" />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -407,9 +561,9 @@ const CarDetails = () => {
           </div>
 
           {/* Desktop: Grid layout */}
-          <div className="hidden md:grid md:grid-cols-5 gap-2 p-2">
+          <div className="hidden md:grid md:grid-cols-4 gap-2 p-2">
             {/* Main large image - takes 3 columns */}
-            <div className="md:col-span-3 relative aspect-[4/3] md:aspect-auto md:h-full bg-slate-100 rounded-xl overflow-hidden cursor-pointer group" onClick={() => openLightbox(0)}>
+            <div className="md:col-span-3 relative aspect-[4/3] md:aspect-auto md:h-96 bg-slate-100 rounded-xl overflow-hidden cursor-pointer group" onClick={() => openLightbox(0)}>
               {activeImage ? (
                 <>
                   <img
@@ -426,8 +580,8 @@ const CarDetails = () => {
               )}
             </div>
 
-            {/* Right side - 2 stacked images */}
-            <div className="md:col-span-2 grid grid-rows-2 gap-2">
+            {/* Right side - 2 stacked images (smaller) */}
+            <div className="md:col-span-1 grid grid-rows-2 gap-2">
               {/* First additional image */}
               {additionalImages[0] ? (
                 <div 

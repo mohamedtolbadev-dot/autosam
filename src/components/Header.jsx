@@ -45,6 +45,7 @@ const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [showMobileUserModal, setShowMobileUserModal] = useState(false);
   const location = useLocation();
 
   const navLinks = [
@@ -262,7 +263,7 @@ const Header = () => {
                 <>
                   <div className="h-4 w-px bg-slate-200" />
                   <button
-                    onClick={() => setShowUserMenu(!showUserMenu)}
+                    onClick={() => setShowMobileUserModal(true)}
                     className="p-2 text-slate-700 hover:text-red-600 hover:bg-slate-100 rounded-lg transition-colors"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -318,47 +319,8 @@ const Header = () => {
             
             <div className="h-px bg-slate-100 my-4 mx-4" />
             
-            {/* Mobile Auth Section */}
-            {isAuthenticated ? (
-              <div className="bg-slate-50 rounded-2xl p-4 mb-2 mt-2">
-                <div className="flex items-center gap-3 mb-4 px-2">
-                  <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center text-red-600">
-                    <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-xs font-medium text-slate-400">{t('booking:header.welcome')}</p>
-                    <p className="text-base font-bold text-slate-800 truncate">{customer?.first_name || customer?.email}</p>
-                  </div>
-                </div>
-                
-                <div className="flex flex-col gap-1">
-                  <Link
-                    to="/my-bookings"
-                    className="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-700 hover:bg-white transition-colors"
-                    onClick={() => setMobileOpen(false)}
-                  >
-                    <svg className="w-5 h-5 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                    </svg>
-                    <span className="font-bold text-sm">{t('booking:header.myBookings')}</span>
-                  </Link>
-                  <button
-                    onClick={() => {
-                      logout();
-                      setMobileOpen(false);
-                    }}
-                    className="flex items-center gap-3 px-3 py-3 rounded-xl text-red-600 hover:bg-red-50 transition-colors"
-                  >
-                    <svg className="w-5 h-5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                    </svg>
-                    <span className="font-bold text-sm">{t('booking:header.logout')}</span>
-                  </button>
-                </div>
-              </div>
-            ) : (
+            {/* Mobile Auth Section - Only show login/register buttons */}
+            {!isAuthenticated && (
               <div className="grid grid-cols-2 gap-3 mb-2 mt-3">
                 <button
                   onClick={() => {
@@ -387,10 +349,73 @@ const Header = () => {
               </div>
             )}
             
-            <div className="h-px bg-slate-100 my-4 mx-4 md:hidden" />
           </nav>
         </div>
       )}
+      {/* Mobile User Modal - appears when clicking user icon */}
+      {showMobileUserModal && (
+        <>
+          {/* Overlay */}
+          <div 
+            className="fixed inset-0 bg-slate-900/30 backdrop-blur-sm z-50 md:hidden"
+            onClick={() => setShowMobileUserModal(false)}
+          />
+          {/* Modal */}
+          <div className="fixed inset-x-2 sm:inset-x-4 top-[60px] sm:top-[70px] bg-white rounded-2xl shadow-2xl border border-slate-100 z-50 md:hidden max-w-sm mx-auto animate-in slide-in-from-top-2 fade-in duration-200 max-h-[calc(100vh-80px)] overflow-y-auto">
+            <div className="p-4">
+              {/* Header */}
+              <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-red-600">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-slate-400">{t('booking:header.welcome')}</p>
+                    <p className="text-sm font-bold text-slate-800">{customer?.first_name || customer?.email}</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowMobileUserModal(false)}
+                  className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              {/* Actions */}
+              <div className="space-y-2">
+                <Link
+                  to="/my-bookings"
+                  onClick={() => setShowMobileUserModal(false)}
+                  className="flex items-center gap-3 w-full px-4 py-3 rounded-xl bg-slate-50 text-slate-700 hover:bg-slate-100 transition-colors"
+                >
+                  <svg className="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                  </svg>
+                  <span className="font-semibold">{t('booking:header.myBookings')}</span>
+                </Link>
+                <button
+                  onClick={() => {
+                    logout();
+                    setShowMobileUserModal(false);
+                  }}
+                  className="flex items-center gap-3 w-full px-4 py-3 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 transition-colors"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                  <span className="font-semibold">{t('booking:header.logout')}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
       <LoginModal 
         isOpen={showLoginModal} 
         onClose={() => setShowLoginModal(false)}

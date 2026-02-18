@@ -82,7 +82,7 @@
     "fuel": "Fuel"
   },
   "cars": {
-    "loading": "Loading vehicles...",
+    "loading": "hicles...",
     "loadingDetails": "Loading details...",
     "error": "Connection error",
     "empty": "No vehicle found",
@@ -101,10 +101,7 @@
     "perDay": "per day",
     "noAdditionalImages": "No additional images"
   },
-  "loading": {
-    "title": "Loading vehicles...",
-    "subtitle": "Fetching vehicles from server"
-  },
+  
   "error": {
     "title": "Error loading vehicles",
     "connection": "Connection error",

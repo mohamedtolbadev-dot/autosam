@@ -104,6 +104,24 @@ const AdminDashboard = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Add shimmer animation styles for skeleton
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes shimmer {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+      }
+      .animate-shimmer {
+        animation: shimmer 1.5s ease-in-out infinite;
+      }
+    `;
+    document.head.appendChild(style);
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
+
   const markAsSeen = (bookingId) => {
     setSeenBookingIds(prev => [...prev, bookingId]);
     setNotifications(prev => 
@@ -138,9 +156,106 @@ const AdminDashboard = () => {
 
   if (initializing) {
     return (
-      <div className="flex items-center justify-center h-screen bg-slate-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
-      </div>
+      <AdminLayout>
+        <div className="p-4 sm:p-6 lg:p-8">
+          {/* Header Skeleton */}
+          <div className="mb-6 sm:mb-8 flex items-center justify-between">
+            <div>
+              <div className="h-6 w-48 bg-gradient-to-r from-slate-100 to-slate-200 rounded relative overflow-hidden mb-2">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer" />
+              </div>
+              <div className="h-4 w-64 bg-slate-100 rounded" />
+            </div>
+            <div className="w-10 h-10 bg-slate-100 rounded-lg" />
+          </div>
+
+          {/* Stats Cards Skeleton */}
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-6 sm:mb-8">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="bg-white rounded-xl border border-slate-200 p-4 sm:p-6 shadow-sm">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="h-3 w-20 bg-slate-100 rounded mb-2" />
+                    <div className="h-6 w-24 bg-gradient-to-r from-slate-100 to-slate-200 rounded relative overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer" />
+                    </div>
+                  </div>
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-100 rounded-lg" />
+                </div>
+                <div className="mt-3 sm:mt-4 h-3 w-28 bg-slate-100 rounded" />
+              </div>
+            ))}
+          </div>
+
+          {/* Three Column Section Skeleton */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Top Cars Skeleton */}
+            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+              <div className="h-5 w-28 bg-gradient-to-r from-slate-100 to-slate-200 rounded relative overflow-hidden mb-4">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer" />
+              </div>
+              <div className="space-y-3">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <div className="w-6 h-6 bg-slate-100 rounded-full" />
+                    <div className="flex-1">
+                      <div className="h-3 w-24 bg-slate-100 rounded mb-1" />
+                      <div className="h-2 w-16 bg-slate-100 rounded" />
+                    </div>
+                    <div className="h-3 w-8 bg-slate-100 rounded" />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Top Locations Skeleton */}
+            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+              <div className="h-5 w-28 bg-gradient-to-r from-slate-100 to-slate-200 rounded relative overflow-hidden mb-4">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer" />
+              </div>
+              <div className="space-y-3">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <div key={i} className="flex items-center justify-between gap-2">
+                    <div className="h-3 w-24 bg-slate-100 rounded" />
+                    <div className="flex items-center gap-2">
+                      <div className="w-16 h-2 bg-slate-100 rounded-full" />
+                      <div className="h-3 w-4 bg-slate-100 rounded" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Status Distribution Skeleton */}
+            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+              <div className="h-5 w-24 bg-gradient-to-r from-slate-100 to-slate-200 rounded relative overflow-hidden mb-4">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer" />
+              </div>
+              <div className="space-y-3">
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i}>
+                    <div className="flex justify-between mb-1">
+                      <div className="h-3 w-16 bg-slate-100 rounded" />
+                      <div className="h-3 w-6 bg-slate-100 rounded" />
+                    </div>
+                    <div className="w-full h-2 bg-slate-100 rounded-full" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Chart Skeleton */}
+          <div className="mt-8 bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+            <div className="h-5 w-40 bg-gradient-to-r from-slate-100 to-slate-200 rounded relative overflow-hidden mb-4">
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer" />
+            </div>
+            <div className="h-64 bg-slate-50 rounded-lg relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" />
+            </div>
+          </div>
+        </div>
+      </AdminLayout>
     );
   }
 
@@ -249,9 +364,93 @@ const AdminDashboard = () => {
         </div>
 
         {loading ? (
-          <div className="flex items-center justify-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
-          </div>
+          <>
+            {/* Stats Cards Skeleton */}
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-6 sm:mb-8">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="bg-white rounded-xl border border-slate-200 p-4 sm:p-6 shadow-sm">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="h-3 w-20 bg-slate-100 rounded mb-2" />
+                      <div className="h-6 w-24 bg-gradient-to-r from-slate-100 to-slate-200 rounded relative overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer" />
+                      </div>
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-100 rounded-lg" />
+                  </div>
+                  <div className="mt-3 sm:mt-4 h-3 w-28 bg-slate-100 rounded" />
+                </div>
+              ))}
+            </div>
+
+            {/* Three Column Section Skeleton */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {/* Top Cars Skeleton */}
+              <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+                <div className="h-5 w-28 bg-gradient-to-r from-slate-100 to-slate-200 rounded relative overflow-hidden mb-4">
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer" />
+                </div>
+                <div className="space-y-3">
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <div key={i} className="flex items-center gap-3">
+                      <div className="w-6 h-6 bg-slate-100 rounded-full" />
+                      <div className="flex-1">
+                        <div className="h-3 w-24 bg-slate-100 rounded mb-1" />
+                        <div className="h-2 w-16 bg-slate-100 rounded" />
+                      </div>
+                      <div className="h-3 w-8 bg-slate-100 rounded" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Top Locations Skeleton */}
+              <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+                <div className="h-5 w-28 bg-gradient-to-r from-slate-100 to-slate-200 rounded relative overflow-hidden mb-4">
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer" />
+                </div>
+                <div className="space-y-3">
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <div key={i} className="flex items-center justify-between gap-2">
+                      <div className="h-3 w-24 bg-slate-100 rounded" />
+                      <div className="flex items-center gap-2">
+                        <div className="w-16 h-2 bg-slate-100 rounded-full" />
+                        <div className="h-3 w-4 bg-slate-100 rounded" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Status Distribution Skeleton */}
+              <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+                <div className="h-5 w-24 bg-gradient-to-r from-slate-100 to-slate-200 rounded relative overflow-hidden mb-4">
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer" />
+                </div>
+                <div className="space-y-3">
+                  {[1, 2, 3, 4].map((i) => (
+                    <div key={i}>
+                      <div className="flex justify-between mb-1">
+                        <div className="h-3 w-16 bg-slate-100 rounded" />
+                        <div className="h-3 w-6 bg-slate-100 rounded" />
+                      </div>
+                      <div className="w-full h-2 bg-slate-100 rounded-full" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Chart Skeleton */}
+            <div className="mt-8 bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+              <div className="h-5 w-40 bg-gradient-to-r from-slate-100 to-slate-200 rounded relative overflow-hidden mb-4">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer" />
+              </div>
+              <div className="h-64 bg-slate-50 rounded-lg relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" />
+              </div>
+            </div>
+          </>
         ) : (
           <>
             {/* Stats Cards */}

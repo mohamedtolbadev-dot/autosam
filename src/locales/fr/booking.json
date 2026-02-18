@@ -75,13 +75,13 @@
     "next": "Suivant",
     "confirmBooking": "Confirmer la réservation",
     "cancel": "Annuler",
+    "close": "Fermer",
     "ok": "OK",
     "clear": "Effacer",
     "today": "Aujourd'hui",
     "login": "Se connecter",
     "details": "Détails",
-    "bookNow": "Réserver maintenant",
-    "close": "Fermer"
+    "bookNow": "Réserver maintenant"
   },
   "messages": {
     "loading": "Chargement...",
@@ -199,7 +199,30 @@
     "dates": "Dates",
     "fromTo": "Du {{start}} au {{end}}",
     "pickupLocation": "Lieu de retrait",
-    "backToHome": "Retour à l'accueil"
+    "returnLocation": "Lieu de restitution",
+    "bookedOn": "Réservé le {{date}}",
+    "viewDetails": "Voir les détails",
+    "backToHome": "Retour à l'accueil",
+    "detailsModal": {
+      "title": "Détails de la réservation",
+      "status": "Statut",
+      "vehicle": "Véhicule",
+      "model": "Modèle",
+      "category": "Catégorie",
+      "rentalDetails": "Détails de location",
+      "startDate": "Date de début",
+      "endDate": "Date de retour",
+      "priceDetails": "Détails du prix",
+      "vehicleRental": "Location du véhicule",
+      "premiumInsurance": "Assurance premium",
+      "options": "Options",
+      "customerInfo": "Vos coordonnées",
+      "fullName": "Nom complet",
+      "email": "Email",
+      "phone": "Téléphone",
+      "notProvided": "Non fourni",
+      "notes": "Notes"
+    }
   },
   "included": {
     "title": "Inclus :",

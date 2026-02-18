@@ -27,6 +27,24 @@ const MyBookings = () => {
     }
   }, [isAuthenticated]);
 
+  // Add shimmer animation styles
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes shimmer {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+      }
+      .animate-shimmer {
+        animation: shimmer 1.5s ease-in-out infinite;
+      }
+    `;
+    document.head.appendChild(style);
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
+
   const fetchMyBookings = async () => {
     try {
       setLoading(true);
@@ -118,8 +136,87 @@ const MyBookings = () => {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
+      <div className="min-h-screen bg-slate-50 py-8 px-4 sm:px-6 lg:px-8">
+        {/* Header skeleton */}
+        <div className="max-w-4xl mx-auto">
+          <div className="mb-8">
+            <div className="h-8 w-48 bg-gradient-to-r from-slate-100 to-slate-200 rounded mb-2 relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-shimmer" />
+            </div>
+            <div className="h-4 w-64 bg-slate-100 rounded relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer" />
+            </div>
+          </div>
+          
+          {/* Booking cards skeleton - 3 cards */}
+          <div className="space-y-4">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                {/* Card Header skeleton */}
+                <div className="p-6 border-b border-slate-100">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <div className="h-4 w-24 bg-slate-100 rounded relative overflow-hidden">
+                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-shimmer" />
+                        </div>
+                        <div className="h-5 w-16 bg-gradient-to-r from-slate-100 to-slate-200 rounded-full relative overflow-hidden">
+                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/60 to-transparent animate-shimmer" />
+                        </div>
+                      </div>
+                      <div className="h-6 w-32 bg-gradient-to-r from-slate-100 to-slate-200 rounded relative overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-shimmer" />
+                      </div>
+                      <div className="h-3 w-20 bg-slate-100 rounded" />
+                    </div>
+                    <div className="space-y-2">
+                      <div className="h-7 w-24 bg-gradient-to-r from-slate-100 to-slate-200 rounded relative overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-shimmer" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Status Timeline skeleton */}
+                <div className="px-6 py-4 bg-slate-50">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-3 h-3 rounded-full bg-slate-200" />
+                    <div className="h-4 w-20 bg-slate-100 rounded relative overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer" />
+                    </div>
+                  </div>
+                  <div className="h-4 w-48 bg-slate-100 rounded ml-5" />
+                </div>
+
+                {/* Details skeleton */}
+                <div className="px-6 py-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="flex items-start gap-3">
+                      <div className="w-5 h-5 bg-slate-100 rounded mt-0.5" />
+                      <div className="space-y-1">
+                        <div className="h-4 w-16 bg-slate-200 rounded" />
+                        <div className="h-3 w-32 bg-slate-100 rounded" />
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <div className="w-5 h-5 bg-slate-100 rounded mt-0.5" />
+                      <div className="space-y-1">
+                        <div className="h-4 w-20 bg-slate-200 rounded" />
+                        <div className="h-3 w-28 bg-slate-100 rounded" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Footer skeleton */}
+                <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+                  <div className="h-4 w-20 bg-slate-100 rounded" />
+                  <div className="h-3 w-24 bg-slate-100 rounded" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
@@ -317,49 +414,49 @@ const MyBookings = () => {
 
         {/* Booking Details Modal */}
         {showDetailsModal && selectedBooking && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+          <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4">
             <div className="absolute inset-0 bg-black/50" onClick={closeDetailsModal} />
-            <div className="relative z-10 w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white rounded-2xl shadow-2xl">
+            <div className="relative z-10 w-full sm:max-w-2xl h-[85vh] sm:h-auto sm:max-h-[90vh] overflow-y-auto bg-white sm:rounded-2xl shadow-2xl rounded-t-2xl">
               {/* Modal Header */}
-              <div className="sticky top-0 bg-white border-b border-slate-200 p-6 flex justify-between items-center">
+              <div className="sticky top-0 bg-white border-b border-slate-200 p-4 sm:p-6 flex justify-between items-center">
                 <div>
-                  <h2 className="text-xl font-bold text-slate-800">{t('booking:myBookings.detailsModal.title')}</h2>
-                  <p className="text-sm text-slate-500">#{selectedBooking.id}</p>
+                  <h2 className="text-lg sm:text-xl font-bold text-slate-800">{t('booking:myBookings.detailsModal.title')}</h2>
+                  <p className="text-xs sm:text-sm text-slate-500">#{selectedBooking.id}</p>
                 </div>
                 <button
                   onClick={closeDetailsModal}
                   className="text-slate-400 hover:text-slate-600 p-1"
                 >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
               </div>
 
               {/* Modal Content */}
-              <div className="p-6 space-y-6">
+              <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
                 {/* Status Banner */}
-                <div className={`p-4 rounded-lg border ${getStatusColor(selectedBooking.status)}`}>
-                  <div className="flex items-center justify-between">
-                    <span className="font-semibold">{t('booking:myBookings.detailsModal.status')}: {getStatusLabel(selectedBooking.status)}</span>
-                    <span className="text-sm">
+                <div className={`p-3 sm:p-4 rounded-lg border ${getStatusColor(selectedBooking.status)}`}>
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-0">
+                    <span className="font-semibold text-sm sm:text-base">{t('booking:myBookings.detailsModal.status')}: {getStatusLabel(selectedBooking.status)}</span>
+                    <span className="text-xs sm:text-sm">
                       {t('booking:myBookings.bookedOn', { date: formatDate(selectedBooking.created_at) })}
                     </span>
                   </div>
                 </div>
 
                 {/* Vehicle Info */}
-                <div className="bg-slate-50 rounded-lg p-4">
-                  <h3 className="font-semibold text-slate-800 mb-3 flex items-center gap-2">
-                    <svg className="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="bg-slate-50 rounded-lg p-3 sm:p-4">
+                  <h3 className="font-semibold text-slate-800 mb-2 sm:mb-3 flex items-center gap-2 text-sm sm:text-base">
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
                     </svg>
                     {t('booking:myBookings.detailsModal.vehicle')}
                   </h3>
-                  <div className="flex gap-4 items-start">
+                  <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start">
                     {selectedBooking.car_image && (
-                      <div className="w-32 h-24 rounded-lg overflow-hidden bg-slate-200 shrink-0">
+                      <div className="w-full sm:w-32 h-40 sm:h-24 rounded-lg overflow-hidden bg-slate-200 shrink-0">
                         <img 
                           src={selectedBooking.car_image} 
                           alt={selectedBooking.car_name}
@@ -368,122 +465,122 @@ const MyBookings = () => {
                         />
                       </div>
                     )}
-                    <div className="flex-1">
-                      <p className="text-sm text-slate-500">{t('booking:myBookings.detailsModal.model')}</p>
-                      <p className="font-medium text-slate-800">{selectedBooking.car_name}</p>
-                      <p className="text-sm text-slate-500 mt-2">{t('booking:myBookings.detailsModal.category')}</p>
-                      <p className="font-medium text-slate-800">{selectedBooking.car_category}</p>
+                    <div className="flex-1 w-full">
+                      <p className="text-xs sm:text-sm text-slate-500">{t('booking:myBookings.detailsModal.model')}</p>
+                      <p className="font-medium text-slate-800 text-sm sm:text-base">{selectedBooking.car_name}</p>
+                      <p className="text-xs sm:text-sm text-slate-500 mt-1 sm:mt-2">{t('booking:myBookings.detailsModal.category')}</p>
+                      <p className="font-medium text-slate-800 text-sm sm:text-base">{selectedBooking.car_category}</p>
                     </div>
                   </div>
                 </div>
 
                 {/* Rental Details */}
-                <div className="bg-slate-50 rounded-lg p-4">
-                  <h3 className="font-semibold text-slate-800 mb-3 flex items-center gap-2">
-                    <svg className="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="bg-slate-50 rounded-lg p-3 sm:p-4">
+                  <h3 className="font-semibold text-slate-800 mb-2 sm:mb-3 flex items-center gap-2 text-sm sm:text-base">
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                     {t('booking:myBookings.detailsModal.rentalDetails')}
                   </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div>
-                      <p className="text-sm text-slate-500">{t('booking:myBookings.detailsModal.startDate')}</p>
-                      <p className="font-medium text-slate-800">{formatDate(selectedBooking.pickup_date)}</p>
-                      <p className="text-sm text-slate-600">{selectedBooking.pickup_time}</p>
+                      <p className="text-xs sm:text-sm text-slate-500">{t('booking:myBookings.detailsModal.startDate')}</p>
+                      <p className="font-medium text-slate-800 text-sm sm:text-base">{formatDate(selectedBooking.pickup_date)}</p>
+                      <p className="text-xs sm:text-sm text-slate-600">{selectedBooking.pickup_time}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-slate-500">{t('booking:myBookings.detailsModal.endDate')}</p>
-                      <p className="font-medium text-slate-800">{formatDate(selectedBooking.return_date)}</p>
-                      <p className="text-sm text-slate-600">{selectedBooking.return_time}</p>
+                      <p className="text-xs sm:text-sm text-slate-500">{t('booking:myBookings.detailsModal.endDate')}</p>
+                      <p className="font-medium text-slate-800 text-sm sm:text-base">{formatDate(selectedBooking.return_date)}</p>
+                      <p className="text-xs sm:text-sm text-slate-600">{selectedBooking.return_time}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-slate-500">{t('booking:myBookings.pickupLocation')}</p>
-                      <p className="font-medium text-slate-800">{selectedBooking.pickup_location}</p>
+                      <p className="text-xs sm:text-sm text-slate-500">{t('booking:myBookings.pickupLocation')}</p>
+                      <p className="font-medium text-slate-800 text-sm sm:text-base">{selectedBooking.pickup_location}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-slate-500">{t('booking:myBookings.returnLocation')}</p>
-                      <p className="font-medium text-slate-800">{selectedBooking.dropoff_location || selectedBooking.pickup_location}</p>
+                      <p className="text-xs sm:text-sm text-slate-500">{t('booking:myBookings.returnLocation')}</p>
+                      <p className="font-medium text-slate-800 text-sm sm:text-base">{selectedBooking.dropoff_location || selectedBooking.pickup_location}</p>
                     </div>
                   </div>
                 </div>
 
                 {/* Price Details */}
-                <div className="bg-slate-50 rounded-lg p-4">
-                  <h3 className="font-semibold text-slate-800 mb-3 flex items-center gap-2">
-                    <svg className="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="bg-slate-50 rounded-lg p-3 sm:p-4">
+                  <h3 className="font-semibold text-slate-800 mb-2 sm:mb-3 flex items-center gap-2 text-sm sm:text-base">
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     {t('booking:myBookings.detailsModal.priceDetails')}
                   </h3>
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
-                      <span className="text-slate-600">{t('booking:myBookings.detailsModal.vehicleRental')}</span>
-                      <span className="font-medium">{formatPrice(selectedBooking.rental_price || selectedBooking.total_price)}</span>
+                      <span className="text-slate-600 text-xs sm:text-sm">{t('booking:myBookings.detailsModal.vehicleRental')}</span>
+                      <span className="font-medium text-sm sm:text-base">{formatPrice(selectedBooking.rental_price || selectedBooking.total_price)}</span>
                     </div>
                     {selectedBooking.insurance_price > 0 && (
                       <div className="flex justify-between text-sm">
-                        <span className="text-slate-600">{t('booking:myBookings.detailsModal.premiumInsurance')}</span>
-                        <span className="font-medium">{formatPrice(selectedBooking.insurance_price)}</span>
+                        <span className="text-slate-600 text-xs sm:text-sm">{t('booking:myBookings.detailsModal.premiumInsurance')}</span>
+                        <span className="font-medium text-sm sm:text-base">{formatPrice(selectedBooking.insurance_price)}</span>
                       </div>
                     )}
                     {selectedBooking.options_price > 0 && (
                       <div className="flex justify-between text-sm">
-                        <span className="text-slate-600">{t('booking:myBookings.detailsModal.options')}</span>
-                        <span className="font-medium">{formatPrice(selectedBooking.options_price)}</span>
+                        <span className="text-slate-600 text-xs sm:text-sm">{t('booking:myBookings.detailsModal.options')}</span>
+                        <span className="font-medium text-sm sm:text-base">{formatPrice(selectedBooking.options_price)}</span>
                       </div>
                     )}
                     <div className="border-t border-slate-200 pt-2 mt-2">
-                      <div className="flex justify-between">
-                        <span className="font-semibold text-slate-800">{t('booking:summary.total')}</span>
-                        <span className="font-bold text-lg text-red-600">{formatPrice(selectedBooking.total_price)}</span>
+                      <div className="flex justify-between items-center">
+                        <span className="font-semibold text-slate-800 text-sm sm:text-base">{t('booking:summary.total')}</span>
+                        <span className="font-bold text-base sm:text-lg text-red-600">{formatPrice(selectedBooking.total_price)}</span>
                       </div>
                     </div>
                   </div>
                 </div>
 
                 {/* Customer Info */}
-                <div className="bg-slate-50 rounded-lg p-4">
-                  <h3 className="font-semibold text-slate-800 mb-3 flex items-center gap-2">
-                    <svg className="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="bg-slate-50 rounded-lg p-3 sm:p-4">
+                  <h3 className="font-semibold text-slate-800 mb-2 sm:mb-3 flex items-center gap-2 text-sm sm:text-base">
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
                     {t('booking:myBookings.detailsModal.customerInfo')}
                   </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div>
-                      <p className="text-sm text-slate-500">{t('booking:myBookings.detailsModal.fullName')}</p>
-                      <p className="font-medium text-slate-800">{selectedBooking.first_name} {selectedBooking.last_name}</p>
+                      <p className="text-xs sm:text-sm text-slate-500">{t('booking:myBookings.detailsModal.fullName')}</p>
+                      <p className="font-medium text-slate-800 text-sm sm:text-base">{selectedBooking.first_name} {selectedBooking.last_name}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-slate-500">{t('booking:myBookings.detailsModal.email')}</p>
-                      <p className="font-medium text-slate-800">{selectedBooking.email}</p>
+                      <p className="text-xs sm:text-sm text-slate-500">{t('booking:myBookings.detailsModal.email')}</p>
+                      <p className="font-medium text-slate-800 text-sm sm:text-base break-all">{selectedBooking.email}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-slate-500">{t('booking:myBookings.detailsModal.phone')}</p>
-                      <p className="font-medium text-slate-800">{selectedBooking.phone || t('booking:myBookings.detailsModal.notProvided')}</p>
+                      <p className="text-xs sm:text-sm text-slate-500">{t('booking:myBookings.detailsModal.phone')}</p>
+                      <p className="font-medium text-slate-800 text-sm sm:text-base">{selectedBooking.phone || t('booking:myBookings.detailsModal.notProvided')}</p>
                     </div>
                   </div>
                 </div>
 
                 {/* Notes */}
                 {selectedBooking.notes && (
-                  <div className="bg-slate-50 rounded-lg p-4">
-                    <h3 className="font-semibold text-slate-800 mb-2 flex items-center gap-2">
-                      <svg className="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="bg-slate-50 rounded-lg p-3 sm:p-4">
+                    <h3 className="font-semibold text-slate-800 mb-2 flex items-center gap-2 text-sm sm:text-base">
+                      <svg className="w-4 h-4 sm:w-5 sm:h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                       </svg>
                       {t('booking:myBookings.detailsModal.notes')}
                     </h3>
-                    <p className="text-sm text-slate-600 italic">"{selectedBooking.notes}"</p>
+                    <p className="text-xs sm:text-sm text-slate-600 italic">"{selectedBooking.notes}"</p>
                   </div>
                 )}
               </div>
 
               {/* Modal Footer */}
-              <div className="sticky bottom-0 bg-white border-t border-slate-200 p-6 flex justify-end">
+              <div className="sticky bottom-0 bg-white border-t border-slate-200 p-4 sm:p-6 flex justify-end">
                 <button
                   onClick={closeDetailsModal}
-                  className="px-6 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition"
+                  className="w-full sm:w-auto px-6 py-2.5 sm:py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition"
                 >
                   {t('booking:actions.close')}
                 </button>
