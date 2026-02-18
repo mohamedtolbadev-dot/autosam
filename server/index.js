@@ -77,11 +77,6 @@ app.use('/api/bookings', require('./routes/bookingRoutes'));
 app.use('/api/contact', require('./routes/contactRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
 
-// Health check endpoint for Koyeb
-app.get('/api/health', (req, res) => {
-    res.status(200).json({ status: 'OK', timestamp: new Date().toISOString() });
-});
-
 // Error handler for payload too large and other errors
 app.use((err, req, res, next) => {
   if (err.type === 'entity.too.large') {
