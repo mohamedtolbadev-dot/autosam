@@ -76,6 +76,7 @@
     "confirmBooking": "Confirm booking",
     "cancel": "Cancel",
     "ok": "OK",
+    "close": "Close",
     "clear": "Clear",
     "today": "Today",
     "login": "Login",
@@ -91,7 +92,10 @@
     "confirmInfo": "Please verify your information. Free cancellation up to 24 hours before pickup.",
     "termsPart1": "I confirm that my information is correct and I accept the",
     "termsPart2": "terms and conditions",
-    "terms": "I accept the terms and conditions"
+    "terms": "I accept the terms and conditions",
+    "errors": {
+      "loadError": "Error loading bookings"
+    }
   },
   "myBookings": {
     "title": "My Bookings",
@@ -148,6 +152,15 @@
     "errors": {
       "loadError": "Error loading bookings"
     }
+  },
+  "header": {
+    "myAccount": "My account",
+    "myBookings": "My reservations",
+    "logout": "Logout",
+    "login": "Login",
+    "register": "Register",
+    "menu": "Menu",
+    "welcome": "Welcome,"
   },
   "included": {
     "title": "Included:",
@@ -234,14 +247,5 @@
       "passwordSymbol": "Must contain a symbol (!@#$...)",
       "fixErrors": "Please fix the errors"
     }
-  },
-  "header": {
-    "myAccount": "My account",
-    "myBookings": "My reservations",
-    "logout": "Logout",
-    "login": "Login",
-    "register": "Register",
-    "menu": "Menu",
-    "welcome": "Welcome,"
   }
 }
