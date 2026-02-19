@@ -34,6 +34,7 @@ const MyBookings = () => {
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [bookingToCancel, setBookingToCancel] = useState(null);
   const [cancelling, setCancelling] = useState(false);
+  const [openingCancelForId, setOpeningCancelForId] = useState(null);
   
   const [bookings, setBookings] = useState([]);
   const [previousBookings, setPreviousBookings] = useState([]);
@@ -144,9 +145,13 @@ const MyBookings = () => {
     }, 5000);
   };
 
-  const openCancelModal = (booking) => {
+  const openCancelModal = async (booking) => {
+    setOpeningCancelForId(booking.id);
+    // Small delay to show loading state
+    await new Promise(resolve => setTimeout(resolve, 300));
     setBookingToCancel(booking);
     setShowCancelModal(true);
+    setOpeningCancelForId(null);
   };
 
   const closeCancelModal = () => {
@@ -470,11 +475,16 @@ const MyBookings = () => {
                     {canCancel(booking) && (
                       <button
                         onClick={() => openCancelModal(booking)}
-                        className="text-sm font-medium text-red-500 hover:text-red-600 flex items-center gap-1"
+                        disabled={openingCancelForId === booking.id}
+                        className="text-sm font-medium text-red-500 hover:text-red-600 flex items-center gap-1 disabled:opacity-50"
                       >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
+                        {openingCancelForId === booking.id ? (
+                          <div className="w-4 h-4 border-2 border-red-500 border-t-transparent rounded-full animate-spin"></div>
+                        ) : (
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        )}
                         {t('booking:myBookings.cancel')}
                       </button>
                     )}
@@ -660,8 +670,12 @@ const MyBookings = () => {
                       closeDetailsModal();
                       openCancelModal(selectedBooking);
                     }}
-                    className="w-full sm:w-auto px-6 py-2.5 sm:py-2 border border-red-500 text-red-500 rounded-lg font-medium hover:bg-red-50 transition"
+                    disabled={openingCancelForId === selectedBooking.id}
+                    className="w-full sm:w-auto px-6 py-2.5 sm:py-2 border border-red-500 text-red-500 rounded-lg font-medium hover:bg-red-50 transition disabled:opacity-50 flex items-center justify-center gap-2"
                   >
+                    {openingCancelForId === selectedBooking.id ? (
+                      <div className="w-4 h-4 border-2 border-red-500 border-t-transparent rounded-full animate-spin"></div>
+                    ) : null}
                     {t('booking:myBookings.cancel')}
                   </button>
                 )}
