@@ -702,7 +702,7 @@ const MyBookings = () => {
                   </div>
                   <div className="flex justify-between text-xs sm:text-sm">
                     <span className="text-slate-500">{t('booking:myBookings.car')}</span>
-                    <span className="font-medium text-slate-800 truncate ml-2">{bookingToCancel.car?.brand} {bookingToCancel.car?.model}</span>
+                    <span className="font-medium text-slate-800 truncate ml-2">{bookingToCancel.car_name}</span>
                   </div>
                   <div className="flex justify-between text-xs sm:text-sm">
                     <span className="text-slate-500">{t('booking:myBookings.pickupDate')}</span>
