@@ -464,7 +464,6 @@ export const AdminProvider = ({ children }) => {
     allContactMessages,
     pagination,
     isAuthenticated: !!admin,
-    initializing,
     login,
     logout,
     fetchDashboard,

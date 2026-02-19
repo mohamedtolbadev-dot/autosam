@@ -16,8 +16,18 @@ export const CarProvider = ({ children }) => {
     try {
       const data = await carApi.getAll();
       setCars(data);
+      // Store in localStorage for offline access
+      localStorage.setItem('cachedCars', JSON.stringify(data));
+      localStorage.setItem('cachedCarsTime', Date.now().toString());
     } catch (err) {
-      setError(err.message || 'Erreur lors du chargement des voitures');
+      // Try to load from cache if offline
+      const cached = localStorage.getItem('cachedCars');
+      if (cached) {
+        setCars(JSON.parse(cached));
+        setError('Mode hors ligne - Données en cache affichées');
+      } else {
+        setError(err.message || 'Erreur lors du chargement des voitures');
+      }
       console.error('Error fetching cars:', err);
     } finally {
       setLoading(false);
@@ -31,8 +41,18 @@ export const CarProvider = ({ children }) => {
     try {
       const data = await carApi.getById(id);
       setSelectedCar(data);
+      // Store in localStorage
+      localStorage.setItem(`cachedCar_${id}`, JSON.stringify(data));
       return data;
     } catch (err) {
+      // Try to load from cache
+      const cached = localStorage.getItem(`cachedCar_${id}`);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        setSelectedCar(parsed);
+        setError('Mode hors ligne - Données en cache');
+        return parsed;
+      }
       setError(err.message || 'Erreur lors du chargement du véhicule');
       console.error('Error fetching car:', err);
     } finally {

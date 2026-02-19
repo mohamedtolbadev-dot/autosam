@@ -15,6 +15,7 @@ const app = express();
 // CORS middleware - MUST be first to handle preflight requests
 const allowedOrigins = [
   'http://localhost:5173',
+  'http://localhost:4173',
   'http://localhost:3000',
   'https://autosam.ma',
   'https://www.autosam.ma',

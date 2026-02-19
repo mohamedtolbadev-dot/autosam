@@ -27,6 +27,7 @@ const AdminCars = () => {
     fuel: 'Essence',
     available: true,
     doors: 5,
+    year_model: 2024,
     description: '',
     features: '[]'
   });
@@ -71,6 +72,7 @@ const AdminCars = () => {
       formDataToSend.append('fuel', formData.fuel);
       formDataToSend.append('available', formData.available);
       formDataToSend.append('doors', parseInt(formData.doors));
+      formDataToSend.append('year_model', parseInt(formData.year_model));
       formDataToSend.append('description', formData.description);
       formDataToSend.append('features', JSON.stringify(formData.features.split(',').map(f => f.trim()).filter(f => f)));
       
@@ -102,6 +104,7 @@ const AdminCars = () => {
       fuel: 'Essence',
       available: true,
       doors: 5,
+      year_model: 2024,
       description: '',
       features: '[]'
     });
@@ -413,6 +416,16 @@ const AdminCars = () => {
                     />
                   </div>
                   <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Année</label>
+                    <input
+                      type="number"
+                      value={formData.year_model}
+                      onChange={(e) => setFormData({ ...formData, year_model: e.target.value })}
+                      className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-red-500/40 focus:border-red-500 outline-none"
+                      required
+                    />
+                  </div>
+                  <div>
                     <label className="block text-sm font-medium text-slate-700 mb-1">Transmission</label>
                     <select
                       value={formData.transmission}
@@ -595,6 +608,10 @@ const AdminCars = () => {
                   <div>
                     <p className="text-sm text-slate-500">Portes</p>
                     <p className="font-medium text-slate-800">{selectedCar.doors}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-slate-500">Année</p>
+                    <p className="font-medium text-slate-800">{selectedCar.year_model}</p>
                   </div>
                   <div>
                     <p className="text-sm text-slate-500">Transmission</p>
