@@ -16,7 +16,8 @@
     "apply": "Appliquer",
     "retry": "Réessayer",
     "search": "Rechercher",
-    "chooseDate": "Choisir une date"
+    "chooseDate": "Choisir une date",
+    "processing": "Traitement..."
   },
   "currency": {
     "title": "Sélectionner une devise",
@@ -43,6 +44,13 @@
   },
   "calendar": {
     "shortDays": ["Di", "Lu", "Ma", "Me", "Je", "Ve", "Sa"]
+  },
+  "offline": {
+    "title": "Pas de connexion Internet - Mode hors ligne",
+    "message": "Les données sont affichées depuis le cache local"
+  },
+  "online": {
+    "title": "Connexion Internet restaurée"
   },
   "footer": {
     "copyright": "© 2024 Location Maroc. Tous droits réservés."

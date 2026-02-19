@@ -16,7 +16,8 @@
     "apply": "Apply",
     "retry": "Retry",
     "search": "Search",
-    "chooseDate": "Choose a date"
+    "chooseDate": "Choose a date",
+    "processing": "Processing..."
   },
   "currency": {
     "title": "Select Currency",
@@ -43,6 +44,13 @@
   },
   "calendar": {
     "shortDays": ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"]
+  },
+  "offline": {
+    "title": "No Internet connection - Offline mode",
+    "message": "Data is displayed from local cache"
+  },
+  "online": {
+    "title": "Internet connection restored"
   },
   "footer": {
     "copyright": "© 2024 Location Maroc. All rights reserved."

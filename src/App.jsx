@@ -5,6 +5,7 @@ import { CurrencyProvider } from './context/CurrencyContext';
 import { CustomerProvider } from './context/CustomerContext';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import OfflineNotification from './components/OfflineNotification';
 import Home from './pages/Home';
 import Cars from './pages/Cars';
 import CarDetails from './pages/CarDetails';
@@ -93,6 +94,7 @@ function Layout() {
 
   return (
     <>
+      <OfflineNotification />
       <div className="min-h-screen flex flex-col">
         {!isAdminRoute && <Header />}
         <main className="flex-1">
