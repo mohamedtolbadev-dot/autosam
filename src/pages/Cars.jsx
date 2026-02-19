@@ -5,6 +5,30 @@ import { useCars } from '../context/CarContext';
 import { useCurrency } from '../context/CurrencyContext';
 import { isValidCarId } from '../utils/security';
 
+// Helper function to format location keys to human-readable names
+const formatLocation = (locationKey, t) => {
+  if (!locationKey) return '';
+  const [city, location] = locationKey.split('_');
+  const cityNames = {
+    casablanca: t('common:cities.casablanca'),
+    marrakech: t('common:cities.marrakech'),
+    rabat: t('common:cities.rabat'),
+    tangier: t('common:cities.tangier'),
+    agadir: t('common:cities.agadir'),
+    fes: t('common:cities.fes')
+  };
+  const locationTypes = {
+    airport: t('common:locations.airport'),
+    cityCenter: t('common:locations.cityCenter'),
+    city: t('common:locations.cityCenter'),
+    trainStation: t('common:locations.trainStation'),
+    train: t('common:locations.trainStation')
+  };
+  const cityName = cityNames[city] || city;
+  const locationType = locationTypes[location] || location;
+  return `${cityName} - ${locationType}`;
+};
+
 // --- ICONS ---
 const IconHeart = ({ className = 'w-5 h-5', filled }) => (
   <svg className={className} viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -157,7 +181,7 @@ const SpecItem = ({ icon, label, highlight }) => (
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 const Cars = () => {
-  const { t } = useTranslation('cars');
+  const { t } = useTranslation(['cars', 'common']);
   const { cars: allCarsData, loading, error } = useCars();
   const { formatPrice } = useCurrency();
   const [searchParams] = useSearchParams();
@@ -303,14 +327,14 @@ const Cars = () => {
                 <span className="flex items-center gap-1.5 text-slate-300">
                   <IconMapPin className="w-3 h-3 text-red-500 shrink-0" />
                   <span className="text-slate-500">{t('search.pickup')}:</span>
-                  <strong className="text-white font-semibold">{searchLocation}</strong>
+                  <strong className="text-white font-semibold">{formatLocation(searchLocation, t)}</strong>
                 </span>
               )}
               {searchDropoffLocation && (
                 <span className="flex items-center gap-1.5 text-slate-300">
                   <IconMapPin className="w-3 h-3 text-red-500 shrink-0" />
                   <span className="text-slate-500">{t('search.dropoff')}:</span>
-                  <strong className="text-white font-semibold">{searchDropoffLocation}</strong>
+                  <strong className="text-white font-semibold">{formatLocation(searchDropoffLocation, t)}</strong>
                 </span>
               )}
               {(searchStartDate || searchEndDate) && (

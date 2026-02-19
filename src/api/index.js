@@ -75,7 +75,10 @@ export const bookingApi = {
     return api('/bookings/my-bookings', { token });
   },
   create: (data) => api('/bookings', { method: 'POST', body: JSON.stringify(data) }),
-  updateStatus: (id, status) => api(`/bookings/${id}/status`, { method: 'PUT', body: JSON.stringify({ status }) }),
+  updateStatus: (id, status) => {
+    const token = localStorage.getItem('token');
+    return api(`/bookings/${id}/status`, { method: 'PUT', body: JSON.stringify({ status }), token });
+  },
   delete: (id) => api(`/bookings/${id}`, { method: 'DELETE' }),
 };
 

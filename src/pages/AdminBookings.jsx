@@ -2,9 +2,35 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdmin } from '../context/AdminContext';
 import AdminLayout from '../components/AdminLayout';
+import { useTranslation } from 'react-i18next';
+
+// Helper function to format location keys to human-readable names
+const formatLocation = (locationKey, t) => {
+  if (!locationKey) return '';
+  const [city, location] = locationKey.split('_');
+  const cityNames = {
+    casablanca: t('common:cities.casablanca'),
+    marrakech: t('common:cities.marrakech'),
+    rabat: t('common:cities.rabat'),
+    tangier: t('common:cities.tangier'),
+    agadir: t('common:cities.agadir'),
+    fes: t('common:cities.fes')
+  };
+  const locationTypes = {
+    airport: t('common:locations.airport'),
+    cityCenter: t('common:locations.cityCenter'),
+    city: t('common:locations.cityCenter'),
+    trainStation: t('common:locations.trainStation'),
+    train: t('common:locations.trainStation')
+  };
+  const cityName = cityNames[city] || city;
+  const locationType = locationTypes[location] || location;
+  return `${cityName} - ${locationType}`;
+};
 
 const AdminBookings = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { 
     allBookings, 
     pagination,
@@ -21,6 +47,7 @@ const AdminBookings = () => {
   const [showModal, setShowModal] = useState(false);
   const [confirmModal, setConfirmModal] = useState({ show: false, title: '', message: '', onConfirm: null, type: 'info' });
   const [updatingStatus, setUpdatingStatus] = useState(null);
+  const [deletingBookingId, setDeletingBookingId] = useState(null);
 
   useEffect(() => {
     if (initializing) return;
@@ -85,6 +112,7 @@ const AdminBookings = () => {
       message: 'Êtes-vous sûr de vouloir supprimer cette réservation ? Cette action est irréversible.',
       type: 'danger',
       onConfirm: async () => {
+        setDeletingBookingId(bookingId);
         try {
           await deleteBooking(bookingId);
           setConfirmModal({ show: false, title: '', message: '', onConfirm: null, type: 'info' });
@@ -96,6 +124,8 @@ const AdminBookings = () => {
             type: 'error',
             onConfirm: () => setConfirmModal({ show: false, title: '', message: '', onConfirm: null, type: 'info' })
           });
+        } finally {
+          setDeletingBookingId(null);
         }
       }
     });
@@ -272,6 +302,20 @@ const AdminBookings = () => {
                               >
                                 Détails
                               </button>
+                              <button
+                                onClick={() => handleDelete(booking.id)}
+                                disabled={deletingBookingId === booking.id}
+                                className="px-2 py-1 text-xs bg-red-100 text-red-700 rounded hover:bg-red-200 transition disabled:opacity-50"
+                                title="Supprimer"
+                              >
+                                {deletingBookingId === booking.id ? (
+                                  <div className="w-4 h-4 border-2 border-red-600 border-t-transparent rounded-full animate-spin"></div>
+                                ) : (
+                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                  </svg>
+                                )}
+                              </button>
                             </div>
                           </td>
                         </tr>
@@ -362,7 +406,7 @@ const AdminBookings = () => {
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-slate-500">Lieu:</span>
-                    <span className="text-slate-800">{booking.pickup_location}</span>
+                    <span className="text-slate-800">{formatLocation(booking.pickup_location, t)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-slate-500">Total:</span>
@@ -376,6 +420,20 @@ const AdminBookings = () => {
                     className="flex-1 px-3 py-2 text-sm bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition"
                   >
                     Détails
+                  </button>
+                  <button
+                    onClick={() => handleDelete(booking.id)}
+                    disabled={deletingBookingId === booking.id}
+                    className="px-3 py-2 text-sm bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition disabled:opacity-50"
+                    title="Supprimer"
+                  >
+                    {deletingBookingId === booking.id ? (
+                      <div className="w-4 h-4 border-2 border-red-600 border-t-transparent rounded-full animate-spin"></div>
+                    ) : (
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    )}
                   </button>
                 </div>
               </div>
@@ -523,11 +581,11 @@ const AdminBookings = () => {
                     </div>
                     <div>
                       <p className="text-sm text-slate-500">Lieu de retrait</p>
-                      <p className="font-medium text-slate-800">{selectedBooking.pickup_location}</p>
+                      <p className="font-medium text-slate-800">{formatLocation(selectedBooking.pickup_location, t)}</p>
                     </div>
                     <div>
                       <p className="text-sm text-slate-500">Lieu de retour</p>
-                      <p className="font-medium text-slate-800">{selectedBooking.dropoff_location || selectedBooking.pickup_location}</p>
+                      <p className="font-medium text-slate-800">{formatLocation(selectedBooking.dropoff_location || selectedBooking.pickup_location, t)}</p>
                     </div>
                     <div>
                       <p className="text-sm text-slate-500">Nombre de jours</p>

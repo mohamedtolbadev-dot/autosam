@@ -4,9 +4,36 @@ import { useCustomer } from '../context/CustomerContext';
 import { bookingApi } from '../api/index';
 import { useTranslation } from 'react-i18next';
 
+// Helper function to format location keys to human-readable names
+const formatLocation = (locationKey, t) => {
+  if (!locationKey) return '';
+  const [city, location] = locationKey.split('_');
+  const cityNames = {
+    casablanca: t('common:cities.casablanca'),
+    marrakech: t('common:cities.marrakech'),
+    rabat: t('common:cities.rabat'),
+    tangier: t('common:cities.tangier'),
+    agadir: t('common:cities.agadir'),
+    fes: t('common:cities.fes')
+  };
+  const locationTypes = {
+    airport: t('common:locations.airport'),
+    cityCenter: t('common:locations.cityCenter'),
+    city: t('common:locations.cityCenter'),
+    trainStation: t('common:locations.trainStation'),
+    train: t('common:locations.trainStation')
+  };
+  const cityName = cityNames[city] || city;
+  const locationType = locationTypes[location] || location;
+  return `${cityName} - ${locationType}`;
+};
+
 const MyBookings = () => {
   const { customer, isAuthenticated, loading: authLoading, setShowLoginModal } = useCustomer();
-  const { t } = useTranslation();
+  const { t } = useTranslation(['booking', 'common']);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [bookingToCancel, setBookingToCancel] = useState(null);
+  const [cancelling, setCancelling] = useState(false);
   
   const [bookings, setBookings] = useState([]);
   const [previousBookings, setPreviousBookings] = useState([]);
@@ -117,8 +144,44 @@ const MyBookings = () => {
     }, 5000);
   };
 
-  const removeNotification = (notificationId) => {
-    setNotifications(prev => prev.filter(n => n.id !== notificationId));
+  const openCancelModal = (booking) => {
+    setBookingToCancel(booking);
+    setShowCancelModal(true);
+  };
+
+  const closeCancelModal = () => {
+    setBookingToCancel(null);
+    setShowCancelModal(false);
+  };
+
+  const handleCancelBooking = async () => {
+    if (!bookingToCancel) return;
+    
+    try {
+      setCancelling(true);
+      await bookingApi.updateStatus(bookingToCancel.id, 'cancelled');
+      
+      // Refresh bookings
+      await fetchMyBookings();
+      
+      // Close modal
+      closeCancelModal();
+      
+      // Show success notification
+      addNotification(
+        Date.now(),
+        t('booking:myBookings.cancelSuccess'),
+        t('booking:myBookings.cancelSuccessMessage', { id: bookingToCancel.id })
+      );
+    } catch (err) {
+      setError(err.message || t('booking:myBookings.cancelError'));
+    } finally {
+      setCancelling(false);
+    }
+  };
+
+  const canCancel = (booking) => {
+    return booking.status === 'pending' || booking.status === 'confirmed';
   };
 
   const [selectedBooking, setSelectedBooking] = useState(null);
@@ -385,7 +448,7 @@ const MyBookings = () => {
                       </svg>
                       <div>
                         <p className="text-sm font-medium text-slate-700">{t('booking:myBookings.pickupLocation')}</p>
-                        <p className="text-sm text-slate-600">{booking.pickup_location}</p>
+                        <p className="text-sm text-slate-600">{formatLocation(booking.pickup_location, t)}</p>
                       </div>
                     </div>
                   </div>
@@ -393,16 +456,29 @@ const MyBookings = () => {
 
                 {/* Footer */}
                 <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
-                  <button
-                    onClick={() => openDetailsModal(booking)}
-                    className="text-sm font-medium text-red-600 hover:text-red-700 flex items-center gap-1"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                    </svg>
-                    {t('booking:myBookings.viewDetails')}
-                  </button>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => openDetailsModal(booking)}
+                      className="text-sm font-medium text-red-600 hover:text-red-700 flex items-center gap-1"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                      {t('booking:myBookings.viewDetails')}
+                    </button>
+                    {canCancel(booking) && (
+                      <button
+                        onClick={() => openCancelModal(booking)}
+                        className="text-sm font-medium text-red-500 hover:text-red-600 flex items-center gap-1"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                        {t('booking:myBookings.cancel')}
+                      </button>
+                    )}
+                  </div>
                   <span className="text-xs text-slate-500">
                     {t('booking:myBookings.bookedOn', { date: formatDate(booking.created_at) })}
                   </span>
@@ -495,11 +571,11 @@ const MyBookings = () => {
                     </div>
                     <div>
                       <p className="text-xs sm:text-sm text-slate-500">{t('booking:myBookings.pickupLocation')}</p>
-                      <p className="font-medium text-slate-800 text-sm sm:text-base">{selectedBooking.pickup_location}</p>
+                      <p className="font-medium text-slate-800 text-sm sm:text-base">{formatLocation(selectedBooking.pickup_location, t)}</p>
                     </div>
                     <div>
                       <p className="text-xs sm:text-sm text-slate-500">{t('booking:myBookings.returnLocation')}</p>
-                      <p className="font-medium text-slate-800 text-sm sm:text-base">{selectedBooking.dropoff_location || selectedBooking.pickup_location}</p>
+                      <p className="font-medium text-slate-800 text-sm sm:text-base">{formatLocation(selectedBooking.dropoff_location || selectedBooking.pickup_location, t)}</p>
                     </div>
                   </div>
                 </div>
@@ -577,12 +653,91 @@ const MyBookings = () => {
               </div>
 
               {/* Modal Footer */}
-              <div className="sticky bottom-0 bg-white border-t border-slate-200 p-4 sm:p-6 flex justify-end">
+              <div className="sticky bottom-0 bg-white border-t border-slate-200 p-4 sm:p-6 flex flex-col sm:flex-row gap-3">
+                {canCancel(selectedBooking) && (
+                  <button
+                    onClick={() => {
+                      closeDetailsModal();
+                      openCancelModal(selectedBooking);
+                    }}
+                    className="w-full sm:w-auto px-6 py-2.5 sm:py-2 border border-red-500 text-red-500 rounded-lg font-medium hover:bg-red-50 transition"
+                  >
+                    {t('booking:myBookings.cancel')}
+                  </button>
+                )}
                 <button
                   onClick={closeDetailsModal}
-                  className="w-full sm:w-auto px-6 py-2.5 sm:py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition"
+                  className="w-full sm:w-auto px-6 py-2.5 sm:py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition ml-auto"
                 >
                   {t('booking:actions.close')}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Cancel Confirmation Modal */}
+        {showCancelModal && bookingToCancel && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-3 sm:p-4">
+            <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto animate-in zoom-in-95 duration-200">
+              <div className="p-4 sm:p-6 border-b border-slate-100">
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-red-100 rounded-full flex items-center justify-center shrink-0">
+                    <svg className="w-5 h-5 sm:w-6 sm:h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="text-base sm:text-lg font-bold text-slate-800">{t('booking:myBookings.cancelConfirmTitle')}</h3>
+                    <p className="text-xs sm:text-sm text-slate-500">{t('booking:myBookings.cancelConfirmSubtitle')}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-4 sm:p-6 space-y-3 sm:space-y-4">
+                <div className="bg-slate-50 rounded-lg p-3 sm:p-4 space-y-2">
+                  <div className="flex justify-between text-xs sm:text-sm">
+                    <span className="text-slate-500">{t('booking:myBookings.bookingId')}</span>
+                    <span className="font-medium text-slate-800">#{bookingToCancel.id}</span>
+                  </div>
+                  <div className="flex justify-between text-xs sm:text-sm">
+                    <span className="text-slate-500">{t('booking:myBookings.car')}</span>
+                    <span className="font-medium text-slate-800 truncate ml-2">{bookingToCancel.car?.brand} {bookingToCancel.car?.model}</span>
+                  </div>
+                  <div className="flex justify-between text-xs sm:text-sm">
+                    <span className="text-slate-500">{t('booking:myBookings.pickupDate')}</span>
+                    <span className="font-medium text-slate-800">{formatDate(bookingToCancel.pickup_date)}</span>
+                  </div>
+                </div>
+
+                <p className="text-xs sm:text-sm text-slate-600 bg-yellow-50 border border-yellow-200 rounded-lg p-2 sm:p-3">
+                  {t('booking:myBookings.cancelWarning')}
+                </p>
+              </div>
+
+              <div className="p-4 sm:p-6 border-t border-slate-100 flex flex-col sm:flex-row gap-2 sm:gap-3">
+                <button
+                  onClick={closeCancelModal}
+                  className="w-full px-4 py-2.5 border border-slate-300 text-slate-700 rounded-lg font-medium hover:bg-slate-50 transition text-sm"
+                >
+                  {t('common:actions.keep')}
+                </button>
+                <button
+                  onClick={handleCancelBooking}
+                  disabled={cancelling}
+                  className="w-full px-4 py-2.5 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition flex items-center justify-center gap-2 text-sm"
+                >
+                  {cancelling ? (
+                    <>
+                      <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                      {t('common:actions.processing')}
+                    </>
+                  ) : (
+                    t('booking:myBookings.confirmCancel')
+                  )}
                 </button>
               </div>
             </div>
