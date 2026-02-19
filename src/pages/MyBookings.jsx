@@ -55,7 +55,7 @@ const MyBookings = () => {
     }
   }, [isAuthenticated]);
 
-  // Add shimmer animation styles
+  // Add shimmer animation styles and slide-in animation
   useEffect(() => {
     const style = document.createElement('style');
     style.textContent = `
@@ -65,6 +65,13 @@ const MyBookings = () => {
       }
       .animate-shimmer {
         animation: shimmer 1.5s ease-in-out infinite;
+      }
+      @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+      }
+      .animate-slide-in {
+        animation: slideIn 0.3s ease-out forwards;
       }
     `;
     document.head.appendChild(style);
@@ -143,6 +150,10 @@ const MyBookings = () => {
     setTimeout(() => {
       removeNotification(notification.id);
     }, 5000);
+  };
+
+  const removeNotification = (notificationId) => {
+    setNotifications(prev => prev.filter(n => n.id !== notificationId));
   };
 
   const openCancelModal = async (booking) => {
@@ -311,11 +322,11 @@ const MyBookings = () => {
   return (
     <div className="min-h-screen bg-slate-50 py-8 px-4 sm:px-6 lg:px-8">
       {/* Notifications */}
-      <div className="fixed top-4 right-4 z-50 space-y-2">
+      <div className="fixed top-4 left-4 right-4 sm:left-auto sm:right-4 z-50 space-y-2">
         {notifications.map((notification) => (
           <div
             key={notification.id}
-            className="bg-white border-l-4 border-red-500 shadow-lg rounded-lg p-4 max-w-sm animate-slide-in"
+            className="bg-white border-l-4 border-red-500 shadow-lg rounded-lg p-4 w-full sm:w-auto sm:max-w-sm animate-slide-in"
           >
             <div className="flex items-start gap-3">
               <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center shrink-0">
@@ -323,13 +334,14 @@ const MyBookings = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                 </svg>
               </div>
-              <div className="flex-1">
+              <div className="flex-1 min-w-0">
                 <p className="font-semibold text-slate-800 text-sm">{notification.title}</p>
                 <p className="text-xs text-slate-600 mt-1">{notification.message}</p>
               </div>
               <button
                 onClick={() => removeNotification(notification.id)}
-                className="text-slate-400 hover:text-slate-600"
+                className="text-slate-400 hover:text-slate-600 p-1 shrink-0"
+                aria-label="Fermer"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -460,8 +472,8 @@ const MyBookings = () => {
                 </div>
 
                 {/* Footer */}
-                <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
+                <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                  <div className="flex items-center gap-3 flex-wrap">
                     <button
                       onClick={() => openDetailsModal(booking)}
                       className="text-sm font-medium text-red-600 hover:text-red-700 flex items-center gap-1"
@@ -489,7 +501,7 @@ const MyBookings = () => {
                       </button>
                     )}
                   </div>
-                  <span className="text-xs text-slate-500">
+                  <span className="text-xs text-slate-500 whitespace-nowrap">
                     {t('booking:myBookings.bookedOn', { date: formatDate(booking.created_at) })}
                   </span>
                 </div>
