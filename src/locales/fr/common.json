@@ -17,7 +17,14 @@
     "retry": "Réessayer",
     "search": "Rechercher",
     "chooseDate": "Choisir une date",
-    "processing": "Traitement en cours..."
+    "processing": "Traitement en cours...",
+    "later": "Plus tard"
+  },
+  "install": {
+    "app": "Installer l'app",
+    "title": "Installer l'application AutoSam",
+    "description": "Accès rapide depuis l'écran d'accueil, même hors ligne !",
+    "button": "Installer"
   },
   "currency": {
     "title": "Sélectionner une devise",

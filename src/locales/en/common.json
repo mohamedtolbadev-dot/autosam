@@ -17,7 +17,14 @@
     "retry": "Retry",
     "search": "Search",
     "chooseDate": "Choose a date",
-    "processing": "Processing..."
+    "processing": "Processing...",
+    "later": "Later"
+  },
+  "install": {
+    "app": "Install App",
+    "title": "Install AutoSam App",
+    "description": "Quick access from home screen, even offline!",
+    "button": "Install"
   },
   "currency": {
     "title": "Select Currency",
