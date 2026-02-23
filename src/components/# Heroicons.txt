@@ -1,0 +1,20 @@
+# Heroicons
+
+[Share on Twitter](https://twitter.com/intent/tweet?text=Check%20out%20Heroicons%20by%20%40steveschoger%20and%20the%20%40tailwindcss%20team%20%F0%9F%98%8D&url=https%3A%2F%2Fheroicons.com)
+
+# Beautiful hand-crafted SVG icons, by the makers of Tailwind CSS.
+316 icons
+MIT license
+React & Vue libraries
+[Documentation](https://github.com/tailwindlabs/heroicons)
+[Get Figma File](https://www.figma.com/community/file/1143911270904274171)
+
+## Outline
+
+## Solid
+
+## Mini
+
+## Micro
+By the makers of [tailwindcss](https://tailwindcss.com)
+[Share on Twitter](https://twitter.com/intent/tweet?text=Check%20out%20Heroicons%20by%20%40steveschoger%20and%20the%20%40tailwindcss%20team%20%F0%9F%98%8D&url=https%3A%2F%2Fheroicons.com)

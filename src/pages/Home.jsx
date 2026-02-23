@@ -23,9 +23,8 @@ const IconMapPin = ({ className = "w-8 h-8" }) => (
   </svg>
 );
 const IconCar = ({ className = "w-8 h-8" }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H8.5a1 1 0 0 0-.8.4L5 11l-.16.01a1 1 0 0 0-.84.99V16h3" />
-    <path d="M17 21H7a2 2 0 0 1-2-2v-3h14v3a2 2 0 0 1-2 2Z" />
+  <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" fill="currentColor">
+    <path d="M199.2 181.4L173.1 256L466.9 256L440.8 181.4C436.3 168.6 424.2 160 410.6 160L229.4 160C215.8 160 203.7 168.6 199.2 181.4zM103.6 260.8L138.8 160.3C152.3 121.8 188.6 96 229.4 96L410.6 96C451.4 96 487.7 121.8 501.2 160.3L536.4 260.8C559.6 270.4 576 293.3 576 320L576 512C576 529.7 561.7 544 544 544L512 544C494.3 544 480 529.7 480 512L480 480L160 480L160 512C160 529.7 145.7 544 128 544L96 544C78.3 544 64 529.7 64 512L64 320C64 293.3 80.4 270.4 103.6 260.8zM192 368C192 350.3 177.7 336 160 336C142.3 336 128 350.3 128 368C128 385.7 142.3 400 160 400C177.7 400 192 385.7 192 368zM480 400C497.7 400 512 385.7 512 368C512 350.3 497.7 336 480 336C462.3 336 448 350.3 448 368C448 385.7 462.3 400 480 400z" />
   </svg>
 );
 const IconStar = ({ className = "w-5 h-5", filled = false }) => (
@@ -939,7 +938,7 @@ const brands = [
                 </div>
               </div>
 
-              <div className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 bg-white rounded-2xl shadow-lg p-3 sm:p-4 border border-slate-200">
+              <div className="absolute top-4 right-2 sm:top-6 sm:right-4 bg-white rounded-2xl shadow-lg p-3 sm:p-4 border border-slate-200">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 bg-red-50 rounded-2xl flex items-center justify-center border border-red-100">
                     <IconUsers className="w-6 h-6 text-red-600" />

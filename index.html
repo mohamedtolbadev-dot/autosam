@@ -9,6 +9,7 @@
     <meta name="theme-color" content="#F01023" />
     <meta name="background-color" content="#0F172B" />
     <meta name="description" content="Location de voitures au Maroc - Casablanca et partout au Maroc" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="AutoSam" />
@@ -33,9 +34,33 @@
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
     
-    <!-- Service Worker Registration -->
+    <!-- Service Worker Registration & Cleanup -->
     <script>
       if ('serviceWorker' in navigator) {
+        // 🧹 Clean up old service workers and caches first
+        (async function cleanupOldServiceWorkers() {
+          try {
+            // Unregister all old service workers
+            const registrations = await navigator.serviceWorker.getRegistrations();
+            for (const registration of registrations) {
+              await registration.unregister();
+              console.log('[PWA] Old Service Worker unregistered');
+            }
+            
+            // Delete all old caches
+            const cacheNames = await caches.keys();
+            for (const cacheName of cacheNames) {
+              // Delete old cache versions
+              if (cacheName.includes('autosam') && !cacheName.includes('v2')) {
+                await caches.delete(cacheName);
+                console.log('[PWA] Old cache deleted:', cacheName);
+              }
+            }
+          } catch (err) {
+            console.log('[PWA] Cleanup error:', err);
+          }
+        })();
+        
         // Only register SW in production, not in dev mode
         if (!location.hostname.includes('localhost') && !location.port.includes('5173')) {
           window.addEventListener('load', () => {

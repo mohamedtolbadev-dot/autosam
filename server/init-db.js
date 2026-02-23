@@ -136,15 +136,15 @@ async function initializeDatabase() {
           transmission: 'Manuelle',
           fuel: 'Essence',
           available: true,
-          image_url: 'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=1200&q=80',
+          image_url: '/imgs/cars/dacia-sandero-1.jpg',
           year_model: 2023,
           doors: 5,
           description: 'La Dacia Sandero est le choix parfait pour découvrir le Maroc de manière économique et confortable.',
           features: JSON.stringify(['Climatisation', 'Direction assistée', 'Bluetooth', 'Verrouillage centralisé', 'ABS', 'Airbags frontaux']),
           images: [
-            'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=1200&q=80'
+            '/imgs/cars/dacia-sandero-1.jpg',
+            '/imgs/cars/dacia-sandero-2.jpg',
+            '/imgs/cars/dacia-sandero-3.jpg'
           ]
         },
         // 2. Dacia Logan
@@ -156,15 +156,15 @@ async function initializeDatabase() {
           transmission: 'Manuelle',
           fuel: 'Diesel',
           available: true,
-          image_url: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80',
+          image_url: '/imgs/cars/dacia-logan-1.jpg',
           year_model: 2023,
           doors: 5,
           description: 'La Dacia Logan offre un excellent rapport qualité-prix avec un coffre spacieux.',
           features: JSON.stringify(['Climatisation', 'Direction assistée', 'Bluetooth', 'Verrouillage centralisé', 'ABS']),
           images: [
-            'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=1200&q=80'
+            '/imgs/cars/dacia-logan-1.jpg',
+            '/imgs/cars/dacia-logan-2.jpg',
+            '/imgs/cars/dacia-logan-3.jpg'
           ]
         },
         // 3. Renault Clio
@@ -176,16 +176,16 @@ async function initializeDatabase() {
           transmission: 'Automatique',
           fuel: 'Diesel',
           available: true,
-          image_url: 'https://images.unsplash.com/photo-1619767886558-efdc259cde1e?auto=format&fit=crop&w=1200&q=80',
+          image_url: '/imgs/cars/renault-clio-1.jpg',
           year_model: 2024,
           doors: 5,
           description: 'La Renault Clio allie confort et dynamisme pour vos déplacements quotidiens.',
           features: JSON.stringify(['Climatisation', 'Direction assistée', 'Bluetooth', 'Écran tactile', 'Régulateur de vitesse']),
           images: [
-            'https://images.unsplash.com/photo-1619767886558-efdc259cde1e?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=1200&q=80'
+            '/imgs/cars/renault-clio-1.jpg',
+            '/imgs/cars/renault-clio-2.jpg',
+            '/imgs/cars/renault-clio-3.jpg',
+            '/imgs/cars/renault-clio-4.jpg'
           ]
         },
         // 4. Peugeot 208
@@ -197,16 +197,16 @@ async function initializeDatabase() {
           transmission: 'Manuelle',
           fuel: 'Essence',
           available: true,
-          image_url: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1200&q=80',
+          image_url: '/imgs/cars/peugeot-208-1.jpg',
           year_model: 2024,
           doors: 5,
           description: 'Design moderne et conduite agile, parfaite pour les déplacements urbains.',
           features: JSON.stringify(['Écran tactile', 'Radar de recul', 'LED', 'Régulateur de vitesse', 'ABS']),
           images: [
-            'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1619767886558-efdc259cde1e?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-13376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=1200&q=80'
+            '/imgs/cars/peugeot-208-1.jpg',
+            '/imgs/cars/peugeot-208-2.jpg',
+            '/imgs/cars/peugeot-208-3.jpg',
+            '/imgs/cars/peugeot-208-4.jpg'
           ]
         },
         // 5. Toyota Yaris
@@ -218,15 +218,15 @@ async function initializeDatabase() {
           transmission: 'Automatique',
           fuel: 'Hybride',
           available: true,
-          image_url: 'https://images.unsplash.com/photo-1549924231-f129b911e442?auto=format&fit=crop&w=1200&q=80',
+          image_url: '/imgs/cars/toyota-yaris-1.jpg',
           year_model: 2024,
           doors: 5,
           description: 'Une citadine hybride fiable, idéale pour la ville avec une consommation réduite.',
           features: JSON.stringify(['Climatisation', 'Bluetooth', 'Caméra de recul', 'CarPlay/Android Auto', 'ABS']),
           images: [
-            'https://images.unsplash.com/photo-1549924231-f129b911e442?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=1200&q=80'
+            '/imgs/cars/toyota-yaris-1.jpg',
+            '/imgs/cars/toyota-yaris-2.jpg',
+            '/imgs/cars/toyota-yaris-3.jpg'
           ]
         },
         // 6. Volkswagen Golf
@@ -238,16 +238,16 @@ async function initializeDatabase() {
           transmission: 'Automatique',
           fuel: 'Diesel',
           available: true,
-          image_url: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80',
+          image_url: '/imgs/cars/vw-golf-1.jpg',
           year_model: 2023,
           doors: 5,
           description: 'Compacte premium polyvalente avec un excellent confort sur route.',
           features: JSON.stringify(['CarPlay/Android Auto', 'Radar de recul', 'Régulateur de vitesse', 'Bluetooth', 'Lane Assist']),
           images: [
-            'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1619767886558-efdc259cde1e?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&w=1200&q=80'
+            '/imgs/cars/vw-golf-1.jpg',
+            '/imgs/cars/vw-golf-2.jpg',
+            '/imgs/cars/vw-golf-3.jpg',
+            '/imgs/cars/vw-golf-4.jpg'
           ]
         },
         // 7. Hyundai Tucson
@@ -259,16 +259,16 @@ async function initializeDatabase() {
           transmission: 'Automatique',
           fuel: 'Diesel',
           available: true,
-          image_url: 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=1200&q=80',
+          image_url: '/imgs/cars/hyundai-tucson-1.jpg',
           year_model: 2023,
           doors: 5,
           description: 'Le Hyundai Tucson SUV offre espace et confort pour toute la famille lors de vos voyages.',
           features: JSON.stringify(['Climatisation automatique', 'Bluetooth', 'Toit panoramique', 'Caméra de recul', 'Aide au stationnement']),
           images: [
-            'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1603386329225-868f9b1d1f6b?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&w=1200&q=80'
+            '/imgs/cars/hyundai-tucson-1.jpg',
+            '/imgs/cars/hyundai-tucson-2.jpg',
+            '/imgs/cars/hyundai-tucson-3.jpg',
+            '/imgs/cars/hyundai-tucson-4.jpg'
           ]
         },
         // 8. Kia Sportage
@@ -280,16 +280,16 @@ async function initializeDatabase() {
           transmission: 'Automatique',
           fuel: 'Diesel',
           available: true,
-          image_url: 'https://images.unsplash.com/photo-1603386329225-868f9b1d1f6b?auto=format&fit=crop&w=1200&q=80',
+          image_url: '/imgs/cars/kia-sportage-1.jpg',
           year_model: 2024,
           doors: 5,
           description: 'SUV confortable et spacieux, parfait pour les longs trajets en famille.',
           features: JSON.stringify(['Climatisation', 'Bluetooth', 'Caméra de recul', 'Toit panoramique', 'CarPlay/Android Auto']),
           images: [
-            'https://images.unsplash.com/photo-1603386329225-868f9b1d1f6b?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=1200&q=80'
+            '/imgs/cars/kia-sportage-1.jpg',
+            '/imgs/cars/kia-sportage-2.jpg',
+            '/imgs/cars/kia-sportage-3.jpg',
+            '/imgs/cars/kia-sportage-4.jpg'
           ]
         },
         // 9. Nissan Qashqai
@@ -301,15 +301,15 @@ async function initializeDatabase() {
           transmission: 'Automatique',
           fuel: 'Essence',
           available: true,
-          image_url: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=1200&q=80',
+          image_url: '/imgs/cars/nissan-qashqai-1.jpg',
           year_model: 2023,
           doors: 5,
           description: 'SUV moderne avec une conduite souple et des équipements de sécurité avancés.',
           features: JSON.stringify(['Aide au stationnement', 'Bluetooth', 'Régulateur adaptatif', 'Lane Assist', 'LED']),
           images: [
-            'https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1603386329225-868f9b1d1f6b?auto=format&fit=crop&w=1200&q=80'
+            '/imgs/cars/nissan-qashqai-1.jpg',
+            '/imgs/cars/nissan-qashqai-2.jpg',
+            '/imgs/cars/nissan-qashqai-3.jpg'
           ]
         },
         // 10. BMW Série 3
@@ -321,223 +321,16 @@ async function initializeDatabase() {
           transmission: 'Automatique',
           fuel: 'Diesel',
           available: true,
-          image_url: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=1200&q=80',
+          image_url: '/imgs/cars/bmw-serie3-1.jpg',
           year_model: 2023,
           doors: 4,
           description: 'Une berline premium pour un confort maximal et une expérience de conduite sportive inoubliable.',
           features: JSON.stringify(['Intérieur cuir', 'Radar de recul', 'Bluetooth', 'Régulateur de vitesse', 'Sièges chauffants', 'Head-Up Display']),
           images: [
-            'https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1549924231-f129b911e442?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=1200&q=80'
-          ]
-        },
-        // 11. Tesla Model 3
-        {
-          name: 'Tesla Model 3',
-          category: 'Luxe',
-          price_per_day: 1600,
-          seats: 5,
-          transmission: 'Automatique',
-          fuel: 'Électrique',
-          available: true,
-          image_url: 'https://images.unsplash.com/photo-1549924231-f129b911e442?auto=format&fit=crop&w=1200&q=80',
-          year_model: 2024,
-          doors: 4,
-          description: 'Berline électrique haut de gamme avec autonomie et technologie avancées.',
-          features: JSON.stringify(['Autopilot', 'Navigation', 'Caméra 360', 'Sièges chauffants', 'Écran 15 pouces']),
-          images: [
-            'https://images.unsplash.com/photo-1549924231-f129b911e442?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1200&q=80'
-          ]
-        },
-        // 12. Mercedes Classe C
-        {
-          name: 'Mercedes Classe C',
-          category: 'Luxe',
-          price_per_day: 2000,
-          seats: 5,
-          transmission: 'Automatique',
-          fuel: 'Essence',
-          available: true,
-          image_url: 'https://images.unsplash.com/photo-1617469767053-d3b523a0b982?auto=format&fit=crop&w=1200&q=80',
-          year_model: 2024,
-          doors: 4,
-          description: 'Élégance et technologie au sommet, la Classe C redéfinit le luxe automobile.',
-          features: JSON.stringify(['Intérieur cuir Nappa', 'MBUX', 'Caméra 360', 'Toit panoramique', 'Sièges massants', 'Ambiance lumineuse']),
-          images: [
-            'https://images.unsplash.com/photo-1617469767053-d3b523a0b982?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1549924231-f129b911e442?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&w=1200&q=80'
-          ]
-        },
-        // 13. Audi A4
-        {
-          name: 'Audi A4',
-          category: 'Luxe',
-          price_per_day: 1900,
-          seats: 5,
-          transmission: 'Automatique',
-          fuel: 'Diesel',
-          available: true,
-          image_url: 'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=1200&q=80',
-          year_model: 2023,
-          doors: 4,
-          description: 'Berline allemande haut de gamme, alliant technologie, confort et performance.',
-          features: JSON.stringify(['Virtual Cockpit', 'CarPlay/Android Auto', 'Sièges chauffants', 'Caméra de recul', 'Régulateur adaptatif']),
-          images: [
-            'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1617469767053-d3b523a0b982?auto=format&fit=crop&w=1200&q=80'
-          ]
-        },
-        // 14. Range Rover Evoque
-        {
-          name: 'Range Rover Evoque',
-          category: 'SUV',
-          price_per_day: 1200,
-          seats: 5,
-          transmission: 'Automatique',
-          fuel: 'Diesel',
-          available: true,
-          image_url: 'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&w=1200&q=80',
-          year_model: 2024,
-          doors: 5,
-          description: 'Le SUV compact de luxe par excellence, avec un design iconique et des capacités tout-terrain.',
-          features: JSON.stringify(['Toit panoramique', 'Caméra 360', 'Terrain Response', 'Sièges cuir', 'Head-Up Display', 'Bluetooth']),
-          images: [
-            'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1603386329225-868f9b1d1f6b?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&w=1200&q=80'
-          ]
-        },
-        // 15. Toyota RAV4
-        {
-          name: 'Toyota RAV4',
-          category: 'SUV',
-          price_per_day: 700,
-          seats: 5,
-          transmission: 'Automatique',
-          fuel: 'Hybride',
-          available: true,
-          image_url: 'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&w=1200&q=80',
-          year_model: 2024,
-          doors: 5,
-          description: 'SUV hybride fiable et économique, idéal pour les routes marocaines variées.',
-          features: JSON.stringify(['Climatisation automatique', 'CarPlay/Android Auto', 'Caméra de recul', 'Traction 4x4', 'Régulateur adaptatif']),
-          images: [
-            'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1603386329225-868f9b1d1f6b?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=1200&q=80'
-          ]
-        },
-        // 16. Seat Ibiza
-        {
-          name: 'Seat Ibiza',
-          category: 'Économique',
-          price_per_day: 270,
-          seats: 5,
-          transmission: 'Manuelle',
-          fuel: 'Essence',
-          available: true,
-          image_url: 'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=1200&q=80',
-          year_model: 2023,
-          doors: 5,
-          description: 'Citadine espagnole dynamique et économique, idéale pour les petits budgets.',
-          features: JSON.stringify(['Climatisation', 'Bluetooth', 'Écran tactile', 'ABS', 'Verrouillage centralisé']),
-          images: [
-            'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1619767886558-efdc259cde1e?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1200&q=80'
-          ]
-        },
-        // 17. Skoda Octavia
-        {
-          name: 'Skoda Octavia',
-          category: 'Compacte',
-          price_per_day: 390,
-          seats: 5,
-          transmission: 'Automatique',
-          fuel: 'Diesel',
-          available: true,
-          image_url: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80',
-          year_model: 2023,
-          doors: 5,
-          description: 'Berline spacieuse et fiable, avec un excellent rapport espace-prix.',
-          features: JSON.stringify(['CarPlay/Android Auto', 'Radar de recul', 'Régulateur de vitesse', 'Bluetooth', 'Caméra de recul']),
-          images: [
-            'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1619767886558-efdc259cde1e?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=1200&q=80'
-          ]
-        },
-        // 18. Ford Mustang
-        {
-          name: 'Ford Mustang',
-          category: 'Luxe',
-          price_per_day: 1500,
-          seats: 4,
-          transmission: 'Automatique',
-          fuel: 'Essence',
-          available: true,
-          image_url: 'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=1200&q=80',
-          year_model: 2023,
-          doors: 2,
-          description: 'L\'icône américaine, pour une expérience de conduite sportive et inoubliable.',
-          features: JSON.stringify(['Intérieur cuir', 'Bluetooth', 'Caméra de recul', 'Mode Sport', 'Sièges Baquets', 'Échappement sport']),
-          images: [
-            'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&w=1200&q=80'
-          ]
-        },
-        // 19. Opel Corsa
-        {
-          name: 'Opel Corsa',
-          category: 'Économique',
-          price_per_day: 260,
-          seats: 5,
-          transmission: 'Manuelle',
-          fuel: 'Essence',
-          available: true,
-          image_url: 'https://images.unsplash.com/photo-1619767886558-efdc259cde1e?auto=format&fit=crop&w=1200&q=80',
-          year_model: 2023,
-          doors: 5,
-          description: 'Petite citadine pratique et économique, parfaite pour les courtes distances.',
-          features: JSON.stringify(['Climatisation', 'Bluetooth', 'ABS', 'Verrouillage centralisé', 'Direction assistée']),
-          images: [
-            'https://images.unsplash.com/photo-1619767886558-efdc259cde1e?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&w=1200&q=80'
-          ]
-        },
-        // 20. Jeep Wrangler
-        {
-          name: 'Jeep Wrangler',
-          category: 'SUV',
-          price_per_day: 1100,
-          seats: 5,
-          transmission: 'Automatique',
-          fuel: 'Diesel',
-          available: true,
-          image_url: 'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&w=1200&q=80',
-          year_model: 2023,
-          doors: 4,
-          description: 'La légende du tout-terrain, parfaite pour explorer les pistes et déserts marocains.',
-          features: JSON.stringify(['4x4 intégral', 'Toit amovible', 'Bluetooth', 'Caméra de recul', 'Barres de toit', 'Blindage sous caisse']),
-          images: [
-            'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1603386329225-868f9b1d1f6b?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&w=1200&q=80'
+            '/imgs/cars/bmw-serie3-1.jpg',
+            '/imgs/cars/bmw-serie3-2.jpg',
+            '/imgs/cars/bmw-serie3-3.jpg',
+            '/imgs/cars/bmw-serie3-4.jpg'
           ]
         }
       ];

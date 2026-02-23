@@ -6,7 +6,6 @@ const multer = require('multer');
 const Booking = require('../models/Booking');
 const Car = require('../models/Car');
 const db = require('../config/db');
-const path = require('path');
 const { sendBookingConfirmation, sendStatusUpdate } = require('../services/emailService');
 
 // GET /api/admin/dashboard - Statistiques complètes du tableau de bord
@@ -23,12 +22,12 @@ router.get('/dashboard', auth, isAdmin, async (req, res) => {
         const [completedCount] = await db.query("SELECT COUNT(*) as count FROM bookings WHERE status = 'completed'");
         const [cancelledCount] = await db.query("SELECT COUNT(*) as count FROM bookings WHERE status = 'cancelled'");
         
-        // Revenus totaux et revenus du mois
-        const [totalRevenue] = await db.query("SELECT COALESCE(SUM(total_price), 0) as total FROM bookings WHERE status IN ('pending', 'confirmed', 'completed')");
+        // Revenus totaux et revenus du mois (confirmed et completed uniquement)
+        const [totalRevenue] = await db.query("SELECT COALESCE(SUM(total_price), 0) as total FROM bookings WHERE status IN ('confirmed', 'completed')");
         const [monthRevenue] = await db.query(`
             SELECT COALESCE(SUM(total_price), 0) as total 
             FROM bookings 
-            WHERE status IN ('pending', 'confirmed', 'completed') 
+            WHERE status IN ('confirmed', 'completed') 
             AND MONTH(created_at) = MONTH(CURRENT_DATE()) 
             AND YEAR(created_at) = YEAR(CURRENT_DATE())
         `);
@@ -64,11 +63,20 @@ router.get('/dashboard', auth, isAdmin, async (req, res) => {
             LIMIT 5
         `);
         
-        // Locations les plus populaires
-        const [topLocations] = await db.query(`
-            SELECT pickup_location, COUNT(*) as count
+        // Locations les plus populaires - Lieu de prise en charge
+        const [topPickupLocations] = await db.query(`
+            SELECT pickup_location as location, COUNT(*) as count
             FROM bookings
             GROUP BY pickup_location
+            ORDER BY count DESC
+            LIMIT 5
+        `);
+        
+        // Locations les plus populaires - Lieu de restitution
+        const [topReturnLocations] = await db.query(`
+            SELECT dropoff_location as location, COUNT(*) as count
+            FROM bookings
+            GROUP BY dropoff_location
             ORDER BY count DESC
             LIMIT 5
         `);
@@ -89,7 +97,8 @@ router.get('/dashboard', auth, isAdmin, async (req, res) => {
             weeklyBookings,
             monthlyBookings,
             topCars,
-            topLocations
+            topPickupLocations,
+            topReturnLocations
         });
     } catch (error) {
         console.error('Dashboard error:', error);
@@ -318,32 +327,62 @@ router.get('/cars', auth, isAdmin, async (req, res) => {
 
 // POST /api/admin/cars - Ajouter une voiture avec images
 router.post('/cars', auth, isAdmin, (req, res, next) => {
+    console.log('📥 Create car request');
+    console.log('📄 Content-Type:', req.headers['content-type']);
+    
     upload.array('images', 10)(req, res, (err) => {
         if (err instanceof multer.MulterError) {
-            // A Multer error occurred when uploading
+            console.error('❌ Multer error:', err);
             if (err.code === 'LIMIT_FILE_SIZE') {
                 return res.status(413).json({ message: 'Fichier trop volumineux. Taille maximum: 10MB' });
             }
             return res.status(400).json({ message: err.message });
         } else if (err) {
-            // An unknown error occurred
+            console.error('❌ Multer/Cloudinary error:', err);
             return res.status(500).json({ message: err.message });
         }
-        // Everything went fine, proceed to next middleware
+        console.log('✅ File upload middleware passed, files:', req.files?.length || 0);
         next();
     });
 }, async (req, res) => {
     try {
+        console.log('📝 Request body:', req.body);
+        console.log('📎 Uploaded files:', req.files);
+        
         // Get uploaded files from Cloudinary
         const uploadedFiles = req.files || [];
         const imageUrls = uploadedFiles.map(file => file.path); // Cloudinary returns URL in file.path
         
+        // Parse features if it's a string
+        let features = req.body.features || '[]';
+        if (typeof features === 'string') {
+            try {
+                features = JSON.parse(features);
+            } catch (e) {
+                features = features.split(',').map(f => f.trim()).filter(f => f);
+            }
+        }
+        
+        // Ensure numeric values
+        const pricePerDay = parseInt(req.body.price_per_day) || 0;
+        const seats = parseInt(req.body.seats) || 5;
+        const doors = parseInt(req.body.doors) || 5;
+        const yearModel = parseInt(req.body.year_model) || 2024;
+        
         // Prepare car data
         const carData = {
             ...req.body,
+            price_per_day: pricePerDay,
+            seats: seats,
+            doors: doors,
+            year_model: yearModel,
+            available: req.body.available === 'true' || req.body.available === true ? 1 : 0,
             image_url: imageUrls.length > 0 ? imageUrls[0] : null, // Main image
-            images: imageUrls // All images including secondary
+            images: imageUrls, // All images including secondary
+            features: typeof features === 'string' ? features : JSON.stringify(features)
         };
+        
+        console.log('🚗 Car data to create:', carData);
         
         const carId = await Car.create(carData);
         
@@ -365,28 +404,49 @@ router.post('/cars', auth, isAdmin, (req, res, next) => {
             );
         }
         
+        console.log('✅ Car created successfully with ID:', carId);
         res.status(201).json({ id: carId, message: 'Voiture ajoutée avec succès', images: imageUrls });
     } catch (error) {
-        console.error('Create car error:', error);
+        console.error('❌ Create car error:', error);
         res.status(500).json({ message: error.message });
     }
 });
 
 // PUT /api/admin/cars/:id - Mettre à jour une voiture avec images
 router.put('/cars/:id', auth, isAdmin, (req, res, next) => {
+    // Only process files if they exist in the request
+    const contentType = req.headers['content-type'] || '';
+    const hasFiles = contentType.includes('multipart/form-data');
+    
+    console.log('📥 Update car request:', req.params.id);
+    console.log('📄 Content-Type:', contentType);
+    console.log('📎 Has multipart files:', hasFiles);
+    
+    if (!hasFiles) {
+        // No files to upload, skip multer and proceed
+        console.log('⏭️ Skipping file upload middleware');
+        return next();
+    }
+    
     upload.array('images', 10)(req, res, (err) => {
         if (err instanceof multer.MulterError) {
+            console.error('❌ Multer error:', err);
             if (err.code === 'LIMIT_FILE_SIZE') {
                 return res.status(413).json({ message: 'Fichier trop volumineux. Taille maximum: 10MB' });
             }
             return res.status(400).json({ message: err.message });
         } else if (err) {
+            console.error('❌ Multer/Cloudinary error:', err);
             return res.status(500).json({ message: err.message });
         }
+        console.log('✅ File upload middleware passed, files:', req.files?.length || 0);
         next();
     });
 }, async (req, res) => {
     try {
+        console.log('📝 Request body:', req.body);
+        console.log('📎 Uploaded files:', req.files);
+        
         // Get uploaded files from Cloudinary
         const uploadedFiles = req.files || [];
         const newImageUrls = uploadedFiles.map(file => file.path); // Cloudinary returns URL in file.path
@@ -397,11 +457,101 @@ router.put('/cars/:id', auth, isAdmin, (req, res, next) => {
             return res.status(404).json({ message: 'Voiture non trouvée' });
         }
         
-        // Determine main image
-        let mainImage = existingCar[0].image_url;
-        if (newImageUrls.length > 0) {
-            mainImage = newImageUrls[0];
+        // Parse features if it's a string
+        let features = req.body.features;
+        if (typeof features === 'string') {
+            try {
+                features = JSON.parse(features);
+            } catch (e) {
+                features = features.split(',').map(f => f.trim()).filter(f => f);
+            }
         }
+        
+        // Handle images to delete - normalize URLs to match database format
+        let imagesToDelete = [];
+        if (req.body.images_to_delete) {
+            try {
+                imagesToDelete = JSON.parse(req.body.images_to_delete);
+            } catch (e) {
+                console.log('Failed to parse images_to_delete:', e);
+            }
+        }
+        
+        // Delete marked images from car_images table
+        // Normalize URLs to handle both full URLs and relative paths
+        if (imagesToDelete.length > 0) {
+            for (let imgUrl of imagesToDelete) {
+                // Extract path from full URL if needed
+                let normalizedUrl = imgUrl;
+                if (imgUrl.includes('vercel.app')) {
+                    normalizedUrl = imgUrl.replace(/^https?:\/\/[^/]+/, '');
+                }
+                
+                // Delete using exact match or LIKE for partial matches
+                const [deleteResult] = await db.query(
+                    'DELETE FROM car_images WHERE car_id = ? AND (image_url = ? OR image_url = ?)',
+                    [req.params.id, imgUrl, normalizedUrl]
+                );
+                console.log('Deleted image:', imgUrl, 'affected rows:', deleteResult.affectedRows);
+                
+                // Also update the main image if it was deleted
+                if (existingCar[0].image_url === imgUrl || existingCar[0].image_url === normalizedUrl) {
+                    await db.query('UPDATE cars SET image_url = NULL WHERE id = ?', [req.params.id]);
+                }
+            }
+        }
+        
+        // Get remaining existing images with normalized URLs
+        let existingImages = [];
+        if (req.body.existing_images) {
+            try {
+                existingImages = JSON.parse(req.body.existing_images);
+                // Normalize URLs to match database format
+                existingImages = existingImages.map(url => {
+                    if (url.includes('vercel.app')) {
+                        return url.replace(/^https?:\/\/[^/]+/, '');
+                    }
+                    return url;
+                });
+            } catch (e) {
+                console.log('Failed to parse existing_images:', e);
+            }
+        }
+        
+        // Get primary image index from request (default to 0)
+        const primaryImageIndex = parseInt(req.body.primary_image_index) || 0;
+        console.log('Primary image index:', primaryImageIndex);
+        
+        // Combine all images: existing (remaining) + new uploads
+        let allImages = [];
+        
+        // Add remaining existing images
+        if (existingImages.length > 0) {
+            allImages = [...existingImages];
+        }
+        
+        // Add new uploaded images
+        if (newImageUrls.length > 0) {
+            allImages = [...allImages, ...newImageUrls];
+        }
+        
+        // Determine main image based on user's selection
+        let mainImage = null;
+        if (allImages.length > 0) {
+            // Use the selected primary image index, but ensure it's within bounds
+            const safeIndex = Math.min(Math.max(0, primaryImageIndex), allImages.length - 1);
+            mainImage = allImages[safeIndex];
+            console.log('Selected primary image:', mainImage, 'at index:', safeIndex);
+        } else {
+            // Fallback to old main image if no images left
+            mainImage = existingCar[0].image_url;
+        }
+        
+        // Ensure price_per_day is a valid number
+        const pricePerDay = parseInt(req.body.price_per_day) || 0;
+        const seats = parseInt(req.body.seats) || 5;
+        const doors = parseInt(req.body.doors) || 5;
+        const yearModel = parseInt(req.body.year_model) || 2024;
         
         // Update car
         const [result] = await db.query(
@@ -411,10 +561,12 @@ router.put('/cars/:id', auth, isAdmin, (req, res, next) => {
                 year_model = ?, doors = ?, description = ?, features = ?
             WHERE id = ?`,
             [
-                req.body.name, req.body.category, req.body.price_per_day,
-                req.body.seats, req.body.transmission, req.body.fuel,
-                req.body.available, mainImage, req.body.year_model,
-                req.body.doors, req.body.description, req.body.features,
+                req.body.name, req.body.category, pricePerDay,
+                seats, req.body.transmission, req.body.fuel,
+                req.body.available === 'true' || req.body.available === true ? 1 : 0, 
+                mainImage, yearModel,
+                doors, req.body.description, 
+                typeof features === 'string' ? features : JSON.stringify(features),
                 req.params.id
             ]
         );
@@ -423,31 +575,50 @@ router.put('/cars/:id', auth, isAdmin, (req, res, next) => {
             return res.status(404).json({ message: 'Voiture non trouvée' });
         }
         
-        // Add new secondary images
-        if (newImageUrls.length > 1) {
-            for (let i = 1; i < newImageUrls.length; i++) {
-                await db.query(
-                    'INSERT INTO car_images (car_id, image_url, is_primary, display_order) VALUES (?, ?, ?, ?)',
-                    [req.params.id, newImageUrls[i], false, i]
+        // Reset all images to non-primary first
+        await db.query('UPDATE car_images SET is_primary = false WHERE car_id = ?', [req.params.id]);
+        
+        // Insert/update all images with correct primary status
+        if (allImages.length > 0) {
+            for (let i = 0; i < allImages.length; i++) {
+                const isPrimary = (i === Math.min(Math.max(0, primaryImageIndex), allImages.length - 1));
+                const imageUrl = allImages[i];
+                
+                // Check if image already exists
+                const [existingImg] = await db.query(
+                    'SELECT id FROM car_images WHERE car_id = ? AND image_url = ?',
+                    [req.params.id, imageUrl]
                 );
+                
+                if (existingImg.length > 0) {
+                    // Update existing image
+                    await db.query(
+                        'UPDATE car_images SET is_primary = ?, display_order = ? WHERE id = ?',
+                        [isPrimary, i, existingImg[0].id]
+                    );
+                } else {
+                    // Insert new image
+                    await db.query(
+                        'INSERT INTO car_images (car_id, image_url, is_primary, display_order) VALUES (?, ?, ?, ?)',
+                        [req.params.id, imageUrl, isPrimary, i]
+                    );
+                }
             }
         }
         
-        // If new primary image, update car_images table
-        if (newImageUrls.length > 0) {
+        // Clean up any orphaned images (not in allImages list)
+        if (allImages.length > 0) {
+            const placeholders = allImages.map(() => '?').join(',');
             await db.query(
-                'UPDATE car_images SET is_primary = false WHERE car_id = ?',
-                [req.params.id]
-            );
-            await db.query(
-                'INSERT INTO car_images (car_id, image_url, is_primary, display_order) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE image_url = ?, is_primary = true',
-                [req.params.id, newImageUrls[0], true, 0, newImageUrls[0]]
+                `DELETE FROM car_images WHERE car_id = ? AND image_url NOT IN (${placeholders})`,
+                [req.params.id, ...allImages]
             );
         }
         
-        res.json({ message: 'Voiture mise à jour avec succès', images: newImageUrls });
+        console.log('✅ Car updated successfully');
+        res.json({ message: 'Voiture mise à jour avec succès', images: allImages });
     } catch (error) {
-        console.error('Update car error:', error);
+        console.error('❌ Update car error:', error);
         res.status(500).json({ message: error.message });
     }
 });

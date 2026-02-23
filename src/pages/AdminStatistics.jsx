@@ -41,6 +41,30 @@ const AdminStatistics = () => {
   const formatCurrency = (num) => new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'MAD' }).format(num || 0);
   const formatNumber = (num) => new Intl.NumberFormat('fr-FR').format(num || 0);
 
+  // Skeleton loading components
+  const SkeletonKpiCard = () => (
+    <div className="bg-slate-100 rounded-xl p-4 sm:p-6 animate-pulse">
+      <div className="h-3 w-24 bg-slate-200 rounded mb-2"></div>
+      <div className="h-8 w-32 bg-slate-200 rounded mb-2"></div>
+      <div className="h-3 w-20 bg-slate-200 rounded"></div>
+    </div>
+  );
+
+  const SkeletonBar = () => (
+    <div className="flex items-center gap-2 sm:gap-4 mb-3">
+      <div className="w-12 sm:w-20 h-4 bg-slate-100 rounded animate-pulse"></div>
+      <div className="flex-1 h-6 sm:h-8 bg-slate-100 rounded-lg animate-pulse"></div>
+      <div className="w-8 sm:w-12 h-4 bg-slate-100 rounded animate-pulse"></div>
+    </div>
+  );
+
+  const SkeletonStatusCard = () => (
+    <div className="p-3 sm:p-4 bg-slate-100 rounded-lg border border-slate-200 animate-pulse">
+      <div className="h-3 w-16 bg-slate-200 rounded mb-2"></div>
+      <div className="h-6 w-12 bg-slate-200 rounded"></div>
+    </div>
+  );
+
   const getMonthName = (monthNum) => {
     const months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
     return months[monthNum - 1];
@@ -67,9 +91,32 @@ const AdminStatistics = () => {
         </div>
 
         {loading ? (
-          <div className="flex items-center justify-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
-          </div>
+          <>
+            {/* Skeleton KPI Cards */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-6 sm:mb-8">
+              {[1,2,3,4].map(i => <SkeletonKpiCard key={i} />)}
+            </div>
+
+            {/* Skeleton Charts */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-6 sm:mb-8">
+              <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 sm:p-6">
+                <div className="h-5 w-48 bg-slate-100 rounded animate-pulse mb-4"></div>
+                {[1,2,3,4,5,6].map(i => <SkeletonBar key={i} />)}
+              </div>
+              <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 sm:p-6">
+                <div className="h-5 w-40 bg-slate-100 rounded animate-pulse mb-4"></div>
+                {[1,2,3,4,5].map(i => <SkeletonBar key={i} />)}
+              </div>
+            </div>
+
+            {/* Skeleton Status Summary */}
+            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 sm:p-6">
+              <div className="h-5 w-48 bg-slate-100 rounded animate-pulse mb-4"></div>
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                {[1,2,3,4].map(i => <SkeletonStatusCard key={i} />)}
+              </div>
+            </div>
+          </>
         ) : (
           <>
             {/* KPI Cards */}

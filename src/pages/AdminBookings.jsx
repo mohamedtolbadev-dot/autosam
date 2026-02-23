@@ -171,6 +171,62 @@ const AdminBookings = () => {
     });
   };
 
+  // Skeleton loading components
+  const SkeletonRow = () => (
+    <tr className="border-b border-slate-100">
+      <td className="px-4 py-3"><div className="h-4 w-12 bg-slate-100 rounded animate-pulse"></div></td>
+      <td className="px-4 py-3">
+        <div className="space-y-2">
+          <div className="h-4 w-24 bg-slate-100 rounded animate-pulse"></div>
+          <div className="h-3 w-32 bg-slate-100 rounded animate-pulse"></div>
+        </div>
+      </td>
+      <td className="px-4 py-3">
+        <div className="space-y-2">
+          <div className="h-4 w-20 bg-slate-100 rounded animate-pulse"></div>
+          <div className="h-3 w-16 bg-slate-100 rounded animate-pulse"></div>
+        </div>
+      </td>
+      <td className="px-4 py-3">
+        <div className="space-y-1">
+          <div className="h-3 w-20 bg-slate-100 rounded animate-pulse"></div>
+          <div className="h-3 w-20 bg-slate-100 rounded animate-pulse"></div>
+        </div>
+      </td>
+      <td className="px-4 py-3"><div className="h-4 w-16 bg-slate-100 rounded animate-pulse"></div></td>
+      <td className="px-4 py-3"><div className="h-6 w-20 bg-slate-100 rounded animate-pulse"></div></td>
+      <td className="px-4 py-3">
+        <div className="flex gap-1">
+          <div className="h-6 w-14 bg-slate-100 rounded animate-pulse"></div>
+          <div className="h-6 w-8 bg-slate-100 rounded animate-pulse"></div>
+        </div>
+      </td>
+    </tr>
+  );
+
+  const SkeletonCard = () => (
+    <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 space-y-3">
+      <div className="flex justify-between items-start">
+        <div className="space-y-2">
+          <div className="h-3 w-16 bg-slate-100 rounded animate-pulse"></div>
+          <div className="h-4 w-28 bg-slate-100 rounded animate-pulse"></div>
+          <div className="h-3 w-24 bg-slate-100 rounded animate-pulse"></div>
+        </div>
+        <div className="h-6 w-20 bg-slate-100 rounded animate-pulse"></div>
+      </div>
+      <div className="space-y-2">
+        <div className="flex justify-between"><div className="h-3 w-12 bg-slate-100 rounded animate-pulse"></div><div className="h-3 w-20 bg-slate-100 rounded animate-pulse"></div></div>
+        <div className="flex justify-between"><div className="h-3 w-12 bg-slate-100 rounded animate-pulse"></div><div className="h-3 w-24 bg-slate-100 rounded animate-pulse"></div></div>
+        <div className="flex justify-between"><div className="h-3 w-12 bg-slate-100 rounded animate-pulse"></div><div className="h-3 w-16 bg-slate-100 rounded animate-pulse"></div></div>
+        <div className="flex justify-between"><div className="h-3 w-12 bg-slate-100 rounded animate-pulse"></div><div className="h-3 w-14 bg-slate-100 rounded animate-pulse"></div></div>
+      </div>
+      <div className="flex gap-2 pt-2">
+        <div className="h-8 flex-1 bg-slate-100 rounded animate-pulse"></div>
+        <div className="h-8 w-10 bg-slate-100 rounded animate-pulse"></div>
+      </div>
+    </div>
+  );
+
   // Parse notes field to extract Permis, Options, Assurance
   const parseNotes = (notes) => {
     if (!notes) return { permis: null, options: null, assurance: null, message: null };
@@ -234,8 +290,23 @@ const AdminBookings = () => {
         {/* Desktop Table */}
         <div className="hidden lg:block bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
           {loading ? (
-            <div className="flex items-center justify-center h-64">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
+            <div className="p-4">
+              <table className="w-full">
+                <thead className="bg-slate-50">
+                  <tr>
+                    <th className="px-4 py-3 w-16"><div className="h-3 w-8 bg-slate-200 rounded"></div></th>
+                    <th className="px-4 py-3"><div className="h-3 w-16 bg-slate-200 rounded"></div></th>
+                    <th className="px-4 py-3"><div className="h-3 w-16 bg-slate-200 rounded"></div></th>
+                    <th className="px-4 py-3"><div className="h-3 w-12 bg-slate-200 rounded"></div></th>
+                    <th className="px-4 py-3"><div className="h-3 w-12 bg-slate-200 rounded"></div></th>
+                    <th className="px-4 py-3"><div className="h-3 w-14 bg-slate-200 rounded"></div></th>
+                    <th className="px-4 py-3"><div className="h-3 w-14 bg-slate-200 rounded"></div></th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-200">
+                  {[1,2,3,4,5].map(i => <SkeletonRow key={i} />)}
+                </tbody>
+              </table>
             </div>
           ) : (
             <>
@@ -359,9 +430,9 @@ const AdminBookings = () => {
         {/* Mobile Cards */}
         <div className="lg:hidden space-y-4">
           {loading ? (
-            <div className="flex items-center justify-center h-64">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
-            </div>
+            <>
+              {[1,2,3,4].map(i => <SkeletonCard key={i} />)}
+            </>
           ) : allBookings.length === 0 ? (
             <div className="bg-white rounded-xl border border-slate-200 p-8 text-center text-slate-500">
               Aucune réservation trouvée

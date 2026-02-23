@@ -1,9 +1,10 @@
 /**
  * Service Worker for AutoSam PWA
- * Handles caching for offline functionality including API data
+ * Handles caching for offline functionality
+ * ⚠️ SECURITY: Never cache auth or admin endpoints
  */
 
-const CACHE_NAME = 'autosam-v1';
+const CACHE_NAME = 'autosam-v2';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -11,12 +12,8 @@ const STATIC_ASSETS = [
   '/icons/icon_app.jpg'
 ];
 
-// API endpoints to cache
-const API_CACHE_NAME = 'autosam-api-v1';
-const API_ENDPOINTS = [
-  '/api/cars',
-  '/api/cars/'
-];
+// API endpoints to cache - ONLY public endpoints
+const API_CACHE_NAME = 'autosam-api-v2';
 
 // Install event - cache static assets
 self.addEventListener('install', (event) => {
@@ -58,14 +55,36 @@ self.addEventListener('fetch', (event) => {
   // Skip non-GET requests
   if (request.method !== 'GET') return;
 
-  // Handle API requests (cars data)
-  if (url.pathname.startsWith('/api/cars') || url.hostname.includes('vercel.app')) {
-    event.respondWith(handleAPIRequest(request));
+  // 🚨 SECURITY: Never cache auth or admin endpoints
+  if (url.pathname.includes('/auth/') || 
+      url.pathname.includes('/admin/') ||
+      url.pathname.includes('/bookings') ||
+      url.pathname.includes('/profile')) {
+    console.log('[Service Worker] Skipping cache for sensitive endpoint:', url.pathname);
     return;
   }
 
+  // Only cache public /api/cars endpoint (not /api/admin/cars)
+  if (url.pathname === '/api/cars' || url.pathname.startsWith('/api/cars/')) {
+    // Make sure it's not an admin endpoint
+    if (!url.pathname.includes('/admin/')) {
+      event.respondWith(handleAPIRequest(request));
+      return;
+    }
+  }
+
   // Handle static assets
-  event.respondWith(handleStaticRequest(request));
+  if (request.mode === 'navigate' || 
+      request.destination === 'style' || 
+      request.destination === 'script' ||
+      request.destination === 'image' ||
+      url.pathname.endsWith('.js') ||
+      url.pathname.endsWith('.css') ||
+      url.pathname.endsWith('.png') ||
+      url.pathname.endsWith('.jpg') ||
+      url.pathname.endsWith('.svg')) {
+    event.respondWith(handleStaticRequest(request));
+  }
 });
 
 // Handle API requests with caching

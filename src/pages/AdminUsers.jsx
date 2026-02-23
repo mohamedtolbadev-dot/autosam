@@ -53,6 +53,42 @@ const AdminUsers = () => {
     });
   };
 
+  // Skeleton loading components
+  const SkeletonRow = () => (
+    <tr className="border-b border-slate-100">
+      <td className="px-6 py-4"><div className="h-4 w-12 bg-slate-100 rounded animate-pulse"></div></td>
+      <td className="px-6 py-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-slate-100 rounded-full animate-pulse"></div>
+          <div className="h-4 w-24 bg-slate-100 rounded animate-pulse"></div>
+        </div>
+      </td>
+      <td className="px-6 py-4"><div className="h-4 w-32 bg-slate-100 rounded animate-pulse"></div></td>
+      <td className="px-6 py-4"><div className="h-5 w-16 bg-slate-100 rounded-full animate-pulse"></div></td>
+      <td className="px-6 py-4 hidden md:table-cell"><div className="h-4 w-20 bg-slate-100 rounded animate-pulse"></div></td>
+      <td className="px-6 py-4"><div className="h-4 w-20 bg-slate-100 rounded animate-pulse"></div></td>
+    </tr>
+  );
+
+  const SkeletonCard = () => (
+    <div className="p-4 border-b border-slate-100">
+      <div className="flex items-start justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-slate-100 rounded-full animate-pulse shrink-0"></div>
+          <div className="min-w-0 space-y-2">
+            <div className="h-4 w-24 bg-slate-100 rounded animate-pulse"></div>
+            <div className="h-3 w-32 bg-slate-100 rounded animate-pulse"></div>
+            <div className="flex items-center gap-2 mt-1">
+              <div className="h-5 w-12 bg-slate-100 rounded-full animate-pulse"></div>
+              <div className="h-3 w-8 bg-slate-100 rounded animate-pulse"></div>
+            </div>
+          </div>
+        </div>
+        <div className="h-8 w-8 bg-slate-100 rounded animate-pulse"></div>
+      </div>
+    </div>
+  );
+
   return (
     <AdminLayout>
       <div className="p-4 sm:p-6 lg:p-8">
@@ -67,9 +103,30 @@ const AdminUsers = () => {
         {/* Users List - Cards on Mobile, Table on Desktop */}
         <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
           {loading ? (
-            <div className="flex items-center justify-center h-64">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
-            </div>
+            <>
+              {/* Mobile Skeleton Cards */}
+              <div className="sm:hidden">
+                {[1,2,3,4].map(i => <SkeletonCard key={i} />)}
+              </div>
+              {/* Desktop Skeleton Table */}
+              <div className="hidden sm:block p-4">
+                <table className="w-full">
+                  <thead className="bg-slate-50">
+                    <tr>
+                      <th className="px-6 py-3"><div className="h-3 w-8 bg-slate-200 rounded"></div></th>
+                      <th className="px-6 py-3"><div className="h-3 w-16 bg-slate-200 rounded"></div></th>
+                      <th className="px-6 py-3"><div className="h-3 w-12 bg-slate-200 rounded"></div></th>
+                      <th className="px-6 py-3"><div className="h-3 w-10 bg-slate-200 rounded"></div></th>
+                      <th className="px-6 py-3 hidden md:table-cell"><div className="h-3 w-14 bg-slate-200 rounded"></div></th>
+                      <th className="px-6 py-3"><div className="h-3 w-14 bg-slate-200 rounded"></div></th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-200">
+                    {[1,2,3,4,5].map(i => <SkeletonRow key={i} />)}
+                  </tbody>
+                </table>
+              </div>
+            </>
           ) : allUsers.length === 0 ? (
             <div className="px-6 py-8 text-center text-slate-500">
               Aucun utilisateur trouvé

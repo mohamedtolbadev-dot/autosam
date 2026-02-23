@@ -53,7 +53,7 @@ exports.createBooking = async (req, res) => {
         // Get car details for email
         let carDetails = null;
         try {
-            carDetails = await Car.findById(bookingData.car_id);
+            carDetails = await Car.getById(bookingData.car_id);
         } catch (err) {
             console.log('Could not fetch car details for email:', err.message);
         }

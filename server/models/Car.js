@@ -36,7 +36,7 @@ const Car = {
                 seats: row.seats,
                 transmission: row.transmission,
                 fuel: row.fuel,
-                available: row.available !== undefined ? row.available : true,
+                available: row.available === 1 || row.available === true,
                 reserved: isReserved,
                 image: row.image_url || row.image,
                 images: images.map(img => img.image_url),

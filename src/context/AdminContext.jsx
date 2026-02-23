@@ -23,7 +23,8 @@ export const AdminProvider = ({ children }) => {
   const [weeklyBookings, setWeeklyBookings] = useState([]);
   const [monthlyBookings, setMonthlyBookings] = useState([]);
   const [topCars, setTopCars] = useState([]);
-  const [topLocations, setTopLocations] = useState([]);
+  const [topPickupLocations, setTopPickupLocations] = useState([]);
+  const [topReturnLocations, setTopReturnLocations] = useState([]);
   const [detailedStats, setDetailedStats] = useState(null);
   const [allBookings, setAllBookings] = useState([]);
   const [allCars, setAllCars] = useState([]);
@@ -104,7 +105,8 @@ export const AdminProvider = ({ children }) => {
     setWeeklyBookings([]);
     setMonthlyBookings([]);
     setTopCars([]);
-    setTopLocations([]);
+    setTopPickupLocations([]);
+    setTopReturnLocations([]);
     setAllBookings([]);
     setAllCars([]);
     setAllUsers([]);
@@ -128,7 +130,8 @@ export const AdminProvider = ({ children }) => {
       setWeeklyBookings(data.weeklyBookings);
       setMonthlyBookings(data.monthlyBookings);
       setTopCars(data.topCars);
-      setTopLocations(data.topLocations);
+      setTopPickupLocations(data.topPickupLocations);
+      setTopReturnLocations(data.topReturnLocations);
     } catch (err) {
       setError(err.message || 'Erreur lors du chargement');
       console.error('Dashboard error:', err);
@@ -171,7 +174,6 @@ export const AdminProvider = ({ children }) => {
   const updateBookingStatus = useCallback(async (bookingId, status) => {
     if (!admin) return;
     
-    setLoading(true);
     try {
       const token = localStorage.getItem('adminToken');
       await api(`/admin/bookings/${bookingId}/status`, {
@@ -187,8 +189,6 @@ export const AdminProvider = ({ children }) => {
       setError(err.message || 'Erreur lors de la mise à jour');
       console.error('Update error:', err);
       throw err;
-    } finally {
-      setLoading(false);
     }
   }, [admin, fetchDashboard, fetchAllBookings]);
 
@@ -196,7 +196,6 @@ export const AdminProvider = ({ children }) => {
   const deleteBooking = useCallback(async (bookingId) => {
     if (!admin) return;
     
-    setLoading(true);
     try {
       const token = localStorage.getItem('adminToken');
       await api(`/admin/bookings/${bookingId}`, {
@@ -211,8 +210,6 @@ export const AdminProvider = ({ children }) => {
       setError(err.message || 'Erreur lors de la suppression');
       console.error('Delete error:', err);
       throw err;
-    } finally {
-      setLoading(false);
     }
   }, [admin, fetchDashboard, fetchAllBookings]);
 
@@ -299,7 +296,6 @@ export const AdminProvider = ({ children }) => {
   const updateCar = useCallback(async (carId, carData) => {
     if (!admin) return;
     
-    setLoading(true);
     try {
       const token = localStorage.getItem('adminToken');
       
@@ -322,8 +318,6 @@ export const AdminProvider = ({ children }) => {
       setError(err.message || 'Erreur lors de la mise à jour');
       console.error('Update car error:', err);
       throw err;
-    } finally {
-      setLoading(false);
     }
   }, [admin, fetchAllCars]);
 
@@ -331,7 +325,6 @@ export const AdminProvider = ({ children }) => {
   const deleteCar = useCallback(async (carId) => {
     if (!admin) return;
     
-    setLoading(true);
     try {
       const token = localStorage.getItem('adminToken');
       await api(`/admin/cars/${carId}`, {
@@ -346,8 +339,6 @@ export const AdminProvider = ({ children }) => {
       setError(err.message || 'Erreur lors de la suppression');
       console.error('Delete car error:', err);
       throw err;
-    } finally {
-      setLoading(false);
     }
   }, [admin, fetchAllCars, fetchDashboard]);
 
@@ -401,7 +392,6 @@ export const AdminProvider = ({ children }) => {
   const markMessageAsRead = useCallback(async (messageId) => {
     if (!admin) return;
     
-    setLoading(true);
     try {
       const token = localStorage.getItem('adminToken');
       await api(`/admin/contact-messages/${messageId}/read`, {
@@ -418,8 +408,6 @@ export const AdminProvider = ({ children }) => {
       setError(err.message || 'Erreur lors de la mise à jour');
       console.error('Mark as read error:', err);
       throw err;
-    } finally {
-      setLoading(false);
     }
   }, [admin]);
 
@@ -427,7 +415,6 @@ export const AdminProvider = ({ children }) => {
   const deleteContactMessage = useCallback(async (messageId) => {
     if (!admin) return;
     
-    setLoading(true);
     try {
       const token = localStorage.getItem('adminToken');
       await api(`/admin/contact-messages/${messageId}`, {
@@ -441,8 +428,6 @@ export const AdminProvider = ({ children }) => {
       setError(err.message || 'Erreur lors de la suppression');
       console.error('Delete message error:', err);
       throw err;
-    } finally {
-      setLoading(false);
     }
   }, [admin, fetchAllContactMessages]);
 
@@ -456,7 +441,8 @@ export const AdminProvider = ({ children }) => {
     weeklyBookings,
     monthlyBookings,
     topCars,
-    topLocations,
+    topPickupLocations,
+    topReturnLocations,
     detailedStats,
     allBookings,
     allCars,

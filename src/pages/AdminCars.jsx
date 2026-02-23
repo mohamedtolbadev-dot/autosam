@@ -33,6 +33,9 @@ const AdminCars = () => {
   });
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [previewUrls, setPreviewUrls] = useState([]);
+  const [existingImages, setExistingImages] = useState([]); // Track existing images separately
+  const [imagesToDelete, setImagesToDelete] = useState([]); // Track images marked for deletion
+  const [primaryImageIndex, setPrimaryImageIndex] = useState(0); // Track selected primary image
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedCar, setSelectedCar] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -81,6 +84,24 @@ const AdminCars = () => {
         formDataToSend.append('images', file);
       });
 
+      // Add primary image info
+      if (primaryImageIndex >= 0 && primaryImageIndex < previewUrls.length) {
+        formDataToSend.append('primary_image_index', primaryImageIndex);
+      }
+
+      // When editing, send remaining existing images and images to delete
+      if (editingCar) {
+        // Send remaining existing images (not marked for deletion)
+        const remainingImages = existingImages.filter(img => !imagesToDelete.includes(img));
+        if (remainingImages.length > 0) {
+          formDataToSend.append('existing_images', JSON.stringify(remainingImages));
+        }
+        // Send images to delete
+        if (imagesToDelete.length > 0) {
+          formDataToSend.append('images_to_delete', JSON.stringify(imagesToDelete));
+        }
+      }
+
       if (editingCar) {
         await updateCar(editingCar.id, formDataToSend);
       } else {
@@ -90,7 +111,8 @@ const AdminCars = () => {
       setEditingCar(null);
       resetForm();
     } catch (error) {
-      alert('Erreur lors de la sauvegarde');
+      console.error('Submit error:', error);
+      alert('Erreur lors de la sauvegarde: ' + (error.message || 'Erreur inconnue'));
     }
   };
 
@@ -110,20 +132,38 @@ const AdminCars = () => {
     });
     setSelectedFiles([]);
     setPreviewUrls([]);
+    setExistingImages([]);
+    setImagesToDelete([]);
+    setPrimaryImageIndex(0);
   };
 
   const handleEdit = (car) => {
     setEditingCar(car);
     setFormData({
-      ...car,
-      features: Array.isArray(car.features) ? car.features.join(', ') : car.features
+      name: car.name || '',
+      category: car.category || 'Économique',
+      price_per_day: car.price || car.price_per_day || '',
+      seats: car.seats || 5,
+      transmission: car.transmission || 'Manuelle',
+      fuel: car.fuel || 'Essence',
+      available: car.available !== undefined ? car.available : true,
+      doors: car.doors || 5,
+      year_model: car.year_model || 2024,
+      description: car.description || '',
+      features: Array.isArray(car.features) ? car.features.join(', ') : (car.features || '[]')
     });
-    // Show existing images as previews
+    // Show existing images as previews and track them separately
+    let initialImages = [];
     if (car.images && car.images.length > 0) {
-      setPreviewUrls(car.images.map(img => img.startsWith('http') ? img : `https://server-chi-two-10.vercel.app${img}`));
+      initialImages = car.images.map(img => img.startsWith('http') ? img : `https://server-chi-two-10.vercel.app${img}`);
     } else if (car.image) {
-      setPreviewUrls([car.image.startsWith('http') ? car.image : `https://server-chi-two-10.vercel.app${car.image}`]);
+      initialImages = [car.image.startsWith('http') ? car.image : `https://server-chi-two-10.vercel.app${car.image}`];
     }
+    setExistingImages(initialImages);
+    setPreviewUrls(initialImages);
+    setImagesToDelete([]);
+    setSelectedFiles([]);
+    setPrimaryImageIndex(0); // First image is primary by default
     setShowModal(true);
   };
 
@@ -158,20 +198,41 @@ const AdminCars = () => {
     }
     
     if (validFiles.length > 0) {
-      setSelectedFiles(validFiles);
+      setSelectedFiles(prev => [...prev, ...validFiles]);
       const previews = validFiles.map(file => URL.createObjectURL(file));
-      setPreviewUrls(previews);
+      setPreviewUrls(prev => [...prev, ...previews]);
     }
   };
 
   const removeFile = (index) => {
-    const newFiles = selectedFiles.filter((_, i) => i !== index);
-    const newPreviews = previewUrls.filter((_, i) => i !== index);
-    setSelectedFiles(newFiles);
-    setPreviewUrls(newPreviews);
+    const urlToRemove = previewUrls[index];
+    
+    // Check if this is an existing image or a new file
+    const isExistingImage = existingImages.includes(urlToRemove);
+    
+    if (isExistingImage) {
+      // Mark existing image for deletion
+      setImagesToDelete(prev => [...prev, urlToRemove]);
+      // Remove from preview
+      setPreviewUrls(prev => prev.filter((_, i) => i !== index));
+    } else {
+      // It's a new file, remove from selectedFiles
+      // Find the index in selectedFiles by matching preview URL
+      const newFileIndex = selectedFiles.findIndex((_, i) => {
+        const previewIndex = previewUrls.findIndex(url => url === urlToRemove);
+        return previewIndex === index;
+      });
+      
+      if (newFileIndex !== -1) {
+        setSelectedFiles(prev => prev.filter((_, i) => i !== newFileIndex));
+      }
+      setPreviewUrls(prev => prev.filter((_, i) => i !== index));
+    }
   };
 
-  // Pagination logic
+  const setPrimaryImage = (index) => {
+    setPrimaryImageIndex(index);
+  };
   const indexOfLastCar = currentPage * carsPerPage;
   const indexOfFirstCar = indexOfLastCar - carsPerPage;
   const currentCars = allCars.slice(indexOfFirstCar, indexOfLastCar);
@@ -185,6 +246,39 @@ const AdminCars = () => {
     setSelectedCar(car);
     setShowDetailModal(true);
   };
+
+  // Skeleton loading component
+  const SkeletonRow = () => (
+    <tr className="border-b border-slate-100">
+      <td className="px-2 sm:px-6 py-3 sm:py-4">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <div className="w-8 h-8 sm:w-12 sm:h-12 bg-slate-100 rounded-lg animate-pulse shrink-0"></div>
+          <div className="space-y-1">
+            <div className="h-3 w-24 bg-slate-100 rounded animate-pulse"></div>
+            <div className="h-2 w-16 bg-slate-100 rounded animate-pulse sm:hidden"></div>
+          </div>
+        </div>
+      </td>
+      <td className="px-2 sm:px-6 py-3 sm:py-4 hidden sm:table-cell"><div className="h-3 w-16 bg-slate-100 rounded animate-pulse"></div></td>
+      <td className="px-2 sm:px-6 py-3 sm:py-4"><div className="h-3 w-12 bg-slate-100 rounded animate-pulse"></div></td>
+      <td className="px-2 sm:px-6 py-3 sm:py-4 hidden lg:table-cell">
+        <div className="space-y-1">
+          <div className="h-3 w-16 bg-slate-100 rounded animate-pulse"></div>
+          <div className="h-2 w-12 bg-slate-100 rounded animate-pulse"></div>
+        </div>
+      </td>
+      <td className="px-2 sm:px-6 py-3 sm:py-4 hidden md:table-cell"><div className="h-3 w-8 bg-slate-100 rounded animate-pulse"></div></td>
+      <td className="px-2 sm:px-6 py-3 sm:py-4 hidden lg:table-cell"><div className="h-3 w-10 bg-slate-100 rounded animate-pulse"></div></td>
+      <td className="px-2 sm:px-6 py-3 sm:py-4 hidden sm:table-cell"><div className="h-5 w-14 bg-slate-100 rounded-full animate-pulse"></div></td>
+      <td className="px-2 sm:px-6 py-3 sm:py-4">
+        <div className="flex gap-1">
+          <div className="h-7 w-7 bg-slate-100 rounded animate-pulse"></div>
+          <div className="h-7 w-7 bg-slate-100 rounded animate-pulse"></div>
+          <div className="h-7 w-7 bg-slate-100 rounded animate-pulse"></div>
+        </div>
+      </td>
+    </tr>
+  );
 
   const categories = ['Économique', 'Compacte', 'Berline', 'SUV', 'Premium', 'Luxe'];
   const transmissions = ['Manuelle', 'Automatique'];
@@ -214,8 +308,24 @@ const AdminCars = () => {
         {/* Tableau */}
         <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
           {loading ? (
-            <div className="flex items-center justify-center h-64">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
+            <div className="p-4">
+              <table className="w-full min-w-[360px] sm:min-w-[700px]">
+                <thead className="bg-slate-50">
+                  <tr>
+                    <th className="px-2 sm:px-6 py-3 w-32 sm:w-40"><div className="h-3 w-16 bg-slate-200 rounded"></div></th>
+                    <th className="px-2 sm:px-6 py-3 hidden sm:table-cell"><div className="h-3 w-16 bg-slate-200 rounded"></div></th>
+                    <th className="px-2 sm:px-6 py-3"><div className="h-3 w-10 bg-slate-200 rounded"></div></th>
+                    <th className="px-2 sm:px-6 py-3 hidden lg:table-cell"><div className="h-3 w-12 bg-slate-200 rounded"></div></th>
+                    <th className="px-2 sm:px-6 py-3 hidden md:table-cell"><div className="h-3 w-8 bg-slate-200 rounded"></div></th>
+                    <th className="px-2 sm:px-6 py-3 hidden lg:table-cell"><div className="h-3 w-10 bg-slate-200 rounded"></div></th>
+                    <th className="px-2 sm:px-6 py-3 hidden sm:table-cell"><div className="h-3 w-12 bg-slate-200 rounded"></div></th>
+                    <th className="px-2 sm:px-6 py-3"><div className="h-3 w-14 bg-slate-200 rounded"></div></th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-200">
+                  {[1,2,3,4,5].map(i => <SkeletonRow key={i} />)}
+                </tbody>
+              </table>
             </div>
           ) : (
             <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
@@ -225,7 +335,7 @@ const AdminCars = () => {
                     <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Voiture</th>
                     <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase hidden sm:table-cell">Catégorie</th>
                     <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Prix</th>
-                    <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase hidden md:table-cell">Places</th>
+                    <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase hidden lg:table-cell">Chiffre d'affaires</th>
                     <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase hidden lg:table-cell">Trans.</th>
                     <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase hidden sm:table-cell">Dispo</th>
                     <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Actions</th>
@@ -261,7 +371,10 @@ const AdminCars = () => {
                         </td>
                         <td className="px-2 sm:px-6 py-3 sm:py-4 text-xs text-slate-600 whitespace-nowrap hidden sm:table-cell">{car.category}</td>
                         <td className="px-2 sm:px-6 py-3 sm:py-4 text-xs font-medium text-slate-800 whitespace-nowrap">{car.price} <span className="text-[10px]">MAD</span></td>
-                        <td className="px-2 sm:px-6 py-3 sm:py-4 text-xs text-slate-600 hidden md:table-cell">{car.seats}p</td>
+                        <td className="px-2 sm:px-6 py-3 sm:py-4 text-xs text-slate-600 hidden lg:table-cell">
+                          <div className="font-semibold text-emerald-600">{(car.total_revenue || 0).toLocaleString()} MAD</div>
+                          <div className="text-[10px] text-slate-400">{car.booking_count || 0} réservations</div>
+                        </td>
                         <td className="px-2 sm:px-6 py-3 sm:py-4 text-xs text-slate-600 hidden lg:table-cell">{car.transmission.substring(0, 3)}</td>
                         <td className="px-2 sm:px-6 py-3 sm:py-4 hidden sm:table-cell">
                           <span className={`inline-flex px-1.5 py-0.5 text-[10px] font-semibold rounded-full ${
@@ -465,13 +578,14 @@ const AdminCars = () => {
                       <p className="text-sm font-medium text-slate-700 mb-2">
                         {selectedFiles.length > 0 ? 'Nouvelles images:' : 'Images existantes:'}
                       </p>
-                      <div className="flex flex-wrap gap-2">
+                      <p className="text-xs text-slate-500 mb-2">Cochez "Principale" pour choisir l'image principale</p>
+                      <div className="flex flex-wrap gap-3">
                         {previewUrls.map((url, index) => (
-                          <div key={index} className="relative">
+                          <div key={index} className="relative group">
                             <img 
                               src={url} 
                               alt={`Preview ${index + 1}`} 
-                              className="w-20 h-20 object-cover rounded-lg border border-slate-200"
+                              className={`w-24 h-24 object-cover rounded-lg border-2 ${primaryImageIndex === index ? 'border-red-500' : 'border-slate-200'}`}
                             />
                             <button
                               type="button"
@@ -480,10 +594,22 @@ const AdminCars = () => {
                             >
                               ×
                             </button>
-                            {index === 0 && (
-                              <span className="absolute bottom-0 left-0 right-0 bg-red-600 text-white text-xs text-center py-0.5 rounded-b-lg">
-                                Principale
-                              </span>
+                            {/* Primary image checkbox */}
+                            <div className="absolute bottom-0 left-0 right-0 bg-white/90 backdrop-blur-sm p-1 rounded-b-lg">
+                              <label className="flex items-center gap-1 cursor-pointer">
+                                <input
+                                  type="checkbox"
+                                  checked={primaryImageIndex === index}
+                                  onChange={() => setPrimaryImage(index)}
+                                  className="w-3 h-3 text-red-600 rounded focus:ring-red-500"
+                                />
+                                <span className="text-xs text-slate-700">Principale</span>
+                              </label>
+                            </div>
+                            {primaryImageIndex === index && (
+                              <div className="absolute top-0 left-0 bg-red-600 text-white text-xs px-2 py-0.5 rounded-tl-lg rounded-br-lg">
+                                ★
+                              </div>
                             )}
                           </div>
                         ))}
@@ -524,15 +650,26 @@ const AdminCars = () => {
                   <button
                     type="button"
                     onClick={() => setShowModal(false)}
-                    className="flex-1 px-6 py-3 border border-slate-200 text-slate-700 rounded-lg hover:bg-slate-50 transition"
+                    disabled={loading}
+                    className="flex-1 px-6 py-3 border border-slate-200 text-slate-700 rounded-lg hover:bg-slate-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Annuler
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+                    disabled={loading}
+                    className="flex-1 px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
-                    {editingCar ? 'Mettre à jour' : 'Ajouter'}
+                    {loading && (
+                      <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                    )}
+                    {loading 
+                      ? (editingCar ? 'Mise à jour...' : 'Ajout...')
+                      : (editingCar ? 'Mettre à jour' : 'Ajouter')
+                    }
                   </button>
                 </div>
               </form>
@@ -620,6 +757,11 @@ const AdminCars = () => {
                   <div>
                     <p className="text-sm text-slate-500">Carburant</p>
                     <p className="font-medium text-slate-800">{selectedCar.fuel}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-slate-500">Chiffre d'affaires</p>
+                    <p className="font-bold text-emerald-600">{(selectedCar.total_revenue || 0).toLocaleString()} MAD</p>
+                    <p className="text-xs text-slate-400">{selectedCar.booking_count || 0} réservations confirmées</p>
                   </div>
                   <div>
                     <p className="text-sm text-slate-500">Disponible</p>

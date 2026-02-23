@@ -99,7 +99,7 @@ const Booking = () => {
   const searchEndDate = searchParams.get('endDate');
 
   // Trouver la voiture depuis le contexte (serveur)
-  const car = cars.find(c => c.id === carId) || cars[0] || { 
+  const car = cars.find(c => c.id === carId) || { 
     name: t('messages.loading'), 
     category: '', 
     price: 0, 
