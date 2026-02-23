@@ -1,16 +1,14 @@
 const express = require('express');
 const cors = require('cors');
-const cookieParser = require('cookie-parser');
 const path = require('path');
 const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
 const app = express();
 
-// CORS - must be first
+// CORS - no credentials needed
 app.use(cors({
-  origin: true,
-  credentials: true,
+  origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With']
 }));
@@ -18,7 +16,6 @@ app.use(cors({
 // Body parsers
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
-app.use(cookieParser());
 
 // Rate limiting
 const limiter = rateLimit({

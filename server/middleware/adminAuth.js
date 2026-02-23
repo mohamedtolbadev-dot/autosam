@@ -1,13 +1,8 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-// Helper to get token from cookies or headers (backward compatibility)
+// Get token from Authorization header only
 const getToken = (req) => {
-    // First try cookies (new httpOnly method)
-    if (req.cookies && req.cookies.token) {
-        return req.cookies.token;
-    }
-    // Fallback to Authorization header (legacy method)
     if (req.headers.authorization) {
         return req.headers.authorization.split(' ')[1];
     }

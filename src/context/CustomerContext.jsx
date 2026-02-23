@@ -11,12 +11,21 @@ export const CustomerProvider = ({ children }) => {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
 
-  // Check authentication on mount using cookies
+  // Check authentication on mount using localStorage
   useEffect(() => {
     fetchProfile();
   }, []);
 
   const fetchProfile = useCallback(async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setCustomer(null);
+      setIsAuthenticated(false);
+      setLoading(false);
+      setInitializing(false);
+      return;
+    }
+    
     try {
       setLoading(true);
       const profile = await authApi.getProfile();
@@ -25,6 +34,7 @@ export const CustomerProvider = ({ children }) => {
       if (profile.role === 'admin') {
         setCustomer(null);
         setIsAuthenticated(false);
+        localStorage.removeItem('token');
         return;
       }
       
@@ -35,6 +45,7 @@ export const CustomerProvider = ({ children }) => {
       // Not authenticated or token invalid
       setCustomer(null);
       setIsAuthenticated(false);
+      localStorage.removeItem('token');
     } finally {
       setLoading(false);
       setInitializing(false);
@@ -49,6 +60,11 @@ export const CustomerProvider = ({ children }) => {
       // Reject if user is an admin - admins must use admin login
       if (response.user.role === 'admin') {
         return { success: false, error: 'Veuillez utiliser la page de connexion administrateur' };
+      }
+      
+      // Save token to localStorage
+      if (response.token) {
+        localStorage.setItem('token', response.token);
       }
       
       setCustomer(response.user);
@@ -71,6 +87,11 @@ export const CustomerProvider = ({ children }) => {
         return { success: false, error: 'Inscription non autorisée' };
       }
       
+      // Save token to localStorage
+      if (response.token) {
+        localStorage.setItem('token', response.token);
+      }
+      
       setCustomer(response.user);
       setIsAuthenticated(true);
       return { success: true };
@@ -87,6 +108,8 @@ export const CustomerProvider = ({ children }) => {
     } catch (error) {
       console.error('Logout error:', error);
     }
+    // Remove token from localStorage
+    localStorage.removeItem('token');
     setCustomer(null);
     setIsAuthenticated(false);
   };

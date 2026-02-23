@@ -32,7 +32,7 @@ export const AdminProvider = ({ children }) => {
   const [allContactMessages, setAllContactMessages] = useState([]);
   const [pagination, setPagination] = useState({ page: 1, limit: 20, total: 0, pages: 0 });
 
-  // Vérifier si l'admin est déjà connecté (via cookies)
+  // Vérifier si l'admin est déjà connecté (via localStorage)
   useEffect(() => {
     const verifyAuth = async () => {
       await verifyAdminToken();
@@ -41,8 +41,14 @@ export const AdminProvider = ({ children }) => {
     verifyAuth();
   }, []);
 
-  // Vérifier le token admin via cookies
+  // Vérifier le token admin via localStorage
   const verifyAdminToken = useCallback(async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setAdmin(null);
+      return;
+    }
+    
     try {
       const data = await api('/auth/verify');
       
@@ -50,9 +56,11 @@ export const AdminProvider = ({ children }) => {
         setAdmin(data.user);
       } else {
         setAdmin(null);
+        localStorage.removeItem('token');
       }
     } catch (err) {
       setAdmin(null);
+      localStorage.removeItem('token');
       console.error('Token verification failed:', err);
     }
   }, []);
@@ -69,6 +77,11 @@ export const AdminProvider = ({ children }) => {
 
       if (data.user.role !== 'admin') {
         throw new Error('Accès réservé aux administrateurs');
+      }
+
+      // Save token to localStorage
+      if (data.token) {
+        localStorage.setItem('token', data.token);
       }
 
       setAdmin(data.user);
@@ -89,6 +102,8 @@ export const AdminProvider = ({ children }) => {
     } catch (err) {
       console.error('Logout error:', err);
     }
+    // Remove token from localStorage
+    localStorage.removeItem('token');
     setAdmin(null);
     setStats({
       totalCars: 0, totalBookings: 0, totalUsers: 0, pendingBookings: 0,
@@ -238,18 +253,13 @@ export const AdminProvider = ({ children }) => {
     
     setLoading(true);
     try {
-            
       // Check if carData is FormData (contains files) or regular object
       const isFormData = carData instanceof FormData;
       
       const data = await api('/admin/cars', {
         method: 'POST',
-        headers: {
-          // Don't set Content-Type for FormData, let browser set it with boundary
-          ...(isFormData ? {} : { 'Content-Type': 'application/json' })
-        },
         body: isFormData ? carData : JSON.stringify(carData),
-              });
+      });
       
       await fetchAllCars();
       await fetchDashboard();
@@ -268,18 +278,13 @@ export const AdminProvider = ({ children }) => {
     if (!admin) return;
     
     try {
-            
       // Check if carData is FormData (contains files) or regular object
       const isFormData = carData instanceof FormData;
       
       await api(`/admin/cars/${carId}`, {
         method: 'PUT',
-        headers: {
-          // Don't set Content-Type for FormData, let browser set it with boundary
-          ...(isFormData ? {} : { 'Content-Type': 'application/json' })
-        },
         body: isFormData ? carData : JSON.stringify(carData),
-              });
+      });
       
       await fetchAllCars();
     } catch (err) {

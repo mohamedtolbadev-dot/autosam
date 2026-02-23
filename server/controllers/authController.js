@@ -2,28 +2,13 @@ const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-// Cookie configuration
-const cookieOptions = {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production', // HTTPS only in production
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
-};
-
-// Helper to set auth cookie and respond
-const setAuthCookie = (res, token, user) => {
-    res.cookie('token', token, cookieOptions);
-    res.json({
-        user: {
-            id: user.id,
-            first_name: user.first_name,
-            last_name: user.last_name,
-            username: user.username,
-            email: user.email,
-            phone: user.phone,
-            role: user.role
-        }
-    });
+// Generate JWT Token
+const generateToken = (user) => {
+    return jwt.sign(
+        { userId: user.id, username: user.username, email: user.email, role: user.role },
+        process.env.JWT_SECRET,
+        { expiresIn: '7d' }
+    );
 };
 
 // Customer Registration
@@ -66,7 +51,18 @@ exports.register = async (req, res) => {
         const user = await User.getById(userId);
         const token = generateToken(user);
         
-        setAuthCookie(res, token, user);
+        res.json({
+            token,
+            user: {
+                id: user.id,
+                first_name: user.first_name,
+                last_name: user.last_name,
+                username: user.username,
+                email: user.email,
+                phone: user.phone,
+                role: user.role
+            }
+        });
     } catch (error) {
         console.error('Register error:', error);
         res.status(500).json({ message: 'Erreur lors de l\'inscription' });
@@ -100,7 +96,18 @@ exports.login = async (req, res) => {
 
         const token = generateToken(user);
         
-        setAuthCookie(res, token, user);
+        res.json({
+            token,
+            user: {
+                id: user.id,
+                first_name: user.first_name,
+                last_name: user.last_name,
+                username: user.username,
+                email: user.email,
+                phone: user.phone,
+                role: user.role
+            }
+        });
     } catch (error) {
         console.error('Login error:', error);
         res.status(500).json({ message: 'Erreur lors de la connexion' });
@@ -195,9 +202,8 @@ exports.updateProfile = async (req, res) => {
     }
 };
 
-// Logout - clear cookie
+// Logout
 exports.logout = (req, res) => {
-    res.clearCookie('token', cookieOptions);
     res.json({ message: 'Déconnecté avec succès' });
 };
 

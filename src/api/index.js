@@ -12,12 +12,16 @@ export const api = async (endpoint, options = {}) => {
   // Check if body is FormData - don't set Content-Type for FormData
   const isFormData = options.body instanceof FormData;
   
+  // Get token from localStorage if available
+  const token = localStorage.getItem('token');
+  
   const config = {
     ...options,
-    credentials: 'include', // Important: send cookies with requests
     headers: {
       // Only set Content-Type if not FormData (browser will set with boundary)
       ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
+      // Add Authorization header if token exists
+      ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
       ...options.headers,
     },
   };
