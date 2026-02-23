@@ -1,10 +1,23 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
+// Helper to get token from cookies or headers (backward compatibility)
+const getToken = (req) => {
+    // First try cookies (new httpOnly method)
+    if (req.cookies && req.cookies.token) {
+        return req.cookies.token;
+    }
+    // Fallback to Authorization header (legacy method)
+    if (req.headers.authorization) {
+        return req.headers.authorization.split(' ')[1];
+    }
+    return null;
+};
+
 // Middleware pour vérifier le token JWT
 const auth = async (req, res, next) => {
     try {
-        const token = req.headers.authorization?.split(' ')[1];
+        const token = getToken(req);
         
         if (!token) {
             return res.status(401).json({ message: 'Token manquant' });
@@ -33,7 +46,7 @@ const isAdmin = async (req, res, next) => {
 // Middleware optionnel (ne bloque pas si pas de token)
 const optionalAuth = async (req, res, next) => {
     try {
-        const token = req.headers.authorization?.split(' ')[1];
+        const token = getToken(req);
         
         if (token) {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);

@@ -2,13 +2,28 @@ const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-// Helper to generate JWT
-const generateToken = (user) => {
-    return jwt.sign(
-        { userId: user.id, username: user.username, email: user.email, role: user.role },
-        process.env.JWT_SECRET,
-        { expiresIn: '7d' }
-    );
+// Cookie configuration
+const cookieOptions = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production', // HTTPS only in production
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+};
+
+// Helper to set auth cookie and respond
+const setAuthCookie = (res, token, user) => {
+    res.cookie('token', token, cookieOptions);
+    res.json({
+        user: {
+            id: user.id,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            username: user.username,
+            email: user.email,
+            phone: user.phone,
+            role: user.role
+        }
+    });
 };
 
 // Customer Registration
@@ -51,17 +66,7 @@ exports.register = async (req, res) => {
         const user = await User.getById(userId);
         const token = generateToken(user);
         
-        res.status(201).json({
-            token,
-            user: {
-                id: user.id,
-                first_name: user.first_name,
-                last_name: user.last_name,
-                email: user.email,
-                phone: user.phone,
-                role: user.role
-            }
-        });
+        setAuthCookie(res, token, user);
     } catch (error) {
         console.error('Register error:', error);
         res.status(500).json({ message: 'Erreur lors de l\'inscription' });
@@ -94,19 +99,8 @@ exports.login = async (req, res) => {
         }
 
         const token = generateToken(user);
-
-        res.json({
-            token,
-            user: {
-                id: user.id,
-                first_name: user.first_name,
-                last_name: user.last_name,
-                username: user.username,
-                email: user.email,
-                phone: user.phone,
-                role: user.role
-            }
-        });
+        
+        setAuthCookie(res, token, user);
     } catch (error) {
         console.error('Login error:', error);
         res.status(500).json({ message: 'Erreur lors de la connexion' });
@@ -199,6 +193,12 @@ exports.updateProfile = async (req, res) => {
         console.error('Update profile error:', error);
         res.status(500).json({ message: 'Erreur lors de la mise à jour' });
     }
+};
+
+// Logout - clear cookie
+exports.logout = (req, res) => {
+    res.clearCookie('token', cookieOptions);
+    res.json({ message: 'Déconnecté avec succès' });
 };
 
 // Verify Token (legacy method for backward compatibility)

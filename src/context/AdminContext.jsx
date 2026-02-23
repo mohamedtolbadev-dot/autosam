@@ -32,36 +32,27 @@ export const AdminProvider = ({ children }) => {
   const [allContactMessages, setAllContactMessages] = useState([]);
   const [pagination, setPagination] = useState({ page: 1, limit: 20, total: 0, pages: 0 });
 
-  // Vérifier si l'admin est déjà connecté (token dans localStorage)
+  // Vérifier si l'admin est déjà connecté (via cookies)
   useEffect(() => {
-    const verifyToken = async () => {
-      const token = localStorage.getItem('adminToken');
-      if (token) {
-        await verifyAdminToken();
-      }
+    const verifyAuth = async () => {
+      await verifyAdminToken();
       setInitializing(false);
     };
-    verifyToken();
+    verifyAuth();
   }, []);
 
-  // Vérifier le token admin
+  // Vérifier le token admin via cookies
   const verifyAdminToken = useCallback(async () => {
     try {
-      const token = localStorage.getItem('adminToken');
-      if (!token) return;
-
-      const data = await api('/auth/verify', {
-        headers: { Authorization: `Bearer ${token}` },
-        token: token
-      });
+      const data = await api('/auth/verify');
       
       if (data.user.role === 'admin') {
         setAdmin(data.user);
       } else {
-        localStorage.removeItem('adminToken');
+        setAdmin(null);
       }
     } catch (err) {
-      localStorage.removeItem('adminToken');
+      setAdmin(null);
       console.error('Token verification failed:', err);
     }
   }, []);
@@ -80,7 +71,6 @@ export const AdminProvider = ({ children }) => {
         throw new Error('Accès réservé aux administrateurs');
       }
 
-      localStorage.setItem('adminToken', data.token);
       setAdmin(data.user);
       return data;
     } catch (err) {
@@ -93,8 +83,12 @@ export const AdminProvider = ({ children }) => {
   }, []);
 
   // Déconnexion
-  const logout = useCallback(() => {
-    localStorage.removeItem('adminToken');
+  const logout = useCallback(async () => {
+    try {
+      await api('/auth/logout', { method: 'POST' });
+    } catch (err) {
+      console.error('Logout error:', err);
+    }
     setAdmin(null);
     setStats({
       totalCars: 0, totalBookings: 0, totalUsers: 0, pendingBookings: 0,
@@ -119,11 +113,7 @@ export const AdminProvider = ({ children }) => {
     
     setLoading(true);
     try {
-      const token = localStorage.getItem('adminToken');
-      const data = await api('/admin/dashboard', {
-        headers: { Authorization: `Bearer ${token}` },
-        token: token
-      });
+      const data = await api('/admin/dashboard');
       
       setStats(data.stats);
       setRecentBookings(data.recentBookings);
@@ -146,17 +136,13 @@ export const AdminProvider = ({ children }) => {
     
     setLoading(true);
     try {
-      const token = localStorage.getItem('adminToken');
       const { status, search, page = 1, limit = 20 } = filters;
       
       let url = `/admin/bookings?page=${page}&limit=${limit}`;
       if (status) url += `&status=${status}`;
       if (search) url += `&search=${encodeURIComponent(search)}`;
       
-      const data = await api(url, {
-        headers: { Authorization: `Bearer ${token}` },
-        token: token
-      });
+      const data = await api(url);
       
       setAllBookings(data.bookings);
       setPagination(data.pagination);
@@ -175,12 +161,9 @@ export const AdminProvider = ({ children }) => {
     if (!admin) return;
     
     try {
-      const token = localStorage.getItem('adminToken');
       await api(`/admin/bookings/${bookingId}/status`, {
         method: 'PUT',
-        headers: { Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ status }),
-        token: token
+        body: JSON.stringify({ status })
       });
       
       await fetchDashboard();
@@ -197,11 +180,8 @@ export const AdminProvider = ({ children }) => {
     if (!admin) return;
     
     try {
-      const token = localStorage.getItem('adminToken');
       await api(`/admin/bookings/${bookingId}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
-        token: token
+        method: 'DELETE'
       });
       
       await fetchDashboard();
@@ -219,11 +199,8 @@ export const AdminProvider = ({ children }) => {
     
     setLoading(true);
     try {
-      const token = localStorage.getItem('adminToken');
-      const data = await api(`/admin/statistics?period=${period}`, {
-        headers: { Authorization: `Bearer ${token}` },
-        token: token
-      });
+            const data = await api(`/admin/statistics?period=${period}`, {
+                      });
       
       setDetailedStats(data);
       return data;
@@ -241,11 +218,8 @@ export const AdminProvider = ({ children }) => {
     
     setLoading(true);
     try {
-      const token = localStorage.getItem('adminToken');
-      const data = await api('/admin/cars', {
-        headers: { Authorization: `Bearer ${token}` },
-        token: token
-      });
+            const data = await api('/admin/cars', {
+                      });
       
       setAllCars(data);
       return data;
@@ -264,21 +238,18 @@ export const AdminProvider = ({ children }) => {
     
     setLoading(true);
     try {
-      const token = localStorage.getItem('adminToken');
-      
+            
       // Check if carData is FormData (contains files) or regular object
       const isFormData = carData instanceof FormData;
       
       const data = await api('/admin/cars', {
         method: 'POST',
-        headers: { 
-          Authorization: `Bearer ${token}`,
+        headers: {
           // Don't set Content-Type for FormData, let browser set it with boundary
           ...(isFormData ? {} : { 'Content-Type': 'application/json' })
         },
         body: isFormData ? carData : JSON.stringify(carData),
-        token: token
-      });
+              });
       
       await fetchAllCars();
       await fetchDashboard();
@@ -297,21 +268,18 @@ export const AdminProvider = ({ children }) => {
     if (!admin) return;
     
     try {
-      const token = localStorage.getItem('adminToken');
-      
+            
       // Check if carData is FormData (contains files) or regular object
       const isFormData = carData instanceof FormData;
       
       await api(`/admin/cars/${carId}`, {
         method: 'PUT',
-        headers: { 
-          Authorization: `Bearer ${token}`,
+        headers: {
           // Don't set Content-Type for FormData, let browser set it with boundary
           ...(isFormData ? {} : { 'Content-Type': 'application/json' })
         },
         body: isFormData ? carData : JSON.stringify(carData),
-        token: token
-      });
+              });
       
       await fetchAllCars();
     } catch (err) {
@@ -326,11 +294,8 @@ export const AdminProvider = ({ children }) => {
     if (!admin) return;
     
     try {
-      const token = localStorage.getItem('adminToken');
-      await api(`/admin/cars/${carId}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
-        token: token
+            await api(`/admin/cars/${carId}`, {
+        method: 'DELETE'
       });
       
       await fetchAllCars();
@@ -348,11 +313,8 @@ export const AdminProvider = ({ children }) => {
     
     setLoading(true);
     try {
-      const token = localStorage.getItem('adminToken');
-      const data = await api('/admin/users', {
-        headers: { Authorization: `Bearer ${token}` },
-        token: token
-      });
+            const data = await api('/admin/users', {
+                      });
       
       setAllUsers(data);
       return data;
@@ -371,11 +333,8 @@ export const AdminProvider = ({ children }) => {
     
     setLoading(true);
     try {
-      const token = localStorage.getItem('adminToken');
-      const data = await api('/admin/contact-messages', {
-        headers: { Authorization: `Bearer ${token}` },
-        token: token
-      });
+            const data = await api('/admin/contact-messages', {
+                      });
       
       setAllContactMessages(data);
       return data;
@@ -393,12 +352,9 @@ export const AdminProvider = ({ children }) => {
     if (!admin) return;
     
     try {
-      const token = localStorage.getItem('adminToken');
-      await api(`/admin/contact-messages/${messageId}/read`, {
+            await api(`/admin/contact-messages/${messageId}/read`, {
         method: 'PUT',
-        headers: { Authorization: `Bearer ${token}` },
-        token: token
-      });
+                      });
       
       // Mettre à jour la liste locale
       setAllContactMessages(prev => 
@@ -416,11 +372,8 @@ export const AdminProvider = ({ children }) => {
     if (!admin) return;
     
     try {
-      const token = localStorage.getItem('adminToken');
-      await api(`/admin/contact-messages/${messageId}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
-        token: token
+            await api(`/admin/contact-messages/${messageId}`, {
+        method: 'DELETE'
       });
       
       await fetchAllContactMessages();

@@ -11,15 +11,9 @@ export const CustomerProvider = ({ children }) => {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
 
-  // Check for existing token on mount
+  // Check authentication on mount using cookies
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      fetchProfile();
-    } else {
-      setInitializing(false);
-      setLoading(false);
-    }
+    fetchProfile();
   }, []);
 
   const fetchProfile = useCallback(async () => {
@@ -29,7 +23,6 @@ export const CustomerProvider = ({ children }) => {
       
       // If user is admin, don't treat them as customer
       if (profile.role === 'admin') {
-        localStorage.removeItem('token');
         setCustomer(null);
         setIsAuthenticated(false);
         return;
@@ -39,8 +32,7 @@ export const CustomerProvider = ({ children }) => {
       setIsAuthenticated(true);
     } catch (error) {
       console.error('Failed to fetch profile:', error);
-      // Token might be invalid, clear it
-      localStorage.removeItem('token');
+      // Not authenticated or token invalid
       setCustomer(null);
       setIsAuthenticated(false);
     } finally {
@@ -59,7 +51,6 @@ export const CustomerProvider = ({ children }) => {
         return { success: false, error: 'Veuillez utiliser la page de connexion administrateur' };
       }
       
-      localStorage.setItem('token', response.token);
       setCustomer(response.user);
       setIsAuthenticated(true);
       return { success: true };
@@ -80,7 +71,6 @@ export const CustomerProvider = ({ children }) => {
         return { success: false, error: 'Inscription non autorisée' };
       }
       
-      localStorage.setItem('token', response.token);
       setCustomer(response.user);
       setIsAuthenticated(true);
       return { success: true };
@@ -91,8 +81,12 @@ export const CustomerProvider = ({ children }) => {
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem('token');
+  const logout = async () => {
+    try {
+      await authApi.logout();
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
     setCustomer(null);
     setIsAuthenticated(false);
   };

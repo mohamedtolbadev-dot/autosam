@@ -9,19 +9,15 @@ const API_URL = 'https://server-chi-two-10.vercel.app/api';
 export const api = async (endpoint, options = {}) => {
   const url = `${API_URL}${endpoint}`;
   
-  // Get the token from options if explicitly provided, otherwise don't send any token
-  // This prevents mixing admin and customer tokens
-  const token = options.token || null;
-  
   // Check if body is FormData - don't set Content-Type for FormData
   const isFormData = options.body instanceof FormData;
   
   const config = {
     ...options,
+    credentials: 'include', // Important: send cookies with requests
     headers: {
       // Only set Content-Type if not FormData (browser will set with boundary)
       ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
-      ...(token && { Authorization: `Bearer ${token}` }),
       ...options.headers,
     },
   };
@@ -70,15 +66,9 @@ export const contactApi = {
 export const bookingApi = {
   getAll: () => api('/bookings'),
   getById: (id) => api(`/bookings/${id}`),
-  getMyBookings: () => {
-    const token = localStorage.getItem('token');
-    return api('/bookings/my-bookings', { token });
-  },
+  getMyBookings: () => api('/bookings/my-bookings'),
   create: (data) => api('/bookings', { method: 'POST', body: JSON.stringify(data) }),
-  updateStatus: (id, status) => {
-    const token = localStorage.getItem('token');
-    return api(`/bookings/${id}/status`, { method: 'PUT', body: JSON.stringify({ status }), token });
-  },
+  updateStatus: (id, status) => api(`/bookings/${id}/status`, { method: 'PUT', body: JSON.stringify({ status }) }),
   delete: (id) => api(`/bookings/${id}`, { method: 'DELETE' }),
 };
 
@@ -86,14 +76,9 @@ export const bookingApi = {
 export const authApi = {
   register: (data) => api('/auth/register', { method: 'POST', body: JSON.stringify(data) }),
   login: (data) => api('/auth/login', { method: 'POST', body: JSON.stringify(data) }),
-  getProfile: () => {
-    const token = localStorage.getItem('token');
-    return api('/auth/profile', { token });
-  },
-  updateProfile: (data) => {
-    const token = localStorage.getItem('token');
-    return api('/auth/profile', { method: 'PUT', body: JSON.stringify(data), token });
-  },
+  logout: () => api('/auth/logout', { method: 'POST' }),
+  getProfile: () => api('/auth/profile'),
+  updateProfile: (data) => api('/auth/profile', { method: 'PUT', body: JSON.stringify(data) }),
 };
 
 export default api;
