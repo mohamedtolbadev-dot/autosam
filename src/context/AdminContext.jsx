@@ -39,6 +39,15 @@ export const AdminProvider = ({ children }) => {
       setInitializing(false);
     };
     verifyAuth();
+    
+    // Periodic token refresh every 5 minutes to keep session alive
+    const interval = setInterval(() => {
+      if (localStorage.getItem('token')) {
+        verifyAdminToken();
+      }
+    }, 5 * 60 * 1000); // 5 minutes
+    
+    return () => clearInterval(interval);
   }, []);
 
   // Vérifier le token admin via localStorage
@@ -59,9 +68,14 @@ export const AdminProvider = ({ children }) => {
         localStorage.removeItem('token');
       }
     } catch (err) {
-      setAdmin(null);
-      localStorage.removeItem('token');
+      // Don't auto-logout on verification errors - just mark as unauthenticated
+      // This prevents redirect loops and allows retry
       console.error('Token verification failed:', err);
+      setAdmin(null);
+      // Only remove token on 401/403 errors, keep it for network errors
+      if (err.message?.includes('Token invalide') || err.message?.includes('Token manquant')) {
+        localStorage.removeItem('token');
+      }
     }
   }, []);
 

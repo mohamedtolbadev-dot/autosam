@@ -554,71 +554,71 @@ const AdminDashboard = () => {
           <>
             {/* Stats Cards */}
             <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-6 sm:mb-8">
-              <div className="bg-white rounded-xl border border-slate-200 p-4 sm:p-6 shadow-sm">
+              <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl border border-emerald-700 p-4 sm:p-6 shadow-md">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs sm:text-sm text-slate-500 mb-1">Revenus totaux</p>
-                    <p className="text-lg sm:text-2xl font-bold text-slate-800">{formatCurrency(stats.totalRevenue)}</p>
+                    <p className="text-xs sm:text-sm text-emerald-100 mb-1 font-medium">Revenus totaux</p>
+                    <p className="text-lg sm:text-2xl font-bold text-white">{formatCurrency(stats.totalRevenue)}</p>
                   </div>
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-red-600">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center bg-white/20 rounded-xl text-white shadow-sm">
                     <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
                 </div>
                 <div className="mt-3 sm:mt-4 flex items-center text-xs sm:text-sm">
-                  <span className="text-slate-600">Ce mois: {formatCurrency(stats.monthRevenue)}</span>
+                  <span className="text-emerald-100">Ce mois: {formatCurrency(stats.monthRevenue)}</span>
                 </div>
               </div>
 
-              <div className="bg-white rounded-xl border border-slate-200 p-4 sm:p-6 shadow-sm">
+              <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl border border-blue-700 p-4 sm:p-6 shadow-md">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs sm:text-sm text-slate-500 mb-1">Réservations</p>
-                    <p className="text-lg sm:text-2xl font-bold text-slate-800">{formatNumber(stats.totalBookings)}</p>
+                    <p className="text-xs sm:text-sm text-blue-100 mb-1 font-medium">Réservations</p>
+                    <p className="text-lg sm:text-2xl font-bold text-white">{formatNumber(stats.totalBookings)}</p>
                   </div>
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-red-600">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center bg-white/20 rounded-xl text-white shadow-sm">
                     <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                     </svg>
                   </div>
                 </div>
                 <div className="mt-3 sm:mt-4 flex flex-col sm:flex-row items-start sm:items-center text-xs sm:text-sm gap-1 sm:gap-4">
-                  <span className="text-slate-600">{stats.pendingBookings} en attente</span>
-                  <span className="text-slate-600">{stats.confirmedBookings} confirmées</span>
+                  <span className="text-blue-100">{stats.pendingBookings} en attente</span>
+                  <span className="text-blue-200">{stats.confirmedBookings} confirmées</span>
                 </div>
               </div>
 
-              <div className="bg-white rounded-xl border border-slate-200 p-4 sm:p-6 shadow-sm">
+              <div className="bg-gradient-to-br from-red-500 to-red-600 rounded-xl border border-red-700 p-4 sm:p-6 shadow-md">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs sm:text-sm text-slate-500 mb-1">Voitures</p>
-                    <p className="text-lg sm:text-2xl font-bold text-slate-800">{formatNumber(stats.totalCars)}</p>
+                    <p className="text-xs sm:text-sm text-red-100 mb-1 font-medium">Voitures</p>
+                    <p className="text-lg sm:text-2xl font-bold text-white">{formatNumber(stats.totalCars)}</p>
                   </div>
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-red-600">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center bg-white/20 rounded-xl text-white shadow-sm">
                     <svg className="w-5 h-5 sm:w-6 sm:h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
-                      <path fill="rgba(193, 23, 42, 1.00)" d="M199.2 181.4L173.1 256L466.9 256L440.8 181.4C436.3 168.6 424.2 160 410.6 160L229.4 160C215.8 160 203.7 168.6 199.2 181.4zM103.6 260.8L138.8 160.3C152.3 121.8 188.6 96 229.4 96L410.6 96C451.4 96 487.7 121.8 501.2 160.3L536.4 260.8C559.6 270.4 576 293.3 576 320L576 512C576 529.7 561.7 544 544 544L512 544C494.3 544 480 529.7 480 512L480 480L160 480L160 512C160 529.7 145.7 544 128 544L96 544C78.3 544 64 529.7 64 512L64 320C64 293.3 80.4 270.4 103.6 260.8zM192 368C192 350.3 177.7 336 160 336C142.3 336 128 350.3 128 368C128 385.7 142.3 400 160 400C177.7 400 192 385.7 192 368zM480 400C497.7 400 512 385.7 512 368C512 350.3 497.7 336 480 336C462.3 336 448 350.3 448 368C448 385.7 462.3 400 480 400z" />
+                      <path fill="currentColor" d="M199.2 181.4L173.1 256L466.9 256L440.8 181.4C436.3 168.6 424.2 160 410.6 160L229.4 160C215.8 160 203.7 168.6 199.2 181.4zM103.6 260.8L138.8 160.3C152.3 121.8 188.6 96 229.4 96L410.6 96C451.4 96 487.7 121.8 501.2 160.3L536.4 260.8C559.6 270.4 576 293.3 576 320L576 512C576 529.7 561.7 544 544 544L512 544C494.3 544 480 529.7 480 512L480 480L160 480L160 512C160 529.7 145.7 544 128 544L96 544C78.3 544 64 529.7 64 512L64 320C64 293.3 80.4 270.4 103.6 260.8zM192 368C192 350.3 177.7 336 160 336C142.3 336 128 350.3 128 368C128 385.7 142.3 400 160 400C177.7 400 192 385.7 192 368zM480 400C497.7 400 512 385.7 512 368C512 350.3 497.7 336 480 336C462.3 336 448 350.3 448 368C448 385.7 462.3 400 480 400z" />
                     </svg>
                   </div>
                 </div>
-                <div className="mt-3 sm:mt-4 text-xs sm:text-sm text-slate-500 truncate">
+                <div className="mt-3 sm:mt-4 text-xs sm:text-sm text-red-100 truncate">
                   {topCars.length > 0 && `Top: ${topCars[0].name}`}
                 </div>
               </div>
 
-              <div className="bg-white rounded-xl border border-slate-200 p-4 sm:p-6 shadow-sm">
+              <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl border border-purple-700 p-4 sm:p-6 shadow-md">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs sm:text-sm text-slate-500 mb-1">Utilisateurs</p>
-                    <p className="text-lg sm:text-2xl font-bold text-slate-800">{formatNumber(stats.totalUsers)}</p>
+                    <p className="text-xs sm:text-sm text-purple-100 mb-1 font-medium">Utilisateurs</p>
+                    <p className="text-lg sm:text-2xl font-bold text-white">{formatNumber(stats.totalUsers)}</p>
                   </div>
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-red-600">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center bg-white/20 rounded-xl text-white shadow-sm">
                     <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                     </svg>
                   </div>
                 </div>
-                <div className="mt-3 sm:mt-4 text-xs sm:text-sm text-slate-500">
+                <div className="mt-3 sm:mt-4 text-xs sm:text-sm text-purple-100">
                   {stats.completedBookings} réservations complétées
                 </div>
               </div>
@@ -769,7 +769,7 @@ const AdminDashboard = () => {
                     }}
                   />
                   {/* Center text showing total */}
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none pr-40">
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none pr-24">
                     <div className="text-center">
                       <span className="text-xs text-slate-400 font-medium block mb-1">Total</span>
                       <span className="text-3xl font-bold text-slate-800">{stats.totalBookings}</span>
