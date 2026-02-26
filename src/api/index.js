@@ -12,8 +12,12 @@ export const api = async (endpoint, options = {}) => {
   // Check if body is FormData - don't set Content-Type for FormData
   const isFormData = options.body instanceof FormData;
   
-  // Get token from localStorage if available
-  const token = localStorage.getItem('token');
+  // Get token from localStorage - check for both admin and customer tokens
+  const adminToken = localStorage.getItem('adminToken');
+  const customerToken = localStorage.getItem('customerToken');
+  const token = adminToken || customerToken; // Use whichever is available
+  
+  console.log('🔑 API call to', endpoint, '- Admin token:', !!adminToken, '- Customer token:', !!customerToken, '- Using token:', token ? token.substring(0, 20) + '...' : 'none');
   
   const config = {
     ...options,
@@ -33,11 +37,18 @@ export const api = async (endpoint, options = {}) => {
       // Clone response before reading to allow retry
       const errorResponse = response.clone();
       let errorMessage;
+      let errorData = {};
       try {
-        const error = await errorResponse.json();
-        errorMessage = error.message || `HTTP ${response.status}`;
+        errorData = await errorResponse.json();
+        errorMessage = errorData.message || `HTTP ${response.status}`;
       } catch {
         errorMessage = await response.text() || `HTTP ${response.status}`;
+      }
+      
+      // Add status code to error message for better handling
+      if (response.status === 401) {
+        console.error('❌ 401 Unauthorized - Token may be invalid or expired');
+        throw new Error(`401 - ${errorMessage}`);
       }
       throw new Error(errorMessage);
     }

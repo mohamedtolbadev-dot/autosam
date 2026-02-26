@@ -4,9 +4,11 @@ const jwt = require('jsonwebtoken');
 
 // Generate JWT Token
 const generateToken = (user) => {
+    const jwtSecret = process.env.JWT_SECRET || 'fallback-secret-key-change-in-production';
+    console.log('🔑 Generating token with secret (first 10 chars):', jwtSecret.substring(0, 10) + '...');
     return jwt.sign(
         { userId: user.id, username: user.username, email: user.email, role: user.role },
-        process.env.JWT_SECRET,
+        jwtSecret,
         { expiresIn: '7d' }
     );
 };

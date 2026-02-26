@@ -8,6 +8,22 @@ import { isValidCarId } from '../utils/security';
 // Helper function to format location keys to human-readable names
 const formatLocation = (locationKey, t) => {
   if (!locationKey) return '';
+  
+  // If no underscore, add default airport location
+  if (!locationKey.includes('_')) {
+    const cityNames = {
+      casablanca: t('common:cities.casablanca'),
+      marrakech: t('common:cities.marrakech'),
+      rabat: t('common:cities.rabat'),
+      tangier: t('common:cities.tangier'),
+      agadir: t('common:cities.agadir'),
+      fes: t('common:cities.fes')
+    };
+    const cityName = cityNames[locationKey.toLowerCase()] || locationKey;
+    const defaultLocation = t('common:locations.airport');
+    return `${cityName} - ${defaultLocation}`;
+  }
+  
   const [city, location] = locationKey.split('_');
   const cityNames = {
     casablanca: t('common:cities.casablanca'),
@@ -25,7 +41,7 @@ const formatLocation = (locationKey, t) => {
     train: t('common:locations.trainStation')
   };
   const cityName = cityNames[city] || city;
-  const locationType = locationTypes[location] || location;
+  const locationType = locationTypes[location] || (location ? location : t('common:locations.airport'));
   return `${cityName} - ${locationType}`;
 };
 

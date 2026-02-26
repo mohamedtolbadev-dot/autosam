@@ -17,7 +17,9 @@ export const AdminProvider = ({ children }) => {
     completedBookings: 0,
     cancelledBookings: 0,
     totalRevenue: 0,
-    monthRevenue: 0
+    monthRevenue: 0,
+    availableCars: 0,
+    reservedCars: 0
   });
   const [recentBookings, setRecentBookings] = useState([]);
   const [weeklyBookings, setWeeklyBookings] = useState([]);
@@ -42,8 +44,8 @@ export const AdminProvider = ({ children }) => {
     
     // Periodic token refresh every 5 minutes to keep session alive
     const interval = setInterval(() => {
-      if (localStorage.getItem('token')) {
-        verifyAdminToken();
+      if (localStorage.getItem('adminToken')) {
+        verifyAdminToken(true); // true = background check, don't clear admin on network errors
       }
     }, 5 * 60 * 1000); // 5 minutes
     
@@ -51,8 +53,8 @@ export const AdminProvider = ({ children }) => {
   }, []);
 
   // Vérifier le token admin via localStorage
-  const verifyAdminToken = useCallback(async () => {
-    const token = localStorage.getItem('token');
+  const verifyAdminToken = useCallback(async (isBackgroundCheck = false) => {
+    const token = localStorage.getItem('adminToken');
     if (!token) {
       setAdmin(null);
       return;
@@ -65,17 +67,26 @@ export const AdminProvider = ({ children }) => {
         setAdmin(data.user);
       } else {
         setAdmin(null);
-        localStorage.removeItem('token');
+        localStorage.removeItem('adminToken');
       }
     } catch (err) {
-      // Don't auto-logout on verification errors - just mark as unauthenticated
-      // This prevents redirect loops and allows retry
       console.error('Token verification failed:', err);
-      setAdmin(null);
-      // Only remove token on 401/403 errors, keep it for network errors
-      if (err.message?.includes('Token invalide') || err.message?.includes('Token manquant')) {
-        localStorage.removeItem('token');
+      
+      // Only clear admin on actual auth errors, not network errors
+      const isAuthError = err.message?.includes('Token invalide') || 
+                          err.message?.includes('Token manquant') ||
+                          err.message?.includes('401') ||
+                          err.message?.includes('403');
+      
+      if (isAuthError) {
+        // Token is actually invalid - clear everything
+        setAdmin(null);
+        localStorage.removeItem('adminToken');
+      } else if (!isBackgroundCheck) {
+        // Network error during initial check - clear admin
+        setAdmin(null);
       }
+      // For background checks with network errors, keep current admin state
     }
   }, []);
 
@@ -93,9 +104,13 @@ export const AdminProvider = ({ children }) => {
         throw new Error('Accès réservé aux administrateurs');
       }
 
+      // Clear customer token to avoid conflicts - we're logging in as admin
+      localStorage.removeItem('customerToken');
+      console.log('🧹 Cleared customerToken on admin login');
+
       // Save token to localStorage
       if (data.token) {
-        localStorage.setItem('token', data.token);
+        localStorage.setItem('adminToken', data.token);
       }
 
       setAdmin(data.user);
@@ -117,12 +132,12 @@ export const AdminProvider = ({ children }) => {
       console.error('Logout error:', err);
     }
     // Remove token from localStorage
-    localStorage.removeItem('token');
+    localStorage.removeItem('adminToken');
     setAdmin(null);
     setStats({
       totalCars: 0, totalBookings: 0, totalUsers: 0, pendingBookings: 0,
       confirmedBookings: 0, completedBookings: 0, cancelledBookings: 0,
-      totalRevenue: 0, monthRevenue: 0
+      totalRevenue: 0, monthRevenue: 0, availableCars: 0, reservedCars: 0
     });
     setRecentBookings([]);
     setWeeklyBookings([]);
@@ -152,12 +167,18 @@ export const AdminProvider = ({ children }) => {
       setTopPickupLocations(data.topPickupLocations);
       setTopReturnLocations(data.topReturnLocations);
     } catch (err) {
+      // Handle 401 - token expired
+      if (err.message?.includes('401') || err.message?.includes('Token invalide')) {
+        console.error('Token expired, logging out');
+        logout();
+        return;
+      }
       setError(err.message || 'Erreur lors du chargement');
       console.error('Dashboard error:', err);
     } finally {
       setLoading(false);
     }
-  }, [admin]);
+  }, [admin, logout]);
 
   // Récupérer toutes les réservations avec filtres
   const fetchAllBookings = useCallback(async (filters = {}) => {
@@ -177,6 +198,12 @@ export const AdminProvider = ({ children }) => {
       setPagination(data.pagination);
       return data;
     } catch (err) {
+      // Handle 401 - token expired
+      if (err.message?.includes('401') || err.message?.includes('Token')) {
+        console.error('Auth error, logging out');
+        logout();
+        return { bookings: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } };
+      }
       setError(err.message || 'Erreur lors du chargement');
       console.error('Bookings error:', err);
       return { bookings: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } };
@@ -198,6 +225,12 @@ export const AdminProvider = ({ children }) => {
       await fetchDashboard();
       await fetchAllBookings();
     } catch (err) {
+      // Handle 401 - token expired
+      if (err.message?.includes('401') || err.message?.includes('Token')) {
+        console.error('Auth error, logging out');
+        logout();
+        return;
+      }
       setError(err.message || 'Erreur lors de la mise à jour');
       console.error('Update error:', err);
       throw err;
@@ -216,6 +249,12 @@ export const AdminProvider = ({ children }) => {
       await fetchDashboard();
       await fetchAllBookings();
     } catch (err) {
+      // Handle 401 - token expired
+      if (err.message?.includes('401') || err.message?.includes('Token')) {
+        console.error('Auth error, logging out');
+        logout();
+        return;
+      }
       setError(err.message || 'Erreur lors de la suppression');
       console.error('Delete error:', err);
       throw err;

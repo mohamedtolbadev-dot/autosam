@@ -428,7 +428,7 @@ const AdminBookings = () => {
         </div>
 
         {/* Mobile Cards */}
-        <div className="lg:hidden space-y-4">
+        <div className="lg:hidden space-y-3">
           {loading ? (
             <>
               {[1,2,3,4].map(i => <SkeletonCard key={i} />)}
@@ -439,19 +439,16 @@ const AdminBookings = () => {
             </div>
           ) : (
             allBookings.map((booking) => (
-              <div key={booking.id} className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
-                <div className="flex justify-between items-start mb-3">
-                  <div>
-                    <span className="text-xs text-slate-500">#{booking.id}</span>
-                    <h3 className="font-semibold text-slate-800">{booking.first_name} {booking.last_name}</h3>
-                    <p className="text-sm text-slate-500">{booking.email}</p>
-                  </div>
+              <div key={booking.id} className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                {/* Card Header */}
+                <div className="p-3 bg-slate-50/50 border-b border-slate-100 flex justify-between items-center">
+                  <span className="text-xs font-medium text-slate-500">#{booking.id}</span>
                   <div className="flex items-center gap-2">
                     <select
                       value={booking.status}
                       onChange={(e) => handleStatusChange(booking.id, e.target.value)}
                       disabled={updatingStatus === booking.id}
-                      className={`text-xs px-2 py-1 rounded border font-medium cursor-pointer outline-none focus:ring-2 focus:ring-red-500/40 disabled:opacity-50 disabled:cursor-not-allowed ${getStatusColor(booking.status)}`}
+                      className={`text-xs px-2 py-1 rounded-md border font-medium cursor-pointer outline-none focus:ring-2 focus:ring-red-500/40 disabled:opacity-50 disabled:cursor-not-allowed ${getStatusColor(booking.status)}`}
                     >
                       <option value="pending">En attente</option>
                       <option value="confirmed">Confirmée</option>
@@ -464,44 +461,66 @@ const AdminBookings = () => {
                   </div>
                 </div>
                 
-                <div className="space-y-2 mb-4">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-slate-500">Voiture:</span>
-                    <span className="font-medium text-slate-800">{booking.car_name}</span>
+                {/* Card Body */}
+                <div className="p-3 space-y-2">
+                  {/* Client Info */}
+                  <div className="flex items-start gap-2">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-red-100 to-red-50 flex items-center justify-center shrink-0">
+                      <span className="text-sm font-semibold text-red-600">
+                        {booking.first_name?.charAt(0)}{booking.last_name?.charAt(0)}
+                      </span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-slate-800 text-sm truncate">
+                        {booking.first_name} {booking.last_name}
+                      </h3>
+                      <p className="text-xs text-slate-500 truncate">{booking.email}</p>
+                    </div>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-slate-500">Dates:</span>
-                    <span className="text-slate-800">
-                      {new Date(booking.pickup_date).toLocaleDateString('fr-FR')} → {new Date(booking.return_date).toLocaleDateString('fr-FR')}
-                    </span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-slate-500">Lieu:</span>
-                    <span className="text-slate-800">{formatLocation(booking.pickup_location, t)}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-slate-500">Total:</span>
-                    <span className="font-semibold text-slate-800">{booking.total_price} MAD</span>
+                  
+                  {/* Details Grid */}
+                  <div className="grid grid-cols-2 gap-2 pt-2">
+                    <div className="bg-slate-50 rounded-lg p-2">
+                      <p className="text-[10px] text-slate-500 uppercase tracking-wider">Voiture</p>
+                      <p className="text-xs font-medium text-slate-800 truncate">{booking.car_name}</p>
+                    </div>
+                    <div className="bg-slate-50 rounded-lg p-2">
+                      <p className="text-[10px] text-slate-500 uppercase tracking-wider">Total</p>
+                      <p className="text-xs font-bold text-slate-800">{booking.total_price} MAD</p>
+                    </div>
+                    <div className="bg-slate-50 rounded-lg p-2 col-span-2">
+                      <p className="text-[10px] text-slate-500 uppercase tracking-wider">Dates</p>
+                      <p className="text-xs text-slate-700">
+                        {new Date(booking.pickup_date).toLocaleDateString('fr-FR', {day:'numeric', month:'short'})} 
+                        <span className="text-slate-400 mx-1">→</span> 
+                        {new Date(booking.return_date).toLocaleDateString('fr-FR', {day:'numeric', month:'short'})}
+                      </p>
+                    </div>
                   </div>
                 </div>
 
-                <div className="flex flex-wrap gap-2">
+                {/* Card Footer */}
+                <div className="p-3 border-t border-slate-100 flex gap-2">
                   <button
                     onClick={() => openDetails(booking)}
-                    className="flex-1 px-3 py-2 text-sm bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition"
+                    className="flex-1 px-3 py-2 text-xs font-medium bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition flex items-center justify-center gap-1"
                   >
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
                     Détails
                   </button>
                   <button
                     onClick={() => handleDelete(booking.id)}
                     disabled={deletingBookingId === booking.id}
-                    className="px-3 py-2 text-sm bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition disabled:opacity-50"
+                    className="px-3 py-2 text-xs font-medium bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition disabled:opacity-50 flex items-center justify-center"
                     title="Supprimer"
                   >
                     {deletingBookingId === booking.id ? (
-                      <div className="w-4 h-4 border-2 border-red-600 border-t-transparent rounded-full animate-spin"></div>
+                      <div className="w-3.5 h-3.5 border-2 border-red-600 border-t-transparent rounded-full animate-spin"></div>
                     ) : (
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                       </svg>
                     )}
@@ -824,17 +843,17 @@ const AdminBookings = () => {
                 </button>
                 <button
                   onClick={confirmModal.onConfirm}
-                  disabled={updatingStatus !== null}
+                  disabled={updatingStatus !== null || deletingBookingId !== null}
                   className={`px-4 py-2 rounded-lg transition disabled:opacity-50 ${
                     confirmModal.type === 'danger' ? 'bg-red-600 text-white hover:bg-red-700' :
                     confirmModal.type === 'warning' ? 'bg-yellow-500 text-white hover:bg-yellow-600' :
                     'bg-red-600 text-white hover:bg-red-700'
                   }`}
                 >
-                  {updatingStatus !== null ? (
+                  {updatingStatus !== null || deletingBookingId !== null ? (
                     <span className="flex items-center gap-2">
                       <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      Mise à jour...
+                      {deletingBookingId !== null ? 'Suppression...' : 'Mise à jour...'}
                     </span>
                   ) : (
                     'Confirmer'

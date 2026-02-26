@@ -59,14 +59,32 @@ const Booking = {
             return_date,
             total_price,
             status = 'pending',
-            notes = ''
+            notes = '',
+            language = 'fr'
         } = bookingData;
+        
+        // Check if car is already reserved for these dates
+        const [existingBookings] = await db.query(
+            `SELECT * FROM bookings 
+             WHERE car_id = ? 
+             AND status IN ('pending', 'confirmed') 
+             AND (
+                 (pickup_date <= ? AND return_date >= ?) OR
+                 (pickup_date <= ? AND return_date >= ?) OR
+                 (pickup_date >= ? AND return_date <= ?)
+             )`,
+            [car_id, return_date, pickup_date, return_date, return_date, pickup_date, return_date]
+        );
+        
+        if (existingBookings.length > 0) {
+            throw new Error('Cette voiture est déjà réservée pour ces dates');
+        }
         
         const [result] = await db.query(
             `INSERT INTO bookings 
-             (car_id, user_id, first_name, last_name, email, phone, license_number, pickup_location, dropoff_location, pickup_date, return_date, total_price, status, notes) 
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [car_id, user_id || null, first_name, last_name, email, phone, license_number || null, pickup_location, dropoff_location, pickup_date, return_date, total_price, status, notes]
+             (car_id, user_id, first_name, last_name, email, phone, license_number, pickup_location, dropoff_location, pickup_date, return_date, total_price, status, notes, language) 
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [car_id, user_id || null, first_name, last_name, email, phone, license_number || null, pickup_location, dropoff_location, pickup_date, return_date, total_price, status, notes, language]
         );
         return result.insertId;
     },

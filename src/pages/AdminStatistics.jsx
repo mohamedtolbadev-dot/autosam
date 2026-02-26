@@ -2,6 +2,15 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdmin } from '../context/AdminContext';
 import AdminLayout from '../components/AdminLayout';
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+import { Doughnut } from 'react-chartjs-2';
+
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 const AdminStatistics = () => {
   const navigate = useNavigate();
@@ -9,6 +18,8 @@ const AdminStatistics = () => {
     stats,
     monthlyBookings,
     detailedStats,
+    topCars,
+    topPickupLocations,
     fetchDashboard,
     fetchStatistics,
     loading,
@@ -17,6 +28,7 @@ const AdminStatistics = () => {
   } = useAdmin();
 
   const [period, setPeriod] = useState('year');
+  const [showDailyTable, setShowDailyTable] = useState(false);
 
   useEffect(() => {
     if (initializing) return;
@@ -133,20 +145,16 @@ const AdminStatistics = () => {
                 <p className="text-blue-100 text-xs sm:text-sm mt-2">{stats.pendingBookings} en attente</p>
               </div>
 
-              <div className="bg-linear-to-br from-green-500 to-green-600 rounded-xl p-4 sm:p-6 text-white">
-                <p className="text-green-100 text-xs sm:text-sm mb-1">Taux de conversion</p>
-                <p className="text-xl sm:text-3xl font-bold">{detailedStats?.conversionRate?.rate || 0}%</p>
-                <p className="text-green-100 text-xs sm:text-sm mt-2">
-                  {detailedStats?.conversionRate?.confirmed || 0} sur {detailedStats?.conversionRate?.total || 0}
-                </p>
+              <div className="bg-linear-to-br from-emerald-500 to-emerald-600 rounded-xl p-4 sm:p-6 text-white">
+                <p className="text-emerald-100 text-xs sm:text-sm mb-1">Voitures disponibles</p>
+                <p className="text-xl sm:text-3xl font-bold">{formatNumber(stats.availableCars)}</p>
+                <p className="text-emerald-100 text-xs sm:text-sm mt-2">Prêtes à louer</p>
               </div>
 
-              <div className="bg-linear-to-br from-purple-500 to-purple-600 rounded-xl p-4 sm:p-6 text-white">
-                <p className="text-purple-100 text-xs sm:text-sm mb-1">Panier moyen</p>
-                <p className="text-xl sm:text-3xl font-bold">
-                  {formatCurrency(stats.totalBookings > 0 ? stats.totalRevenue / stats.totalBookings : 0)}
-                </p>
-                <p className="text-purple-100 text-xs sm:text-sm mt-2">Par réservation</p>
+              <div className="bg-linear-to-br from-orange-500 to-orange-600 rounded-xl p-4 sm:p-6 text-white">
+                <p className="text-orange-100 text-xs sm:text-sm mb-1">Voitures réservées</p>
+                <p className="text-xl sm:text-3xl font-bold">{formatNumber(stats.reservedCars)}</p>
+                <p className="text-orange-100 text-xs sm:text-sm mt-2">En location active</p>
               </div>
             </div>
 
@@ -204,7 +212,7 @@ const AdminStatistics = () => {
               </div>
             </div>
 
-            {/* Évolution quotidienne */}
+            {/* Évolution quotidienne - Always visible */}
             {detailedStats?.dailyEvolution?.length > 0 && (
               <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 sm:p-6 mb-6 sm:mb-8">
                 <h3 className="text-base sm:text-lg font-bold text-slate-800 mb-4">Évolution des 30 derniers jours</h3>

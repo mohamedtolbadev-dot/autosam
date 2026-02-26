@@ -1,44 +1,113 @@
 const nodemailer = require('nodemailer');
 
 const createTransporter = () => {
+    const host = process.env.SMTP_HOST || 'smtp.gmail.com';
+    const port = process.env.SMTP_PORT || 587;
+    const user = process.env.SMTP_USER || process.env.EMAIL_USER;
+    const pass = process.env.SMTP_PASS || process.env.EMAIL_PASS;
+    
+    console.log('📧 Email Config:', { host, port, user: user ? '***' : 'MISSING', pass: pass ? '***' : 'MISSING' });
+    
     return nodemailer.createTransport({
-        host: process.env.SMTP_HOST || 'smtp.gmail.com',
-        port: process.env.SMTP_PORT || 587,
+        host: host,
+        port: port,
         secure: false,
         auth: {
-            user: process.env.SMTP_USER || process.env.EMAIL_USER,
-            pass: process.env.SMTP_PASS || process.env.EMAIL_PASS
+            user: user,
+            pass: pass
         }
     });
 };
 
 const baseStyles = `
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; color: #333; }
-    .wrapper { width: 100%; padding: 40px 0; }
-    .container { max-width: 560px; margin: 0 auto; background-color: #ffffff; border-radius: 6px; overflow: hidden; }
-    .header { padding: 28px 20px; text-align: center; border-bottom: 1px solid #e5e5e5; }
-    .header h1 { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: 3px; color: #111; }
-    .content { padding: 32px 36px; color: #444; font-size: 15px; line-height: 1.7; }
-    .label { font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: #999; margin-bottom: 16px; }
-    .divider { border: none; border-top: 1px solid #ebebeb; margin: 24px 0; }
-    .info-table { width: 100%; border-collapse: collapse; }
-    .info-table tr td { padding: 10px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%); color: #222; min-height: 100vh; }
+    .wrapper { padding: 40px 20px; }
+    .container { max-width: 560px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); overflow: hidden; }
+    .header { padding: 36px 40px 28px; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-bottom: 3px solid #c41e3a; }
+    .header h1 { font-size: 14px; font-weight: 800; letter-spacing: 6px; text-transform: uppercase; color: #ffffff; text-align: center; }
+    .content { padding: 40px; font-size: 15px; line-height: 1.7; color: #444; }
+    .section-title { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #c41e3a; margin-bottom: 16px; margin-top: 32px; display: flex; align-items: center; gap: 10px; }
+    .section-title::before { content: ''; width: 4px; height: 16px; background: #c41e3a; border-radius: 2px; }
+    .divider { border: none; border-top: 1px solid #e8e8e8; margin: 28px 0; }
+    .divider-thick { border: none; border-top: 2px solid #c41e3a; margin: 20px 0; width: 60px; }
+    .info-table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+    .info-table tr td { padding: 12px 0; font-size: 14px; border-bottom: 1px dashed #e0e0e0; }
     .info-table tr:last-child td { border-bottom: none; }
-    .info-table td:first-child { color: #888; width: 45%; }
-    .info-table td:last-child { font-weight: 500; color: #111; text-align: right; }
-    .total-row td { font-size: 16px; font-weight: 700; color: #111; padding-top: 16px !important; border-top: 2px solid #e5e5e5 !important; border-bottom: none !important; }
-    .btn { display: inline-block; padding: 12px 28px; border-radius: 5px; font-size: 14px; font-weight: 600; text-decoration: none; letter-spacing: 0.5px; }
-    .btn-dark { background-color: #111; color: #ffffff; }
-    .footer { text-align: center; padding: 24px 20px; color: #aaa; font-size: 12px; border-top: 1px solid #ebebeb; background-color: #fafafa; line-height: 1.8; }
-    .footer a { color: #555; text-decoration: none; }
+    .info-table td:first-child { color: #666; width: 45%; font-weight: 500; }
+    .info-table td:last-child { color: #222; font-weight: 600; text-align: right; }
+    .total-row td { font-size: 16px; font-weight: 700; color: #1a1a2e; padding-top: 16px !important; border-top: 2px solid #c41e3a !important; border-bottom: none !important; }
+    .btn { display: inline-block; padding: 14px 32px; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; text-decoration: none; border-radius: 6px; color: #ffffff; background: linear-gradient(135deg, #c41e3a 0%, #a01830 100%); box-shadow: 0 4px 12px rgba(196,30,58,0.3); transition: all 0.3s ease; }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(196,30,58,0.4); }
+    .footer { padding: 24px 40px; border-top: 1px solid #e8e8e8; background-color: #fafbfc; font-size: 12px; color: #888; line-height: 1.8; text-align: center; }
+    .footer a { color: #c41e3a; text-decoration: none; font-weight: 500; }
+    .status-badge { display: inline-block; padding: 10px 20px; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; border-radius: 6px; color: #ffffff; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); margin: 12px 0; }
+    .greeting-box { background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-left: 4px solid #c41e3a; padding: 20px 24px; border-radius: 0 8px 8px 0; margin-bottom: 24px; }
+    .highlight { color: #c41e3a; font-weight: 700; }
 `;
 
-// 1. Notification agence - nouvelle réservation
+// Helper function to format location keys to human-readable names (bilingual FR/EN)
+const formatLocation = (locationKey, lang = 'fr') => {
+    if (!locationKey) return '';
+    const [city, location] = locationKey.split('_');
+    
+    // Normalize language code (handle 'en-US', 'en-GB', etc.)
+    const normalizedLang = lang?.toLowerCase().startsWith('en') ? 'en' : 'fr';
+    
+    // Bilingual city names
+    const cityNames = {
+        fr: {
+            casablanca: 'Casablanca',
+            marrakech: 'Marrakech',
+            rabat: 'Rabat',
+            tangier: 'Tanger',
+            agadir: 'Agadir',
+            fes: 'Fès'
+        },
+        en: {
+            casablanca: 'Casablanca',
+            marrakech: 'Marrakech',
+            rabat: 'Rabat',
+            tangier: 'Tangier',
+            agadir: 'Agadir',
+            fes: 'Fez'
+        }
+    };
+    
+    // Bilingual location types
+    const locationTypes = {
+        fr: {
+            airport: 'Aéroport',
+            cityCenter: 'Centre-ville',
+            city: 'Centre-ville',
+            trainStation: 'Gare',
+            train: 'Gare'
+        },
+        en: {
+            airport: 'Airport',
+            cityCenter: 'City Center',
+            city: 'City Center',
+            trainStation: 'Train Station',
+            train: 'Train Station'
+        }
+    };
+    
+    const cityName = cityNames[normalizedLang]?.[city] || cityNames['fr'][city] || city.charAt(0).toUpperCase() + city.slice(1);
+    const locationType = locationTypes[normalizedLang]?.[location] || locationTypes['fr'][location] || location.charAt(0).toUpperCase() + location.slice(1);
+    return `${cityName} - ${locationType}`;
+};
+
+// 1. Notification agence - nouvelle réservation - Bilingual (FR/EN)
 exports.sendNewBookingNotification = async (bookingData, carDetails) => {
     try {
+        console.log('📧 sendNewBookingNotification called with language:', bookingData.language);
         const transporter = createTransporter();
         const agencyEmail = process.env.AGENCY_EMAIL || process.env.EMAIL_USER;
-        const { first_name, last_name, email, phone, pickup_location, dropoff_location, pickup_date, return_date, total_price, notes } = bookingData;
+        const { first_name, last_name, email, phone, pickup_location, dropoff_location, pickup_date, return_date, total_price, notes, language = 'fr' } = bookingData;
+        
+        // Determine language (default to French)
+        const lang = language === 'en' ? 'en' : 'fr';
+        const isEnglish = lang === 'en';
 
         const emailContent = `
 <!DOCTYPE html>
@@ -50,66 +119,74 @@ exports.sendNewBookingNotification = async (bookingData, carDetails) => {
 <body>
 <div class="wrapper">
     <div class="container">
+
         <div class="header">
-            <h1>AUTOSAM</h1>
+            <h1>Autosam</h1>
         </div>
 
         <div class="content">
-            <p class="label">Nouvelle demande</p>
-            <p style="margin: 0 0 24px 0; color: #333;">Un client vient de soumettre une demande de réservation.</p>
+            <div class="greeting-box">
+                <p class="section-title" style="margin-top:0;">${isEnglish ? 'New Reservation Request' : 'Nouvelle demande de réservation'}</p>
+                <p style="color:#555; font-size:14px; margin:0;">${isEnglish 
+                    ? 'A customer has submitted a request. Please contact them to confirm.' 
+                    : 'Un client vient de soumettre une demande. Veuillez le contacter pour confirmer.'}</p>
+            </div>
 
-            <hr class="divider">
+            <div class="divider-thick"></div>
 
-            <p class="label" style="margin-top: 0;">Client</p>
+            <p class="section-title">${isEnglish ? 'Customer' : 'Client'}</p>
             <table class="info-table">
-                <tr><td>Nom</td><td>${first_name} ${last_name}</td></tr>
+                <tr><td>${isEnglish ? 'Name' : 'Nom'}</td><td>${first_name} ${last_name}</td></tr>
                 <tr><td>Email</td><td>${email}</td></tr>
-                <tr><td>Téléphone</td><td>${phone}</td></tr>
+                <tr><td>${isEnglish ? 'Phone' : 'Téléphone'}</td><td>${phone}</td></tr>
             </table>
 
             <hr class="divider">
 
-            <p class="label" style="margin-top: 0;">Véhicule</p>
+            <p class="section-title">${isEnglish ? 'Vehicle' : 'Véhicule'}</p>
             ${carDetails ? `
             <table class="info-table">
-                <tr><td>Modèle</td><td>${carDetails.brand} ${carDetails.model} (${carDetails.year})</td></tr>
-                <tr><td>Prix / jour</td><td>${carDetails.price_per_day} MAD</td></tr>
+                <tr><td>${isEnglish ? 'Model' : 'Modèle'}</td><td>${carDetails.brand} ${carDetails.model} (${carDetails.year})</td></tr>
+                <tr><td>${isEnglish ? 'Price / day' : 'Prix / jour'}</td><td>${carDetails.price_per_day} MAD</td></tr>
             </table>
-            ` : '<p style="color:#888; font-size:14px;">Informations non disponibles</p>'}
+            ` : `<p style="color:#aaa; font-size:13px;">${isEnglish ? 'Information not available' : 'Informations non disponibles'}</p>`}
 
             <hr class="divider">
 
-            <p class="label" style="margin-top: 0;">Réservation</p>
+            <p class="section-title">${isEnglish ? 'Reservation' : 'Réservation'}</p>
             <table class="info-table">
-                <tr><td>Prise en charge</td><td>${pickup_location}</td></tr>
-                <tr><td>Restitution</td><td>${dropoff_location}</td></tr>
-                <tr><td>Date départ</td><td>${pickup_date}</td></tr>
-                <tr><td>Date retour</td><td>${return_date}</td></tr>
-                ${notes ? `<tr><td>Notes</td><td>${notes}</td></tr>` : ''}
-                <tr class="total-row"><td>Total</td><td>${total_price} MAD</td></tr>
+                <tr><td>${isEnglish ? 'Pick-up location' : 'Prise en charge'}</td><td>${formatLocation(pickup_location, lang)}</td></tr>
+                <tr><td>${isEnglish ? 'Return location' : 'Restitution'}</td><td>${formatLocation(dropoff_location, lang)}</td></tr>
+                <tr><td>${isEnglish ? 'Pick-up date' : 'Date départ'}</td><td>${new Date(pickup_date).toLocaleDateString(lang === 'en' ? 'en-US' : 'fr-FR')}</td></tr>
+                <tr><td>${isEnglish ? 'Return date' : 'Date retour'}</td><td>${new Date(return_date).toLocaleDateString(lang === 'en' ? 'en-US' : 'fr-FR')}</td></tr>
+                ${notes ? `<tr><td>${isEnglish ? 'Notes' : 'Notes'}</td><td>${notes}</td></tr>` : ''}
+                <tr class="total-row"><td>${isEnglish ? 'Estimated total' : 'Total estimé'}</td><td>${total_price} MAD</td></tr>
             </table>
 
-            <div style="text-align: center; margin-top: 32px;">
-                <a href="tel:${phone}" class="btn btn-dark">Appeler le client</a>
+            <div style="margin-top: 32px; text-align: center;">
+                <a href="tel:${phone}" class="btn">${isEnglish ? 'Call customer' : 'Appeler le client'}</a>
             </div>
         </div>
 
         <div class="footer">
-            <p>© ${new Date().getFullYear()} AUTOSAM — Notification automatique</p>
+            <p>© ${new Date().getFullYear()} Autosam — ${isEnglish ? 'Automatic notification' : 'Notification automatique'}</p>
         </div>
+
     </div>
 </div>
 </body>
 </html>`;
 
         await transporter.sendMail({
-            from: `"AUTOSAM" <${process.env.EMAIL_USER}>`,
+            from: `"Autosam" <${process.env.EMAIL_USER}>`,
             to: agencyEmail,
-            subject: `Nouvelle réservation — ${first_name} ${last_name}`,
+            subject: isEnglish 
+                ? `New reservation — ${first_name} ${last_name}` 
+                : `Nouvelle réservation — ${first_name} ${last_name}`,
             html: emailContent
         });
 
-        console.log(`✅ Email agence envoyé : ${agencyEmail}`);
+        console.log(`✅ Email agence envoyé : ${agencyEmail} (${lang})`);
         return { success: true };
     } catch (error) {
         console.error('❌ Erreur email agence:', error);
@@ -117,11 +194,15 @@ exports.sendNewBookingNotification = async (bookingData, carDetails) => {
     }
 };
 
-// 2. Confirmation client
+// 2. Confirmation client - Bilingual (FR/EN)
 exports.sendBookingConfirmation = async (bookingData) => {
     try {
         const transporter = createTransporter();
-        const { email, first_name, car_name, pickup_date, return_date, pickup_location, total_price } = bookingData;
+        const { email, first_name, car_name, pickup_date, return_date, pickup_location, dropoff_location, total_price, language = 'fr' } = bookingData;
+        
+        // Determine language (default to French)
+        const lang = language === 'en' ? 'en' : 'fr';
+        const isEnglish = lang === 'en';
 
         const emailContent = `
 <!DOCTYPE html>
@@ -134,48 +215,57 @@ exports.sendBookingConfirmation = async (bookingData) => {
 <body>
 <div class="wrapper">
     <div class="container">
+
         <div class="header">
-            <h1>AUTOSAM</h1>
+            <h1>Autosam</h1>
         </div>
 
         <div class="content">
-            <p style="margin: 0 0 6px 0; font-size: 18px; font-weight: 600; color: #111;">Bonjour ${first_name},</p>
-            <p style="margin: 0 0 28px 0; color: #666;">Votre demande de réservation a bien été reçue. Nous vous contacterons prochainement pour confirmation.</p>
+            <div class="greeting-box">
+                <p style="font-size:17px; font-weight:600; color:#111; margin-bottom:10px;">${isEnglish ? 'Hello' : 'Bonjour'} <span class="highlight">${first_name}</span>,</p>
+                <p style="color:#555; font-size:14px; margin:0;">${isEnglish 
+                    ? 'Your reservation request has been received. We will contact you shortly to confirm your rental.' 
+                    : 'Votre demande de réservation a bien été reçue. Nous vous contacterons dans les plus brefs délais pour confirmer votre location.'}</p>
+            </div>
 
-            <hr class="divider" style="margin-top: 0;">
+            <div class="divider-thick"></div>
 
-            <p class="label" style="margin-top: 0;">Détails de la réservation</p>
+            <p class="section-title">${isEnglish ? 'Summary' : 'Récapitulatif'}</p>
             <table class="info-table">
-                <tr><td>Véhicule</td><td>${car_name}</td></tr>
-                <tr><td>Date départ</td><td>${new Date(pickup_date).toLocaleDateString('fr-FR')}</td></tr>
-                <tr><td>Date retour</td><td>${new Date(return_date).toLocaleDateString('fr-FR')}</td></tr>
-                <tr><td>Lieu</td><td>${pickup_location}</td></tr>
-                <tr class="total-row"><td>Total</td><td>${total_price} MAD</td></tr>
+                <tr><td>${isEnglish ? 'Vehicle' : 'Véhicule'}</td><td>${car_name}</td></tr>
+                <tr><td>${isEnglish ? 'Pick-up date' : 'Date de départ'}</td><td>${new Date(pickup_date).toLocaleDateString(lang === 'en' ? 'en-US' : 'fr-FR')}</td></tr>
+                <tr><td>${isEnglish ? 'Return date' : 'Date de retour'}</td><td>${new Date(return_date).toLocaleDateString(lang === 'en' ? 'en-US' : 'fr-FR')}</td></tr>
+                <tr><td>${isEnglish ? 'Pick-up location' : 'Lieu de prise en charge'}</td><td>${formatLocation(pickup_location, lang)}</td></tr>
+                <tr><td>${isEnglish ? 'Return location' : 'Lieu de restitution'}</td><td>${formatLocation(dropoff_location, lang)}</td></tr>
+                <tr class="total-row"><td>${isEnglish ? 'Total' : 'Total'}</td><td>${total_price} MAD</td></tr>
             </table>
 
-            <div style="text-align: center; margin-top: 32px;">
-                <a href="${process.env.CLIENT_URL || 'http://localhost:5173'}/my-bookings" class="btn btn-dark">Voir ma réservation</a>
+            <div style="margin-top: 32px; text-align: center;">
+                <a href="${process.env.CLIENT_URL || 'http://localhost:5173'}/my-bookings" class="btn">${isEnglish ? 'View my reservation' : 'Voir ma réservation'}</a>
             </div>
         </div>
 
         <div class="footer">
-            <p>Merci de faire confiance à AUTOSAM</p>
-            <p>Questions ? <a href="mailto:contact@autosam.ma">contact@autosam.ma</a></p>
-            <p style="margin-top: 12px;">© ${new Date().getFullYear()} AUTOSAM</p>
+            <p>${isEnglish ? 'Thank you for choosing Autosam' : 'Merci de faire confiance à Autosam'}</p>
+            <p>${isEnglish ? 'Questions?' : 'Questions ?'} <a href="mailto:contact@autosam.ma">contact@autosam.ma</a></p>
+            <p style="margin-top:8px;">© ${new Date().getFullYear()} Autosam</p>
         </div>
+
     </div>
 </div>
 </body>
 </html>`;
 
         await transporter.sendMail({
-            from: `"AUTOSAM" <${process.env.EMAIL_USER}>`,
+            from: `"Autosam" <${process.env.EMAIL_USER}>`,
             to: email,
-            subject: `Demande de réservation reçue — AUTOSAM`,
+            subject: isEnglish 
+                ? `Reservation request received — Autosam` 
+                : `Demande de réservation reçue — Autosam`,
             html: emailContent
         });
 
-        console.log(`✅ Email confirmation envoyé : ${email}`);
+        console.log(`✅ Email confirmation envoyé : ${email} (${lang})`);
         return true;
     } catch (error) {
         console.error('❌ Erreur email confirmation:', error);
@@ -183,20 +273,32 @@ exports.sendBookingConfirmation = async (bookingData) => {
     }
 };
 
-// 3. Mise à jour statut (couleur appliquée selon le statut uniquement)
+// 3. Mise à jour statut - Bilingual (FR/EN)
 exports.sendStatusUpdate = async (bookingData, newStatus) => {
     try {
         const transporter = createTransporter();
-        const { email, first_name, car_name } = bookingData;
+        const { email, first_name, car_name, language = 'fr' } = bookingData;
+        
+        // Determine language (default to French)
+        const lang = language === 'en' ? 'en' : 'fr';
+        const isEnglish = lang === 'en';
 
-        const statusConfig = {
-            confirmed: { label: 'Confirmée',   color: '#16a34a', bg: '#f0fdf4', border: '#bbf7d0' },
-            cancelled:  { label: 'Annulée',    color: '#dc2626', bg: '#fef2f2', border: '#fecaca' },
-            completed:  { label: 'Terminée',   color: '#2563eb', bg: '#eff6ff', border: '#bfdbfe' },
-            pending:    { label: 'En attente', color: '#d97706', bg: '#fffbeb', border: '#fde68a' }
+        const statusLabels = {
+            fr: {
+                confirmed: 'Confirmée',
+                cancelled: 'Annulée',
+                completed: 'Terminée',
+                pending: 'En attente'
+            },
+            en: {
+                confirmed: 'Confirmed',
+                cancelled: 'Cancelled',
+                completed: 'Completed',
+                pending: 'Pending'
+            }
         };
 
-        const status = statusConfig[newStatus] || statusConfig.pending;
+        const label = statusLabels[lang][newStatus] || (isEnglish ? 'Updated' : 'Mise à jour');
 
         const emailContent = `
 <!DOCTYPE html>
@@ -209,53 +311,54 @@ exports.sendStatusUpdate = async (bookingData, newStatus) => {
 <body>
 <div class="wrapper">
     <div class="container">
+
         <div class="header">
-            <h1>AUTOSAM</h1>
+            <h1>Autosam</h1>
         </div>
 
         <div class="content">
-            <p style="margin: 0 0 6px 0; font-size: 18px; font-weight: 600; color: #111;">Bonjour ${first_name},</p>
-            <p style="margin: 0 0 28px 0; color: #666;">Le statut de votre réservation pour le véhicule <strong>${car_name}</strong> a été mis à jour.</p>
-
-            <div style="
-                background-color: ${status.bg};
-                border: 1px solid ${status.border};
-                border-left: 4px solid ${status.color};
-                border-radius: 5px;
-                padding: 16px 20px;
-                margin: 8px 0 28px 0;
-            ">
-                <p style="margin: 0; font-size: 13px; color: #888; letter-spacing: 1px; text-transform: uppercase; font-weight: 600;">Statut</p>
-                <p style="margin: 4px 0 0 0; font-size: 17px; font-weight: 700; color: ${status.color};">${status.label}</p>
+            <div class="greeting-box">
+                <p style="font-size:17px; font-weight:600; color:#111; margin-bottom:10px;">${isEnglish ? 'Hello' : 'Bonjour'} <span class="highlight">${first_name}</span>,</p>
+                <p style="color:#555; font-size:14px; margin:0;">${isEnglish 
+                    ? `The status of your reservation for vehicle <strong style="color:#111;">${car_name}</strong> has been updated.`
+                    : `Le statut de votre réservation pour le véhicule <strong style="color:#111;">${car_name}</strong> a été mis à jour.`}</p>
             </div>
 
-            <div style="text-align: center; margin-top: 8px;">
-                <a href="${process.env.CLIENT_URL || 'http://localhost:5173'}/my-bookings"
-                   class="btn"
-                   style="background-color: ${status.color}; color: #fff;">
-                    Voir les détails
-                </a>
+            <div class="divider-thick"></div>
+
+            <p class="section-title">${isEnglish ? 'Reservation Status' : 'Statut de la réservation'}</p>
+            <span class="status-badge">${label}</span>
+
+            <hr class="divider">
+
+            <div style="margin-top: 28px; text-align: center;">
+                <a href="${process.env.CLIENT_URL || 'http://localhost:5173'}/my-bookings" class="btn">${isEnglish ? 'View details' : 'Voir les détails'}</a>
             </div>
         </div>
 
         <div class="footer">
-            <p>AUTOSAM — Location de voitures</p>
-            <p>Cet email a été envoyé automatiquement.</p>
-            <p style="margin-top: 12px;">© ${new Date().getFullYear()} AUTOSAM</p>
+            <p>Autosam — ${isEnglish ? 'Car Rental' : 'Location de voitures'}</p>
+            <p>${isEnglish 
+                ? 'This email was sent automatically. Please do not reply.' 
+                : 'Cet email a été envoyé automatiquement. Merci de ne pas y répondre.'}</p>
+            <p style="margin-top:8px;">© ${new Date().getFullYear()} Autosam</p>
         </div>
+
     </div>
 </div>
 </body>
 </html>`;
 
         await transporter.sendMail({
-            from: `"AUTOSAM" <${process.env.EMAIL_USER}>`,
+            from: `"Autosam" <${process.env.EMAIL_USER}>`,
             to: email,
-            subject: `Réservation ${status.label} — AUTOSAM`,
+            subject: isEnglish 
+                ? `Reservation ${label} — Autosam`
+                : `Réservation ${label} — Autosam`,
             html: emailContent
         });
 
-        console.log(`✅ Email statut envoyé : ${email}`);
+        console.log(`✅ Email statut envoyé : ${email} (${lang})`);
         return true;
     } catch (error) {
         console.error('❌ Erreur email statut:', error);

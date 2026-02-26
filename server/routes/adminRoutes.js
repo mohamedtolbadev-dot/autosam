@@ -32,6 +32,22 @@ router.get('/dashboard', auth, isAdmin, async (req, res) => {
             AND YEAR(created_at) = YEAR(CURRENT_DATE())
         `);
         
+        // Voitures disponibles et réservées
+        const today = new Date().toISOString().split('T')[0];
+        const [availableCars] = await db.query(`
+            SELECT COUNT(*) as count FROM cars 
+            WHERE available = 1 AND id NOT IN (
+                SELECT DISTINCT car_id FROM bookings 
+                WHERE status IN ('pending', 'confirmed') 
+                AND pickup_date <= ? AND return_date >= ?
+            )
+        `, [today, today]);
+        const [reservedCars] = await db.query(`
+            SELECT COUNT(DISTINCT car_id) as count FROM bookings 
+            WHERE status IN ('pending', 'confirmed') 
+            AND pickup_date <= ? AND return_date >= ?
+        `, [today, today]);
+        
         // Réservations des 7 derniers jours
         const [weeklyBookings] = await db.query(`
             SELECT DATE(created_at) as date, COUNT(*) as count
@@ -53,9 +69,11 @@ router.get('/dashboard', auth, isAdmin, async (req, res) => {
         // Réservations récentes avec détails
         const recentBookings = await Booking.getAll();
         
-        // Top 5 voitures les plus réservées
+        // Top 5 voitures les plus réservées (excluding cancelled bookings)
         const [topCars] = await db.query(`
-            SELECT c.id, c.name, c.category, COUNT(b.id) as booking_count, SUM(b.total_price) as total_revenue
+            SELECT c.id, c.name, c.category, 
+                   COUNT(CASE WHEN b.status != 'cancelled' THEN b.id END) as booking_count, 
+                   SUM(CASE WHEN b.status IN ('confirmed', 'completed') THEN b.total_price ELSE 0 END) as total_revenue
             FROM cars c
             LEFT JOIN bookings b ON c.id = b.car_id
             GROUP BY c.id, c.name, c.category
@@ -91,7 +109,9 @@ router.get('/dashboard', auth, isAdmin, async (req, res) => {
                 completedBookings: completedCount[0].count,
                 cancelledBookings: cancelledCount[0].count,
                 totalRevenue: totalRevenue[0].total,
-                monthRevenue: monthRevenue[0].total
+                monthRevenue: monthRevenue[0].total,
+                availableCars: availableCars[0].count,
+                reservedCars: reservedCars[0].count
             },
             recentBookings: recentBookings.slice(0, 10),
             weeklyBookings,
@@ -271,6 +291,7 @@ router.put('/bookings/:id/status', auth, isAdmin, async (req, res) => {
         
         // Send email notification if status changed
         if (previousStatus !== status) {
+            console.log('📧 Status changed, preparing to send email...');
             const bookingData = {
                 id: booking.id,
                 email: booking.email,
@@ -280,15 +301,28 @@ router.put('/bookings/:id/status', auth, isAdmin, async (req, res) => {
                 pickup_date: booking.pickup_date,
                 return_date: booking.return_date,
                 pickup_location: booking.pickup_location,
-                total_price: booking.total_price
+                total_price: booking.total_price,
+                language: booking.language || 'fr'
             };
             
+            console.log('📧 Booking data for email:', { ...bookingData, email: '***' });
+            
             // Send appropriate email based on status
-            if (status === 'confirmed') {
-                await sendBookingConfirmation(bookingData);
-            } else {
-                await sendStatusUpdate(bookingData, status);
+            try {
+                if (status === 'confirmed') {
+                    console.log('📧 Sending confirmation email...');
+                    await sendBookingConfirmation(bookingData);
+                    console.log('✅ Confirmation email sent');
+                } else {
+                    console.log('📧 Sending status update email for:', status);
+                    await sendStatusUpdate(bookingData, status);
+                    console.log('✅ Status update email sent');
+                }
+            } catch (emailErr) {
+                console.error('❌ Email sending error:', emailErr);
             }
+        } else {
+            console.log('ℹ️ Status not changed, no email sent');
         }
         
         res.json({ message: 'Statut mis à jour avec succès', status });
@@ -314,11 +348,62 @@ router.delete('/bookings/:id', auth, isAdmin, async (req, res) => {
     }
 });
 
-// GET /api/admin/cars - Liste complète des voitures
+// GET /api/admin/cars - Liste complète des voitures avec statistiques
 router.get('/cars', auth, isAdmin, async (req, res) => {
     try {
-        const cars = await Car.getAll();
-        res.json(cars);
+        // Get cars with booking statistics (confirmed and completed only)
+        const [cars] = await db.query(`
+            SELECT c.*, 
+                   COALESCE(COUNT(b.id), 0) as booking_count,
+                   COALESCE(SUM(CASE WHEN b.status IN ('confirmed', 'completed') THEN b.total_price ELSE 0 END), 0) as total_revenue
+            FROM cars c
+            LEFT JOIN bookings b ON c.id = b.car_id
+            GROUP BY c.id, c.name, c.category, c.price_per_day, c.seats, 
+                     c.transmission, c.fuel, c.available, c.image_url, c.year_model, 
+                     c.doors, c.description, c.features
+            ORDER BY c.name
+        `);
+        
+        // Get secondary images for each car
+        const carsWithDetails = await Promise.all(cars.map(async (car) => {
+            const [images] = await db.query(
+                'SELECT image_url, is_primary, display_order FROM car_images WHERE car_id = ? ORDER BY display_order',
+                [car.id]
+            );
+            
+            // Check if car is currently reserved
+            const today = new Date().toISOString().split('T')[0];
+            const [reservedCheck] = await db.query(
+                `SELECT COUNT(*) as count FROM bookings 
+                 WHERE car_id = ? AND status IN ('pending', 'confirmed') 
+                 AND pickup_date <= ? AND return_date >= ?`,
+                [car.id, today, today]
+            );
+            
+            return {
+                id: car.id,
+                name: car.name,
+                category: car.category,
+                price: car.price_per_day,
+                price_per_day: car.price_per_day,
+                seats: car.seats,
+                transmission: car.transmission,
+                fuel: car.fuel,
+                available: car.available === 1 || car.available === true,
+                reserved: reservedCheck[0].count > 0,
+                image: car.image_url,
+                images: images.map(img => img.image_url),
+                year: car.year_model,
+                year_model: car.year_model,
+                doors: car.doors,
+                description: car.description,
+                features: typeof car.features === 'string' ? JSON.parse(car.features) : car.features,
+                booking_count: car.booking_count || 0,
+                total_revenue: car.total_revenue || 0
+            };
+        }));
+        
+        res.json(carsWithDetails);
     } catch (error) {
         console.error('Cars error:', error);
         res.status(500).json({ message: error.message });

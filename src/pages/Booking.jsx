@@ -7,6 +7,7 @@ import { useCurrency } from '../context/CurrencyContext';
 import { useCustomer } from '../context/CustomerContext';
 import { sanitizeInput, isValidEmail, isValidPhone } from '../utils/security';
 import RegisterModal from '../components/RegisterModal';
+import LoginModal from '../components/LoginModal';
 
 // Icônes SVG inline (alignées avec Home / Cars / CarDetails)
 const IconUser = ({ className = 'w-5 h-5' }) => (
@@ -53,6 +54,22 @@ const IconCreditCard = ({ className = 'w-5 h-5' }) => (
 // Helper function to format location keys to human-readable names
 const formatLocation = (locationKey, t) => {
   if (!locationKey) return '';
+  
+  // If no underscore, add default airport location
+  if (!locationKey.includes('_')) {
+    const cityNames = {
+      casablanca: t('common:cities.casablanca'),
+      marrakech: t('common:cities.marrakech'),
+      rabat: t('common:cities.rabat'),
+      tangier: t('common:cities.tangier'),
+      agadir: t('common:cities.agadir'),
+      fes: t('common:cities.fes')
+    };
+    const cityName = cityNames[locationKey.toLowerCase()] || locationKey;
+    const defaultLocation = t('common:locations.airport');
+    return `${cityName} - ${defaultLocation}`;
+  }
+  
   const [city, location] = locationKey.split('_');
   const cityNames = {
     casablanca: t('common:cities.casablanca'),
@@ -65,10 +82,12 @@ const formatLocation = (locationKey, t) => {
   const locationTypes = {
     airport: t('common:locations.airport'),
     cityCenter: t('common:locations.cityCenter'),
-    trainStation: t('common:locations.trainStation')
+    city: t('common:locations.cityCenter'),
+    trainStation: t('common:locations.trainStation'),
+    train: t('common:locations.trainStation')
   };
   const cityName = cityNames[city] || city;
-  const locationType = locationTypes[location] || location;
+  const locationType = locationTypes[location] || (location ? location : t('common:locations.airport'));
   return `${cityName} - ${locationType}`;
 };
 const IconShield = ({ className = 'w-5 h-5' }) => (
@@ -119,8 +138,8 @@ const Booking = () => {
     email: '',
     phone: '',
     licenseNumber: '',
-    pickupLocation: searchLocation || 'Casablanca',
-    dropoffLocation: searchDropoffLocation || 'Casablanca',
+    pickupLocation: searchLocation || 'casablanca_airport',
+    dropoffLocation: searchDropoffLocation || 'casablanca_airport',
     pickupDate: searchStartDate || '',
     dropoffDate: searchEndDate || '',
     additionalDriver: false,
@@ -144,8 +163,11 @@ const Booking = () => {
 
   const [step, setStep] = useState(1);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const [showAccountPrompt, setShowAccountPrompt] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Scroll to top when step changes
@@ -279,19 +301,22 @@ const Booking = () => {
           pickup_date: formData.pickupDate,
           return_date: formData.dropoffDate,
           total_price: calculateTotal(),
+          language: i18n.language || 'fr', // Add current language for email
           notes: `Permis: ${formData.licenseNumber}, Options: ${formData.gps ? 'GPS ' : ''}${formData.childSeat ? 'Siège bébé ' : ''}Assurance: ${formData.insurance}`
         };
         
         await createBooking(bookingData);
         await fetchCars();
-        // Skip success modal, directly show account prompt or redirect
+        // Redirect based on authentication status
         if (!isAuthenticated) {
           setShowAccountPrompt(true);
         } else {
-          navigate('/');
+          // Logged-in user: show success modal then redirect to MyBookings
+          setShowSuccessModal(true);
         }
       } catch (error) {
-        alert(t('messages.bookingError') + error.message);
+        setErrorMessage(error.message || t('messages.bookingError'));
+        setShowErrorModal(true);
       } finally {
         setIsSubmitting(false);
       }
@@ -300,7 +325,12 @@ const Booking = () => {
 
   const handleCloseSuccessModal = () => {
     setShowSuccessModal(false);
-    navigate('/');
+    navigate('/my-bookings');
+  };
+
+  const handleCloseErrorModal = () => {
+    setShowErrorModal(false);
+    setErrorMessage('');
   };
 
   const handleChange = (e) => {
@@ -362,6 +392,43 @@ const Booking = () => {
               <button
                 type="button"
                 onClick={handleCloseSuccessModal}
+                className="px-4 py-2.5 rounded-xl font-semibold bg-red-600 text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors"
+              >
+                {t('actions.ok')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Error Modal */}
+      {showErrorModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center px-4"
+          role="dialog"
+          aria-modal="true"
+          aria-label={t('messages.error')}
+        >
+          <div className="absolute inset-0 bg-slate-900/60" onClick={handleCloseErrorModal} />
+          <div className="relative z-10 w-full max-w-md rounded-2xl bg-white border border-red-200 shadow-xl p-5 sm:p-6">
+            <div className="flex items-start gap-3">
+              <div className="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-red-50 text-red-600 shrink-0">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div className="min-w-0">
+                <h3 className="text-lg font-bold text-slate-900">{t('messages.error')}</h3>
+                <p className="text-sm text-slate-600 mt-1">
+                  {errorMessage}
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-5 flex justify-end">
+              <button
+                type="button"
+                onClick={handleCloseErrorModal}
                 className="px-4 py-2.5 rounded-xl font-semibold bg-red-600 text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors"
               >
                 {t('actions.ok')}
@@ -446,6 +513,16 @@ const Booking = () => {
                 type="button"
                 onClick={() => {
                   setShowAccountPrompt(false);
+                  setShowLoginModal(true);
+                }}
+                className="w-full py-2 px-4 rounded-xl font-medium text-sm text-slate-600 bg-slate-100 hover:bg-slate-200 hover:text-slate-800 transition-colors"
+              >
+                {t('actions.login')}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowAccountPrompt(false);
                   navigate('/');
                 }}
                 className="w-full py-2 px-4 rounded-xl font-medium text-sm text-slate-400 hover:text-slate-600 transition-colors"
@@ -467,6 +544,19 @@ const Booking = () => {
         onSwitchToLogin={() => {
           setShowRegisterModal(false);
           navigate('/');
+        }}
+      />
+
+      {/* Login Modal */}
+      <LoginModal
+        isOpen={showLoginModal}
+        onClose={() => {
+          setShowLoginModal(false);
+          navigate('/');
+        }}
+        onSwitchToRegister={() => {
+          setShowLoginModal(false);
+          setShowRegisterModal(true);
         }}
       />
       <section className="relative text-white overflow-hidden rounded-b-2xl sm:rounded-b-3xl bg-slate-800">
@@ -585,33 +675,33 @@ const Booking = () => {
                   <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-slate-800 mb-4 sm:mb-6">{t('form.yourInfo')}</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 mb-3 sm:mb-4">
                     <div>
-                      <label className="flex items-center gap-2 text-xs sm:text-sm font-medium text-slate-700 mb-1.5 sm:mb-2"><IconUser className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500" />{t('form.firstName')} *</label>
+                      <label className="flex items-center gap-2 text-xs sm:text-sm font-medium text-slate-700 mb-1.5 sm:mb-2"><IconUser className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500" />{t('form.firstName')} <span className="text-red-600">*</span></label>
                       <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} required placeholder={t('form.firstNamePlaceholder')} className={`${inputBaseClassName} text-sm sm:text-base`} />
                     </div>
                     <div>
-                      <label className="flex items-center gap-2 text-xs sm:text-sm font-medium text-slate-700 mb-1.5 sm:mb-2"><IconUser className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500" />{t('form.lastName')} *</label>
+                      <label className="flex items-center gap-2 text-xs sm:text-sm font-medium text-slate-700 mb-1.5 sm:mb-2"><IconUser className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500" />{t('form.lastName')} <span className="text-red-600">*</span></label>
                       <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} required placeholder={t('form.lastNamePlaceholder')} className={`${inputBaseClassName} text-sm sm:text-base`} />
                     </div>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 mb-3 sm:mb-4">
                     <div>
-                      <label className="flex items-center gap-2 text-xs sm:text-sm font-medium text-slate-700 mb-1.5 sm:mb-2"><IconMail className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500" />{t('form.email')} *</label>
+                      <label className="flex items-center gap-2 text-xs sm:text-sm font-medium text-slate-700 mb-1.5 sm:mb-2"><IconMail className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500" />{t('form.email')} <span className="text-red-600">*</span></label>
                       <input type="email" name="email" value={formData.email} onChange={handleChange} required placeholder={t('form.emailPlaceholder')} className={`${inputBaseClassName} text-sm sm:text-base`} />
                     </div>
                     <div>
-                      <label className="flex items-center gap-2 text-xs sm:text-sm font-medium text-slate-700 mb-1.5 sm:mb-2"><IconPhone className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500" />{t('form.phone')} *</label>
+                      <label className="flex items-center gap-2 text-xs sm:text-sm font-medium text-slate-700 mb-1.5 sm:mb-2"><IconPhone className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500" />{t('form.phone')} <span className="text-red-600">*</span></label>
                       <input type="tel" name="phone" value={formData.phone} onChange={handleChange} required placeholder={t('form.phonePlaceholder')} className={`${inputBaseClassName} text-sm sm:text-base`} />
                     </div>
                   </div>
                   <div className="mb-3 sm:mb-4">
-                    <label className="flex items-center gap-2 text-xs sm:text-sm font-medium text-slate-700 mb-1.5 sm:mb-2"><IconCreditCard className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500" />{t('form.license')} *</label>
+                    <label className="flex items-center gap-2 text-xs sm:text-sm font-medium text-slate-700 mb-1.5 sm:mb-2"><IconCreditCard className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500" />{t('form.license')} <span className="text-red-600">*</span></label>
                     <input type="text" name="licenseNumber" value={formData.licenseNumber} onChange={handleChange} required placeholder={t('form.licensePlaceholder')} className={`${inputBaseClassName} text-sm sm:text-base`} />
                   </div>
                   <hr className="my-4 sm:my-6 border-slate-200" />
                   <h3 className="text-base sm:text-lg font-bold text-slate-800 mb-3 sm:mb-4">{t('form.rentalDetails')}</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 mb-3 sm:mb-4">
                     <div>
-                      <label className="flex items-center gap-2 text-xs sm:text-sm font-medium text-slate-700 mb-1.5 sm:mb-2"><IconMapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500" />{t('form.pickup')} *</label>
+                      <label className="flex items-center gap-2 text-xs sm:text-sm font-medium text-slate-700 mb-1.5 sm:mb-2"><IconMapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500" />{t('form.pickup')} <span className="text-red-600">*</span></label>
                       <select name="pickupLocation" value={formData.pickupLocation} onChange={handleChange} className={`${selectBaseClassName} text-sm sm:text-base`}>
                         <option value="casablanca_airport">{t('common:cities.casablanca')} - {t('common:locations.airport')}</option>
                         <option value="casablanca_city">{t('common:cities.casablanca')} - {t('common:locations.cityCenter')}</option>
@@ -628,7 +718,7 @@ const Booking = () => {
                       </select>
                     </div>
                     <div>
-                      <label className="flex items-center gap-2 text-xs sm:text-sm font-medium text-slate-700 mb-1.5 sm:mb-2"><IconMapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500" />{t('form.dropoff')} *</label>
+                      <label className="flex items-center gap-2 text-xs sm:text-sm font-medium text-slate-700 mb-1.5 sm:mb-2"><IconMapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500" />{t('form.dropoff')} <span className="text-red-600">*</span></label>
                       <select name="dropoffLocation" value={formData.dropoffLocation} onChange={handleChange} className={`${selectBaseClassName} text-sm sm:text-base`}>
                         <option value="casablanca_airport">{t('common:cities.casablanca')} - {t('common:locations.airport')}</option>
                         <option value="casablanca_city">{t('common:cities.casablanca')} - {t('common:locations.cityCenter')}</option>
@@ -647,11 +737,11 @@ const Booking = () => {
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 mb-3 sm:mb-4">
                     <div>
-                      <label className="flex items-center gap-2 text-xs sm:text-sm font-medium text-slate-700 mb-1.5 sm:mb-2"><IconCalendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500" />{t('form.startDate')} *</label>
+                      <label className="flex items-center gap-2 text-xs sm:text-sm font-medium text-slate-700 mb-1.5 sm:mb-2"><IconCalendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500" />{t('form.startDate')} <span className="text-red-600">*</span></label>
                       <input type="text" readOnly name="pickupDate" placeholder={t('form.startDatePlaceholder')} value={formData.pickupDate} onClick={() => openDateModal('pickup')} required className={`${inputBaseClassName} text-sm sm:text-base`} />
                     </div>
                     <div>
-                      <label className="flex items-center gap-2 text-xs sm:text-sm font-medium text-slate-700 mb-1.5 sm:mb-2"><IconCalendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500" />{t('form.endDate')} *</label>
+                      <label className="flex items-center gap-2 text-xs sm:text-sm font-medium text-slate-700 mb-1.5 sm:mb-2"><IconCalendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500" />{t('form.endDate')} <span className="text-red-600">*</span></label>
                       <input type="text" readOnly name="dropoffDate" placeholder={t('form.endDatePlaceholder')} value={formData.dropoffDate} onClick={() => openDateModal('dropoff')} required className={`${inputBaseClassName} text-sm sm:text-base`} />
                     </div>
                   </div>

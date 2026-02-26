@@ -59,10 +59,12 @@ exports.createBooking = async (req, res) => {
         }
         
         // Send notification email to agency
+        console.log('📧 Attempting to send agency notification email...');
         emailService.sendNewBookingNotification(
             { ...bookingData, id: bookingId },
             carDetails
         ).then(emailResult => {
+            console.log('📧 Agency email result:', emailResult);
             if (emailResult.success) {
                 console.log('✅ Notification email sent successfully');
             } else {
@@ -70,6 +72,23 @@ exports.createBooking = async (req, res) => {
             }
         }).catch(err => {
             console.error('❌ Email service error:', err);
+        });
+        
+        // Send confirmation email to client
+        console.log('📧 Attempting to send client confirmation email...');
+        emailService.sendBookingConfirmation({
+            ...bookingData,
+            id: bookingId,
+            car_name: carDetails ? `${carDetails.brand} ${carDetails.model}` : bookingData.car_name
+        }).then(emailResult => {
+            console.log('📧 Client email result:', emailResult);
+            if (emailResult) {
+                console.log('✅ Client confirmation email sent successfully');
+            } else {
+                console.error('❌ Failed to send client confirmation email');
+            }
+        }).catch(err => {
+            console.error('❌ Client email service error:', err);
         });
         
         res.status(201).json({ 

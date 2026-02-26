@@ -17,7 +17,7 @@ export const CustomerProvider = ({ children }) => {
   }, []);
 
   const fetchProfile = useCallback(async () => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('customerToken');
     if (!token) {
       setCustomer(null);
       setIsAuthenticated(false);
@@ -34,7 +34,7 @@ export const CustomerProvider = ({ children }) => {
       if (profile.role === 'admin') {
         setCustomer(null);
         setIsAuthenticated(false);
-        localStorage.removeItem('token');
+        localStorage.removeItem('customerToken');
         return;
       }
       
@@ -42,10 +42,12 @@ export const CustomerProvider = ({ children }) => {
       setIsAuthenticated(true);
     } catch (error) {
       console.error('Failed to fetch profile:', error);
-      // Not authenticated or token invalid
-      setCustomer(null);
-      setIsAuthenticated(false);
-      localStorage.removeItem('token');
+      // Not authenticated or token invalid - only clear on auth errors, not network errors
+      if (error.message?.includes('401') || error.message?.includes('Token') || error.message?.includes('unauthorized')) {
+        setCustomer(null);
+        setIsAuthenticated(false);
+        localStorage.removeItem('customerToken');
+      }
     } finally {
       setLoading(false);
       setInitializing(false);
@@ -62,9 +64,13 @@ export const CustomerProvider = ({ children }) => {
         return { success: false, error: 'Veuillez utiliser la page de connexion administrateur' };
       }
       
+      // Clear admin token to avoid conflicts - we're logging in as customer
+      localStorage.removeItem('adminToken');
+      console.log('🧹 Cleared adminToken on customer login');
+      
       // Save token to localStorage
       if (response.token) {
-        localStorage.setItem('token', response.token);
+        localStorage.setItem('customerToken', response.token);
       }
       
       setCustomer(response.user);
@@ -87,9 +93,13 @@ export const CustomerProvider = ({ children }) => {
         return { success: false, error: 'Inscription non autorisée' };
       }
       
+      // Clear admin token to avoid conflicts
+      localStorage.removeItem('adminToken');
+      console.log('🧹 Cleared adminToken on customer registration');
+      
       // Save token to localStorage
       if (response.token) {
-        localStorage.setItem('token', response.token);
+        localStorage.setItem('customerToken', response.token);
       }
       
       setCustomer(response.user);
@@ -109,7 +119,7 @@ export const CustomerProvider = ({ children }) => {
       console.error('Logout error:', error);
     }
     // Remove token from localStorage
-    localStorage.removeItem('token');
+    localStorage.removeItem('customerToken');
     setCustomer(null);
     setIsAuthenticated(false);
   };
