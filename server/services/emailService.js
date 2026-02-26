@@ -21,29 +21,52 @@ const createTransporter = () => {
 
 const baseStyles = `
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%); color: #222; min-height: 100vh; }
-    .wrapper { padding: 40px 20px; }
-    .container { max-width: 560px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); overflow: hidden; }
-    .header { padding: 36px 40px 28px; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-bottom: 3px solid #c41e3a; }
-    .header h1 { font-size: 14px; font-weight: 800; letter-spacing: 6px; text-transform: uppercase; color: #ffffff; text-align: center; }
-    .content { padding: 40px; font-size: 15px; line-height: 1.7; color: #444; }
-    .section-title { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #c41e3a; margin-bottom: 16px; margin-top: 32px; display: flex; align-items: center; gap: 10px; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%); color: #222; min-height: 100vh; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    .wrapper { padding: 20px 10px; }
+    .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); overflow: hidden; width: 100%; }
+    .header { padding: 30px 20px 24px; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-bottom: 3px solid #c41e3a; }
+    .header h1 { font-size: 13px; font-weight: 800; letter-spacing: 5px; text-transform: uppercase; color: #ffffff; text-align: center; }
+    .content { padding: 24px 20px; font-size: 15px; line-height: 1.7; color: #444; }
+    .section-title { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #c41e3a; margin-bottom: 12px; margin-top: 24px; display: flex; align-items: center; gap: 10px; }
     .section-title::before { content: ''; width: 4px; height: 16px; background: #c41e3a; border-radius: 2px; }
-    .divider { border: none; border-top: 1px solid #e8e8e8; margin: 28px 0; }
-    .divider-thick { border: none; border-top: 2px solid #c41e3a; margin: 20px 0; width: 60px; }
+    .divider { border: none; border-top: 1px solid #e8e8e8; margin: 20px 0; }
+    .divider-thick { border: none; border-top: 2px solid #c41e3a; margin: 16px 0; width: 60px; }
     .info-table { width: 100%; border-collapse: collapse; margin-top: 8px; }
-    .info-table tr td { padding: 12px 0; font-size: 14px; border-bottom: 1px dashed #e0e0e0; }
+    .info-table tr td { padding: 10px 0; font-size: 14px; border-bottom: 1px dashed #e0e0e0; word-wrap: break-word; }
     .info-table tr:last-child td { border-bottom: none; }
-    .info-table td:first-child { color: #666; width: 45%; font-weight: 500; }
-    .info-table td:last-child { color: #222; font-weight: 600; text-align: right; }
-    .total-row td { font-size: 16px; font-weight: 700; color: #1a1a2e; padding-top: 16px !important; border-top: 2px solid #c41e3a !important; border-bottom: none !important; }
-    .btn { display: inline-block; padding: 14px 32px; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; text-decoration: none; border-radius: 6px; color: #ffffff; background: linear-gradient(135deg, #c41e3a 0%, #a01830 100%); box-shadow: 0 4px 12px rgba(196,30,58,0.3); transition: all 0.3s ease; }
+    .info-table td:first-child { color: #666; width: 40%; font-weight: 500; padding-right: 10px; }
+    .info-table td:last-child { color: #222; font-weight: 600; text-align: right; width: 60%; }
+    .total-row td { font-size: 16px; font-weight: 700; color: #1a1a2e; padding-top: 12px !important; border-top: 2px solid #c41e3a !important; border-bottom: none !important; }
+    .btn { display: inline-block; padding: 12px 24px; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; text-decoration: none; border-radius: 6px; color: #ffffff; background: linear-gradient(135deg, #c41e3a 0%, #a01830 100%); box-shadow: 0 4px 12px rgba(196,30,58,0.3); transition: all 0.3s ease; max-width: 100%; text-align: center; }
     .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(196,30,58,0.4); }
-    .footer { padding: 24px 40px; border-top: 1px solid #e8e8e8; background-color: #fafbfc; font-size: 12px; color: #888; line-height: 1.8; text-align: center; }
+    .footer { padding: 20px; border-top: 1px solid #e8e8e8; background-color: #fafbfc; font-size: 11px; color: #888; line-height: 1.8; text-align: center; }
     .footer a { color: #c41e3a; text-decoration: none; font-weight: 500; }
     .status-badge { display: inline-block; padding: 10px 20px; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; border-radius: 6px; color: #ffffff; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); margin: 12px 0; }
-    .greeting-box { background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-left: 4px solid #c41e3a; padding: 20px 24px; border-radius: 0 8px 8px 0; margin-bottom: 24px; }
+    .greeting-box { background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-left: 4px solid #c41e3a; padding: 16px 20px; border-radius: 0 8px 8px 0; margin-bottom: 20px; }
     .highlight { color: #c41e3a; font-weight: 700; }
+    
+    /* Mobile responsive styles */
+    @media screen and (max-width: 480px) {
+        .wrapper { padding: 10px 8px; }
+        .container { border-radius: 8px; }
+        .header { padding: 24px 16px 20px; }
+        .header h1 { font-size: 12px; letter-spacing: 4px; }
+        .content { padding: 20px 16px; font-size: 14px; line-height: 1.6; }
+        .section-title { font-size: 10px; margin-top: 20px; margin-bottom: 10px; }
+        .info-table tr td { padding: 8px 0; font-size: 13px; }
+        .info-table td:first-child { width: 35%; }
+        .info-table td:last-child { width: 65%; }
+        .total-row td { font-size: 15px; }
+        .btn { padding: 12px 20px; font-size: 11px; letter-spacing: 1px; display: block; width: 100%; }
+        .footer { padding: 16px; font-size: 10px; }
+        .greeting-box { padding: 12px 16px; }
+    }
+    
+    @media screen and (max-width: 360px) {
+        .content { padding: 16px 12px; }
+        .info-table td:first-child, .info-table td:last-child { display: block; width: 100%; text-align: left; }
+        .info-table td:last-child { padding-top: 4px; font-weight: 600; }
+    }
 `;
 
 // Helper function to format location keys to human-readable names (bilingual FR/EN)
@@ -114,6 +137,7 @@ exports.sendNewBookingNotification = async (bookingData, carDetails) => {
 <html>
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>${baseStyles}</style>
 </head>
 <body>
