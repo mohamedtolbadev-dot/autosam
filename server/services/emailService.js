@@ -170,7 +170,7 @@ exports.sendNewBookingNotification = async (bookingData, carDetails) => {
             <p class="section-title">${isEnglish ? 'Vehicle' : 'Véhicule'}</p>
             ${carDetails ? `
             <table class="info-table">
-                <tr><td>${isEnglish ? 'Model' : 'Modèle'}</td><td>${carDetails.brand} ${carDetails.model} (${carDetails.year})</td></tr>
+                <tr><td>${isEnglish ? 'Model' : 'Modèle'}</td><td>${carDetails.name} (${carDetails.year})</td></tr>
                 <tr><td>${isEnglish ? 'Price / day' : 'Prix / jour'}</td><td>${carDetails.price_per_day} MAD</td></tr>
             </table>
             ` : `<p style="color:#aaa; font-size:13px;">${isEnglish ? 'Information not available' : 'Informations non disponibles'}</p>`}
