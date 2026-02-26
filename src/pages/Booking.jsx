@@ -185,6 +185,28 @@ const Booking = () => {
 
   const todayInputValue = getTodayInputValue();
 
+  const [countryCode, setCountryCode] = useState('+212'); // Default Morocco
+  
+  const countryCodes = [
+    { code: '+212', flag: '🇲🇦', name: 'Maroc' },
+    { code: '+33', flag: '🇫🇷', name: 'France' },
+    { code: '+1', flag: '🇺🇸', name: 'USA' },
+    { code: '+44', flag: '🇬🇧', name: 'UK' },
+    { code: '+49', flag: '🇩🇪', name: 'Allemagne' },
+    { code: '+34', flag: '🇪🇸', name: 'Espagne' },
+    { code: '+39', flag: '🇮🇹', name: 'Italie' },
+    { code: '+31', flag: '🇳🇱', name: 'Pays-Bas' },
+    { code: '+32', flag: '🇧🇪', name: 'Belgique' },
+    { code: '+41', flag: '🇨🇭', name: 'Suisse' },
+    { code: '+352', flag: '🇱🇺', name: 'Luxembourg' },
+    { code: '+216', flag: '🇹🇳', name: 'Tunisie' },
+    { code: '+213', flag: '🇩🇿', name: 'Algérie' },
+    { code: '+20', flag: '🇪🇬', name: 'Égypte' },
+    { code: '+971', flag: '🇦🇪', name: 'UAE' },
+    { code: '+966', flag: '🇸🇦', name: 'Arabie Saoudite' },
+    { code: '+961', flag: '🇱🇧', name: 'Liban' },
+  ];
+
   const [dateModalOpen, setDateModalOpen] = useState(false);
   const [activeDateField, setActiveDateField] = useState(null);
   const [calendarMonth, setCalendarMonth] = useState(() => {
@@ -295,7 +317,7 @@ const Booking = () => {
           first_name: formData.firstName,
           last_name: formData.lastName,
           email: formData.email,
-          phone: formData.phone,
+          phone: `${countryCode} ${formData.phone}`,
           pickup_location: formData.pickupLocation,
           dropoff_location: formData.dropoffLocation,
           pickup_date: formData.pickupDate,
@@ -690,7 +712,28 @@ const Booking = () => {
                     </div>
                     <div>
                       <label className="flex items-center gap-2 text-xs sm:text-sm font-medium text-slate-700 mb-1.5 sm:mb-2"><IconPhone className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500" />{t('form.phone')} <span className="text-red-600">*</span></label>
-                      <input type="tel" name="phone" value={formData.phone} onChange={handleChange} required placeholder={t('form.phonePlaceholder')} className={`${inputBaseClassName} text-sm sm:text-base`} />
+                      <div className="flex">
+                        <select
+                          value={countryCode}
+                          onChange={(e) => setCountryCode(e.target.value)}
+                          className="rounded-l-xl px-2 py-3 text-sm bg-slate-50 border border-r-0 border-slate-200 text-slate-700 focus:ring-2 focus:ring-red-500/40 focus:border-red-500 focus:outline-none cursor-pointer"
+                        >
+                          {countryCodes.map((country) => (
+                            <option key={country.code} value={country.code}>
+                              {country.flag} {country.code}
+                            </option>
+                          ))}
+                        </select>
+                        <input
+                          type="tel"
+                          name="phone"
+                          value={formData.phone}
+                          onChange={handleChange}
+                          required
+                          placeholder={t('form.phonePlaceholder')}
+                          className={`${inputBaseClassName} rounded-l-none text-sm sm:text-base flex-1`}
+                        />
+                      </div>
                     </div>
                   </div>
                   <div className="mb-3 sm:mb-4">

@@ -200,9 +200,21 @@ exports.sendBookingConfirmation = async (bookingData) => {
         const transporter = createTransporter();
         const { email, first_name, car_name, pickup_date, return_date, pickup_location, dropoff_location, total_price, language = 'fr' } = bookingData;
         
+        // Support both camelCase and snake_case field names
+        const actualDropoffLocation = dropoff_location || bookingData.dropoffLocation;
+        const actualPickupLocation = pickup_location || bookingData.pickupLocation;
+        
+        // Debug logging
+        console.log('📧 sendBookingConfirmation - Language:', language);
+        console.log('📧 Pickup location:', actualPickupLocation);
+        console.log('📧 Dropoff location:', actualDropoffLocation);
+        
         // Determine language (default to French)
         const lang = language === 'en' ? 'en' : 'fr';
         const isEnglish = lang === 'en';
+        
+        // Normalize language code for formatLocation
+        const normalizedLang = lang?.toLowerCase().startsWith('en') ? 'en' : 'fr';
 
         const emailContent = `
 <!DOCTYPE html>
@@ -235,8 +247,8 @@ exports.sendBookingConfirmation = async (bookingData) => {
                 <tr><td>${isEnglish ? 'Vehicle' : 'Véhicule'}</td><td>${car_name}</td></tr>
                 <tr><td>${isEnglish ? 'Pick-up date' : 'Date de départ'}</td><td>${new Date(pickup_date).toLocaleDateString(lang === 'en' ? 'en-US' : 'fr-FR')}</td></tr>
                 <tr><td>${isEnglish ? 'Return date' : 'Date de retour'}</td><td>${new Date(return_date).toLocaleDateString(lang === 'en' ? 'en-US' : 'fr-FR')}</td></tr>
-                <tr><td>${isEnglish ? 'Pick-up location' : 'Lieu de prise en charge'}</td><td>${formatLocation(pickup_location, lang)}</td></tr>
-                <tr><td>${isEnglish ? 'Return location' : 'Lieu de restitution'}</td><td>${formatLocation(dropoff_location, lang)}</td></tr>
+                <tr><td>${isEnglish ? 'Pick-up location' : 'Lieu de prise en charge'}</td><td>${formatLocation(actualPickupLocation, normalizedLang)}</td></tr>
+                <tr><td>${isEnglish ? 'Return location' : 'Lieu de restitution'}</td><td>${formatLocation(actualDropoffLocation, normalizedLang)}</td></tr>
                 <tr class="total-row"><td>${isEnglish ? 'Total' : 'Total'}</td><td>${total_price} MAD</td></tr>
             </table>
 
