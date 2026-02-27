@@ -888,16 +888,16 @@ const brands = [
                 </div>
 
                 {/* ── Right: Content ── */}
-                <div className="flex-1 p-5 sm:p-6 flex flex-col justify-between gap-4">
+                <div className="flex-1 p-4 sm:p-5 lg:p-6 flex flex-col justify-between gap-3 sm:gap-4">
                   
                   {/* Title + Description */}
                   <div>
-                    <h3 className="text-xl sm:text-2xl font-bold text-[#1B2638] mb-2 leading-tight">
+                    <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-[#1B2638] mb-2 leading-tight">
                       {i18n.language === 'en'
                         ? promo.title_en || promo.title
                         : promo.title_fr || promo.title}
                     </h3>
-                    <p className="text-gray-600 text-sm leading-relaxed">
+                    <p className="text-gray-600 text-sm leading-relaxed line-clamp-3 sm:line-clamp-none">
                       {i18n.language === 'en'
                         ? promo.description_en || promo.description
                         : promo.description_fr || promo.description}
@@ -987,10 +987,10 @@ const brands = [
                       </span>
                     </div>
 
-                    <div className="flex flex-wrap gap-3">
+                    <div className="flex flex-wrap gap-2 sm:gap-3">
                       <Link
                         to={`/cars/${promo.car_id}`}
-                        className="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-lg text-sm font-semibold text-slate-700 bg-gray-100 hover:bg-gray-200 transition-all"
+                        className="inline-flex items-center justify-center gap-1.5 px-4 sm:px-5 py-2.5 rounded-lg text-sm font-semibold text-slate-700 bg-gray-100 hover:bg-gray-200 transition-all"
                       >
                         {t('actions.details', 'Détails')}
                         <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -1000,7 +1000,7 @@ const brands = [
                       </Link>
                       <Link
                         to={`/booking?promo=${promo.code || ''}&car=${promo.car_id || ''}`}
-                        className="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-[#0F172B] to-[#1B2638] hover:from-[#1B2638] hover:to-[#2d3748] transition-all shadow-md hover:shadow-lg"
+                        className="inline-flex items-center justify-center gap-1.5 px-4 sm:px-5 py-2.5 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-[#0F172B] to-[#1B2638] hover:from-[#1B2638] hover:to-[#2d3748] transition-all shadow-md hover:shadow-lg"
                       >
                         {t('promotions.bookNow', 'Réserver')}
                         <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
