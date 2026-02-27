@@ -1285,7 +1285,7 @@ const brands = [
               <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-200 bg-slate-100 shadow-xl">
                 <div className="absolute inset-0 bg-gradient-to-tr from-slate-900/30 via-transparent to-transparent" />
                 <img
-                  src="../public/imgs/famly.jpg"
+                  src="/imgs/famly.jpg"
                   alt={t('family.imageAlt')}
                   className="w-full h-64 sm:h-80 md:h-96 object-cover"
                   loading="lazy"
