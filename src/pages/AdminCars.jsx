@@ -29,7 +29,7 @@ const AdminCars = () => {
     doors: 5,
     year_model: 2024,
     description: '',
-    features: '[]'
+    features: ''
   });
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [previewUrls, setPreviewUrls] = useState([]);
@@ -49,14 +49,6 @@ const AdminCars = () => {
     }
     fetchAllCars();
   }, [initializing, isAuthenticated, navigate, fetchAllCars]);
-
-  if (initializing) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-slate-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
-      </div>
-    );
-  }
 
   if (!isAuthenticated) return null;
 
@@ -128,7 +120,7 @@ const AdminCars = () => {
       doors: 5,
       year_model: 2024,
       description: '',
-      features: '[]'
+      features: ''
     });
     setSelectedFiles([]);
     setPreviewUrls([]);
@@ -150,7 +142,9 @@ const AdminCars = () => {
       doors: car.doors || 5,
       year_model: car.year_model || 2024,
       description: car.description || '',
-      features: Array.isArray(car.features) ? car.features.join(', ') : (car.features || '[]')
+      features: Array.isArray(car.features) 
+        ? (car.features.length > 0 ? car.features.join(', ') : '') 
+        : (car.features && car.features !== '[]' ? car.features : '')
     });
     // Show existing images as previews and track them separately
     let initialImages = [];

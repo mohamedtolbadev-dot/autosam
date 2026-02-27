@@ -330,6 +330,7 @@ export const AdminProvider = ({ children }) => {
   const updateCar = useCallback(async (carId, carData) => {
     if (!admin) return;
     
+    setLoading(true);
     try {
       // Check if carData is FormData (contains files) or regular object
       const isFormData = carData instanceof FormData;
@@ -344,6 +345,8 @@ export const AdminProvider = ({ children }) => {
       setError(err.message || 'Erreur lors de la mise à jour');
       console.error('Update car error:', err);
       throw err;
+    } finally {
+      setLoading(false);
     }
   }, [admin, fetchAllCars]);
 
@@ -351,8 +354,9 @@ export const AdminProvider = ({ children }) => {
   const deleteCar = useCallback(async (carId) => {
     if (!admin) return;
     
+    setLoading(true);
     try {
-            await api(`/admin/cars/${carId}`, {
+      await api(`/admin/cars/${carId}`, {
         method: 'DELETE'
       });
       
@@ -362,6 +366,8 @@ export const AdminProvider = ({ children }) => {
       setError(err.message || 'Erreur lors de la suppression');
       console.error('Delete car error:', err);
       throw err;
+    } finally {
+      setLoading(false);
     }
   }, [admin, fetchAllCars, fetchDashboard]);
 

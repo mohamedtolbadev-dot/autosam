@@ -260,6 +260,19 @@ const steps = [
     fetchPromotions();
   }, []);
 
+  // Auto-scroll promotions
+  useEffect(() => {
+    if (promotions.length <= 1) return;
+    
+    const interval = setInterval(() => {
+      setCurrentPromoIndex((prev) =>
+        prev === promotions.length - 1 ? 0 : prev + 1
+      );
+    }, 5000); // Change every 5 seconds
+    
+    return () => clearInterval(interval);
+  }, [promotions.length]);
+
   const getTodayInputValue = () => {
     const now = new Date();
     const year = now.getFullYear();
@@ -974,16 +987,28 @@ const brands = [
                       </span>
                     </div>
 
-                    <Link
-                      to={`/booking?promo=${promo.code || ''}&car=${promo.car_id || ''}`}
-                      className="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-[#0F172B] to-[#1B2638] hover:from-[#1B2638] hover:to-[#2d3748] transition-all shadow-md hover:shadow-lg"
-                    >
-                      {t('promotions.bookNow', 'Réserver')}
-                      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <line x1="5" y1="12" x2="19" y2="12"/>
-                        <polyline points="12 5 19 12 12 19"/>
-                      </svg>
-                    </Link>
+                    <div className="flex flex-wrap gap-3">
+                      <Link
+                        to={`/cars/${promo.car_id}`}
+                        className="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-lg text-sm font-semibold text-slate-700 bg-gray-100 hover:bg-gray-200 transition-all"
+                      >
+                        {t('actions.details', 'Détails')}
+                        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                          <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                      </Link>
+                      <Link
+                        to={`/booking?promo=${promo.code || ''}&car=${promo.car_id || ''}`}
+                        className="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-[#0F172B] to-[#1B2638] hover:from-[#1B2638] hover:to-[#2d3748] transition-all shadow-md hover:shadow-lg"
+                      >
+                        {t('promotions.bookNow', 'Réserver')}
+                        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                          <line x1="5" y1="12" x2="19" y2="12"/>
+                          <polyline points="12 5 19 12 12 19"/>
+                        </svg>
+                      </Link>
+                    </div>
                   </div>
 
                 </div>
