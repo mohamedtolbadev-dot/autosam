@@ -22,6 +22,8 @@ import AdminCars from './pages/AdminCars';
 import AdminStatistics from './pages/AdminStatistics';
 import AdminUsers from './pages/AdminUsers';
 import AdminContact from './pages/AdminContact';
+import AdminPromotions from './pages/AdminPromotions';
+import AdminLayout from './components/AdminLayout';
 
 // Floating WhatsApp Button
 function WhatsAppButton() {
@@ -115,6 +117,7 @@ function Layout() {
             <Route path="/admin/statistics" element={<AdminStatistics />} />
             <Route path="/admin/users" element={<AdminUsers />} />
             <Route path="/admin/contact" element={<AdminContact />} />
+            <Route path="/admin/promotions" element={<AdminPromotions />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>

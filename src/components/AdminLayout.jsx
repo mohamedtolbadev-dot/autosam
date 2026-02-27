@@ -1,4 +1,4 @@
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { useAdmin } from '../context/AdminContext';
 import { useState, useEffect } from 'react';
 
@@ -33,7 +33,7 @@ const AdminLayout = ({ children }) => {
   }
 
   if (!isAuthenticated) {
-    return children;
+    return <Navigate to="/admin/login" replace />;
   }
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
@@ -92,6 +92,15 @@ const AdminLayout = ({ children }) => {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
         </svg>
       )
+    },
+    {
+      path: '/admin/promotions',
+      label: 'Promotions',
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+        </svg>
+      )
     }
   ];
 
@@ -101,7 +110,7 @@ const AdminLayout = ({ children }) => {
   };
 
   if (!isAuthenticated) {
-    return children;
+    return <Navigate to="/admin/login" replace />;
   }
 
   return (
@@ -177,7 +186,7 @@ const AdminLayout = ({ children }) => {
                 to={item.path}
                 className={`group flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 ${
                   isActive
-                    ? 'bg-gradient-to-r from-red-50 to-white text-red-600 font-semibold shadow-sm border-r-2 border-red-500'
+                    ? 'bg-gradient-to-r from-red-50 to-white text-red-600 font-semibold shadow-sm'
                     : 'text-slate-600 hover:bg-slate-50 hover:text-slate-800'
                 }`}
               >
@@ -220,7 +229,7 @@ const AdminLayout = ({ children }) => {
 
       {/* Main content */}
       <main className="flex-1 lg:ml-0 pt-16 lg:pt-0">
-        {children}
+          {children}
       </main>
     </div>
   );

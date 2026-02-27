@@ -116,6 +116,7 @@ const Booking = () => {
   const searchDropoffLocation = searchParams.get('dropoffLocation');
   const searchStartDate = searchParams.get('startDate');
   const searchEndDate = searchParams.get('endDate');
+  const promoCode = searchParams.get('promo');
 
   // Trouver la voiture depuis le contexte (serveur)
   const car = cars.find(c => c.id === carId) || { 
@@ -145,7 +146,8 @@ const Booking = () => {
     additionalDriver: false,
     gps: false,
     childSeat: false,
-    insurance: ''
+    insurance: '',
+    promoCode: promoCode || ''
   });
 
   // Pre-fill form with customer data when available
@@ -168,6 +170,9 @@ const Booking = () => {
   const [showAccountPrompt, setShowAccountPrompt] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [promoInfo, setPromoInfo] = useState(null);
+  const [promoError, setPromoError] = useState('');
+  const [promoLoading, setPromoLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Scroll to top when step changes
@@ -243,6 +248,51 @@ const Booking = () => {
     setActiveDateField(null);
   };
 
+  const applyPromoCode = async () => {
+    if (!formData.promoCode.trim()) {
+      setPromoError(t('promoCode.errorEmpty', 'Veuillez entrer un code promo'));
+      return;
+    }
+    
+    setPromoLoading(true);
+    setPromoError('');
+    
+    try {
+      const response = await fetch(`${API_URL}/promotions/validate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: formData.promoCode.toUpperCase(), carId })
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        setPromoInfo({
+          code: formData.promoCode.toUpperCase(),
+          discountPercent: data.discount_percent || 0,
+          discountAmount: data.discount_amount || 0,
+          title: data.title || ''
+        });
+      } else {
+        setPromoError(data.message || t('promoCode.errorInvalid', 'Code promo invalide'));
+        setPromoInfo(null);
+      }
+    } catch (err) {
+      setPromoError(t('promoCode.errorNetwork', 'Erreur de connexion'));
+      setPromoInfo(null);
+    } finally {
+      setPromoLoading(false);
+    }
+  };
+
+  const removePromoCode = () => {
+    setPromoInfo(null);
+    setPromoError('');
+    setFormData(prev => ({ ...prev, promoCode: '' }));
+  };
+
+  const API_URL = 'https://server-chi-two-10.vercel.app/api';
+
   const minSelectableInputValue =
     activeDateField === 'dropoff'
       ? (formData.pickupDate || todayInputValue)
@@ -301,7 +351,35 @@ const Booking = () => {
     if (formData.childSeat) total += 30 * days;
     if (formData.insurance === 'premium') total += 100 * days;
     
-    return total;
+    // Apply promo code discount
+    if (promoInfo) {
+      if (promoInfo.discountPercent > 0) {
+        total = total * (1 - promoInfo.discountPercent / 100);
+      } else if (promoInfo.discountAmount > 0) {
+        total = Math.max(0, total - promoInfo.discountAmount);
+      }
+    }
+    
+    return Math.round(total);
+  };
+
+  const calculateDiscount = () => {
+    if (!promoInfo) return 0;
+    
+    const days = calculateDays();
+    let subtotal = car.price * days;
+    if (formData.gps) subtotal += 50 * days;
+    if (formData.childSeat) subtotal += 30 * days;
+    if (formData.insurance === 'premium') subtotal += 100 * days;
+    
+    let discount = 0;
+    if (promoInfo.discountPercent > 0) {
+      discount = subtotal * (promoInfo.discountPercent / 100);
+    } else if (promoInfo.discountAmount > 0) {
+      discount = Math.min(promoInfo.discountAmount, subtotal);
+    }
+    
+    return Math.round(discount);
   };
 
   const handleSubmit = async (e) => {
@@ -323,8 +401,14 @@ const Booking = () => {
           pickup_date: formData.pickupDate,
           return_date: formData.dropoffDate,
           total_price: calculateTotal(),
-          language: i18n.language || 'fr', // Add current language for email
-          notes: `Permis: ${formData.licenseNumber}, Options: ${formData.gps ? 'GPS ' : ''}${formData.childSeat ? 'Siège bébé ' : ''}Assurance: ${formData.insurance}`
+          language: i18n.language || 'fr',
+          notes: `Permis: ${formData.licenseNumber}, Options: ${formData.gps ? 'GPS ' : ''}${formData.childSeat ? 'Siège bébé ' : ''}Assurance: ${formData.insurance}`,
+          // Include promo code if applied
+          ...(promoInfo && {
+            promo_code: promoInfo.code,
+            discount_amount: calculateDiscount(),
+            original_total: calculateTotal() + calculateDiscount()
+          }),
         };
         
         await createBooking(bookingData);
@@ -654,6 +738,67 @@ const Booking = () => {
 
               {calculateDays() > 0 && (
                 <>
+                  {/* Promo Code Input */}
+                  <div className="mb-3 sm:mb-4 pb-3 sm:pb-4 border-b border-slate-100">
+                    <label className="text-xs sm:text-sm font-medium text-slate-700 mb-1.5 sm:mb-2 block">{t('promoCode.title', 'Code promo')}</label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        name="promoCode"
+                        value={formData.promoCode || ''}
+                        onChange={handleChange}
+                        disabled={promoInfo !== null}
+                        placeholder={t('promoCode.placeholder', 'Ex: PROMO2024')}
+                        className={`${inputSmallClassName} flex-1 uppercase ${promoInfo ? 'bg-emerald-50 border-emerald-300 text-emerald-700' : ''}`}
+                      />
+                      {!promoInfo ? (
+                        <button
+                          type="button"
+                          onClick={applyPromoCode}
+                          disabled={promoLoading}
+                          className="px-3 py-2 bg-slate-100 text-slate-700 rounded-xl text-sm font-semibold hover:bg-slate-200 transition-colors disabled:opacity-50"
+                        >
+                          {promoLoading ? (
+                            <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                            </svg>
+                          ) : (
+                            t('promoCode.apply', 'Appliquer')
+                          )}
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={removePromoCode}
+                          className="px-3 py-2 bg-red-100 text-red-600 rounded-xl text-sm font-semibold hover:bg-red-200 transition-colors"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      )}
+                    </div>
+                    {promoError && (
+                      <p className="text-xs text-red-600 mt-1.5">{promoError}</p>
+                    )}
+                    {promoInfo && (
+                      <div className="mt-2 p-2 bg-emerald-50 border border-emerald-200 rounded-lg">
+                        <div className="flex items-center gap-2">
+                          <svg className="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                          <span className="text-xs text-emerald-700 font-medium">
+                            {promoInfo.discountPercent > 0 
+                              ? `${promoInfo.discountPercent}% ${t('promoCode.discountApplied', 'de réduction appliquée')}`
+                              : `${formatPrice(promoInfo.discountAmount)} ${t('promoCode.discountApplied', 'de réduction appliquée')}`
+                            }
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
                   <div className="space-y-1.5 sm:space-y-2 mb-3 sm:mb-4 pb-3 sm:pb-4 border-b border-slate-100">
                     <div className="flex justify-between text-xs sm:text-sm">
                       <span className="text-slate-600">{t('summary.rental')} ({calculateDays()} {t('summary.days')})</span>
@@ -662,6 +807,12 @@ const Booking = () => {
                     {formData.gps && <div className="flex justify-between text-xs sm:text-sm"><span className="text-slate-600">{t('options.gps.title')}</span><span className="font-semibold text-slate-800">{formatPrice(50 * calculateDays())}</span></div>}
                     {formData.childSeat && <div className="flex justify-between text-xs sm:text-sm"><span className="text-slate-600">{t('options.childSeat.title')}</span><span className="font-semibold text-slate-800">{formatPrice(30 * calculateDays())}</span></div>}
                     {formData.insurance === 'premium' && <div className="flex justify-between text-xs sm:text-sm"><span className="text-slate-600">{t('insurance.premium.title')}</span><span className="font-semibold text-slate-800">{formatPrice(100 * calculateDays())}</span></div>}
+                    {promoInfo && calculateDiscount() > 0 && (
+                      <div className="flex justify-between text-xs sm:text-sm">
+                        <span className="text-emerald-600 font-medium">{t('summary.promoDiscount', 'Réduction promo')} ({promoInfo.code})</span>
+                        <span className="font-semibold text-emerald-600">-{formatPrice(calculateDiscount())}</span>
+                      </div>
+                    )}
                   </div>
                   <div className="flex justify-between items-center pt-2 mb-4 sm:mb-6">
                     <span className="text-base sm:text-lg font-bold text-slate-800">{t('summary.total')}</span>

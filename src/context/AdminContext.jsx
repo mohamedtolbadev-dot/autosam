@@ -442,8 +442,12 @@ export const AdminProvider = ({ children }) => {
     }
   }, [admin, fetchAllContactMessages]);
 
+  // Get token from localStorage
+  const token = localStorage.getItem('adminToken');
+
   const value = {
     admin,
+    token,
     loading,
     initializing,
     error,

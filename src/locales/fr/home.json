@@ -160,5 +160,14 @@
   },
   "currency": {
     "perDay": "par jour"
+  },
+  "promotions": {
+    "badge": "Offres Spéciales",
+    "title": "Profitez de nos promotions",
+    "description": "Des offres exclusives pour vos locations de voitures au Maroc",
+    "code": "Code",
+    "validUntil": "Jusqu'au",
+    "bookNow": "Réserver",
+    "noOffers": "Aucune promotion en cours"
   }
 }

@@ -77,6 +77,9 @@ const Home = () => {
   const { t, i18n, ready } = useTranslation(['home', 'common']);
   const { formatPrice } = useCurrency();
 
+  // API URL
+  const API_URL = 'https://server-chi-two-10.vercel.app/api';
+
   // Add shimmer & pulse animation styles
   useEffect(() => {
     const style = document.createElement('style');
@@ -229,6 +232,33 @@ const steps = [
   ];
 
   const [openFaqIndex, setOpenFaqIndex] = useState(0);
+
+  // Promotions state with carousel
+  const [promotions, setPromotions] = useState([]);
+  const [promotionsLoading, setPromotionsLoading] = useState(false);
+  const [promotionsError, setPromotionsError] = useState(null);
+  const [currentPromoIndex, setCurrentPromoIndex] = useState(0);
+
+  // Fetch promotions
+  useEffect(() => {
+    const fetchPromotions = async () => {
+      setPromotionsLoading(true);
+      try {
+        const response = await fetch(`${API_URL}/promotions`);
+        const data = await response.json();
+        if (data.success) {
+          setPromotions(data.data);
+        }
+      } catch (error) {
+        console.error('Error fetching promotions:', error);
+        setPromotionsError(error);
+      } finally {
+        setPromotionsLoading(false);
+      }
+    };
+
+    fetchPromotions();
+  }, []);
 
   const getTodayInputValue = () => {
     const now = new Date();
@@ -726,6 +756,317 @@ const brands = [
         </div>
       </div>
 
+      {/* ============================================================
+    PROMOTIONS SECTION — Clean Design, Image fills space, Red & #1B2638
+    ============================================================ */}
+
+<section className="py-12 sm:py-16 bg-gray-50">
+  <div className="max-w-5xl mx-auto px-4 sm:px-6">
+
+    {/* ── Section Header ── */}
+    <div className="text-center mb-8 sm:mb-10">
+      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 border border-red-100 text-red-600 text-xs font-bold uppercase tracking-wider mb-3">
+        <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+        </svg>
+        {t('promotions.badge', 'Offres Spéciales')}
+      </span>
+      <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#1B2638] mb-2 tracking-tight">
+        {t('promotions.title', 'Profitez de nos promotions')}
+      </h2>
+      <p className="text-gray-500 text-sm sm:text-base max-w-lg mx-auto">
+        {t('promotions.description', 'Des offres exclusives pour vos locations de voitures au Maroc')}
+      </p>
+    </div>
+
+    {/* ── Loading State — Light Glowing Skeleton ── */}
+    {promotionsLoading && (
+      <div className="bg-white rounded-2xl border border-gray-200 shadow-lg overflow-hidden">
+        <div className="flex flex-col lg:flex-row">
+          {/* Image skeleton */}
+          <div className="relative lg:w-[45%] h-52 sm:h-64 lg:h-auto lg:min-h-[320px] bg-gray-100 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/60 to-transparent animate-shimmer" />
+            <div className="absolute inset-0 bg-linear-to-br from-gray-50 via-gray-100 to-gray-50" />
+            {/* Glow effect */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-red-200/30 rounded-full blur-2xl animate-pulse" />
+          </div>
+          
+          {/* Content skeleton */}
+          <div className="flex-1 p-5 sm:p-6 space-y-4">
+            {/* Title */}
+            <div className="h-6 w-3/4 bg-gray-100 rounded-lg relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/70 to-transparent animate-shimmer" />
+            </div>
+            {/* Description lines */}
+            <div className="space-y-2">
+              <div className="h-4 w-full bg-gray-50 rounded relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/60 to-transparent animate-shimmer" />
+              </div>
+              <div className="h-4 w-2/3 bg-gray-50 rounded relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/60 to-transparent animate-shimmer" />
+              </div>
+            </div>
+            {/* Car info card skeleton */}
+            <div className="rounded-xl border border-gray-100 bg-gray-50/50 p-4 flex items-center gap-3">
+              <div className="w-16 h-12 bg-gray-200 rounded-lg relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-shimmer" />
+              </div>
+              <div className="flex-1 space-y-2">
+                <div className="h-4 w-32 bg-gray-200 rounded relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-shimmer" />
+                </div>
+                <div className="h-3 w-24 bg-gray-100 rounded relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-shimmer" />
+                </div>
+              </div>
+            </div>
+            {/* Code skeleton */}
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-28 bg-red-50 rounded-lg border-2 border-dashed border-red-200 relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-shimmer" />
+              </div>
+            </div>
+            {/* Footer skeleton */}
+            <div className="pt-3 border-t border-gray-100 flex justify-between items-center">
+              <div className="h-4 w-40 bg-gray-100 rounded relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-shimmer" />
+              </div>
+              <div className="h-10 w-32 bg-linear-to-r from-gray-200 to-gray-300 rounded-lg relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
+
+    {/* ── Promotions Carousel ── */}
+    {!promotionsLoading && promotions.length > 0 && (
+      <div className="relative">
+        {(() => {
+          const promo = promotions[currentPromoIndex];
+          return (
+            <div className="group bg-white rounded-2xl border border-gray-200 shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300">
+              <div className="flex flex-col lg:flex-row">
+                {/* ── Left: Full Image Section (no dark background) ── */}
+                <div className="relative lg:w-[45%] h-52 sm:h-64 lg:h-auto lg:min-h-[320px]">
+                  {/* Full cover image */}
+                  <img
+                    src={promo.image_url || '/imgs/promo-default.jpg'}
+                    alt={promo.title}
+                    className="absolute inset-0 w-full h-full object-cover"
+                    onError={(e) => { e.target.src = '/imgs/promo-default.jpg'; }}
+                  />
+                  
+                  {/* Discount Badge - positioned on image */}
+                  {(promo.discount_percent > 0 || promo.discount_amount > 0) && (
+                    <div className="absolute top-4 left-4 z-10">
+                      <div className="bg-red-600 text-white px-3 py-1.5 rounded-lg text-sm font-black shadow-lg flex items-center gap-1.5">
+                        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                          <path d="M12 8v13m0-13V6a2 2 0 012 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+                        </svg>
+                        {promo.discount_percent > 0 ? `-${promo.discount_percent}%` : `-${promo.discount_amount} MAD`}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Dark gradient overlay at bottom for better badge visibility */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
+                </div>
+
+                {/* ── Right: Content ── */}
+                <div className="flex-1 p-5 sm:p-6 flex flex-col justify-between gap-4">
+                  
+                  {/* Title + Description */}
+                  <div>
+                    <h3 className="text-xl sm:text-2xl font-bold text-[#1B2638] mb-2 leading-tight">
+                      {i18n.language === 'en'
+                        ? promo.title_en || promo.title
+                        : promo.title_fr || promo.title}
+                    </h3>
+                    <p className="text-gray-600 text-sm leading-relaxed">
+                      {i18n.language === 'en'
+                        ? promo.description_en || promo.description
+                        : promo.description_fr || promo.description}
+                    </p>
+                  </div>
+
+                  {/* ── Car Info Card ── */}
+                  {promo.car_name && (
+                    <div className="rounded-xl border border-gray-100 bg-gray-50 p-4">
+                      <div className="flex items-center gap-3">
+                        <img
+                          src={promo.car_image || '/imgs/promo-default.jpg'}
+                          alt={promo.car_name}
+                          className="w-16 h-12 object-cover rounded-lg border border-gray-200 flex-shrink-0"
+                          onError={(e) => { e.target.src = '/imgs/promo-default.jpg'; }}
+                        />
+                        <div className="flex-1 min-w-0">
+                          <p className="font-bold text-[#1B2638] text-sm mb-1">{promo.car_name}</p>
+                          
+                          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500">
+                            {promo.car_price && (
+                              <span className="text-red-600 font-semibold">
+                                {formatPrice(promo.car_price)}/{t('common:currency.perDayShort') || 'j'}
+                              </span>
+                            )}
+                            {promo.car_category && (
+                              <span className="flex items-center gap-1.5">
+                                <span className="w-1 h-1 bg-gray-300 rounded-full" />
+                                {promo.car_category}
+                              </span>
+                            )}
+                            {promo.car_seats && (
+                              <span className="flex items-center gap-1.5">
+                                <span className="w-1 h-1 bg-gray-300 rounded-full" />
+                                {promo.car_seats} places
+                              </span>
+                            )}
+                            {promo.car_transmission && (
+                              <span>{promo.car_transmission}</span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* ── Promo Code ── */}
+                  {promo.code && (
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-xs text-gray-400 font-medium uppercase tracking-wide">
+                        {t('promotions.code', 'Code')}
+                      </span>
+                      <div className="flex items-center gap-1.5">
+                        <span className="px-3 py-1.5 rounded-lg text-sm font-mono font-bold tracking-wider border-2 border-dashed border-red-400 bg-red-50 text-red-600">
+                          {promo.code}
+                        </span>
+                        <button 
+                          onClick={() => navigator.clipboard?.writeText(promo.code)}
+                          className="p-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-500 transition-colors"
+                          title="Copier"
+                        >
+                          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                            <path d="M5 15V4a2 2 0 012-2h10"/>
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* ── Footer: Validity + CTA ── */}
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-3 border-t border-gray-100">
+                    <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                      <svg className="w-4 h-4 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="16" y1="2" x2="16" y2="6"/>
+                        <line x1="8" y1="2" x2="8" y2="6"/>
+                        <line x1="3" y1="10" x2="21" y2="10"/>
+                      </svg>
+                      <span>
+                        {t('promotions.validUntil', "Jusqu'au")}{' '}
+                        <strong className="text-[#1B2638]">
+                          {new Date(promo.end_date).toLocaleDateString(
+                            i18n.language === 'en' ? 'en-US' : 'fr-FR'
+                          )}
+                        </strong>
+                      </span>
+                    </div>
+
+                    <Link
+                      to={`/booking?promo=${promo.code || ''}&car=${promo.car_id || ''}`}
+                      className="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-[#0F172B] to-[#1B2638] hover:from-[#1B2638] hover:to-[#2d3748] transition-all shadow-md hover:shadow-lg"
+                    >
+                      {t('promotions.bookNow', 'Réserver')}
+                      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                        <polyline points="12 5 19 12 12 19"/>
+                      </svg>
+                    </Link>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          );
+        })()}
+
+        {/* ── Navigation Arrows ── */}
+        {promotions.length > 1 && (
+          <>
+            <button
+              onClick={() =>
+                setCurrentPromoIndex((prev) =>
+                  prev === 0 ? promotions.length - 1 : prev - 1
+                )
+              }
+              className="absolute -left-3 sm:-left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full shadow-lg border border-gray-200 flex items-center justify-center text-gray-400 hover:text-red-600 hover:border-red-200 transition-all z-10"
+              aria-label="Previous promotion"
+            >
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <polyline points="15 18 9 12 15 6"/>
+              </svg>
+            </button>
+            <button
+              onClick={() =>
+                setCurrentPromoIndex((prev) =>
+                  prev === promotions.length - 1 ? 0 : prev + 1
+                )
+              }
+              className="absolute -right-3 sm:-right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full shadow-lg border border-gray-200 flex items-center justify-center text-gray-400 hover:text-red-600 hover:border-red-200 transition-all z-10"
+              aria-label="Next promotion"
+            >
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <polyline points="9 18 15 12 9 6"/>
+              </svg>
+            </button>
+          </>
+        )}
+
+        {/* ── Dots Navigation ── */}
+        {promotions.length > 1 && (
+          <div className="flex justify-center items-center gap-2 mt-5">
+            <span className="text-xs text-gray-400 font-medium">
+              {currentPromoIndex + 1} / {promotions.length}
+            </span>
+            <div className="flex gap-1.5">
+              {promotions.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setCurrentPromoIndex(idx)}
+                  className="rounded-full transition-all duration-200 hover:scale-110"
+                  style={{
+                    width: idx === currentPromoIndex ? '24px' : '8px',
+                    height: '8px',
+                    backgroundColor: idx === currentPromoIndex ? '#DC2626' : '#D1D5DB',
+                  }}
+                  aria-label={`Go to promotion ${idx + 1}`}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    )}
+
+    {/* ── Empty State ── */}
+    {!promotionsLoading && promotions.length === 0 && !promotionsError && (
+      <div className="text-center py-14">
+        <div className="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-3">
+          <svg className="w-7 h-7 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/>
+            <line x1="7" y1="7" x2="7.01" y2="7"/>
+          </svg>
+        </div>
+        <p className="text-gray-500 font-medium">
+          {t('promotions.noOffers', 'Aucune promotion en cours')}
+        </p>
+      </div>
+    )}
+
+  </div>
+</section>
       {/* Featured vehicles — banner with auto-scroll to the left */}
       <section className="py-10 sm:py-14 md:py-16 bg-slate-50 overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6 max-w-6xl min-w-0">

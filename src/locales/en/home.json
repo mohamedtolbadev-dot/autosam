@@ -157,5 +157,14 @@
   },
   "currency": {
     "perDay": "per day"
+  },
+  "promotions": {
+    "badge": "Special Offers",
+    "title": "Take advantage of our promotions",
+    "description": "Exclusive offers for your car rentals in Morocco",
+    "code": "Code",
+    "validUntil": "Until",
+    "bookNow": "Book Now",
+    "noOffers": "No ongoing promotions"
   }
 }

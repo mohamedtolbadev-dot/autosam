@@ -24,7 +24,8 @@ async function initializeDatabase() {
     await connection.query(`USE ${DB_NAME || 'autosimo_db'}`);
 
     // Supprimer et recréer la table cars avec le nouveau schéma
-    // Supprimer d'abord bookings à cause de la clé étrangère
+    // Supprimer d'abord tables avec FK vers cars (promotions et bookings)
+    await connection.query('DROP TABLE IF EXISTS promotions');
     await connection.query('DROP TABLE IF EXISTS bookings');
     await connection.query('DROP TABLE IF EXISTS car_images');
     await connection.query('DROP TABLE IF EXISTS cars');
@@ -72,12 +73,21 @@ async function initializeDatabase() {
         total_price INT NOT NULL,
         status ENUM('pending', 'confirmed', 'cancelled', 'completed') DEFAULT 'pending',
         notes TEXT,
+        language VARCHAR(10) DEFAULT 'fr',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
         FOREIGN KEY (car_id) REFERENCES cars(id)
       )
     `);
     console.log('Table bookings recréée avec UUID pour car_id');
+
+    // Migration: Ajouter colonne language si elle n'existe pas (pour les bases existantes)
+    try {
+      await connection.query(`ALTER TABLE bookings ADD COLUMN IF NOT EXISTS language VARCHAR(10) DEFAULT 'fr'`);
+      console.log('Colonne language vérifiée/ajoutée à la table bookings');
+    } catch (err) {
+      console.log('Note: colonne language déjà présente ou erreur migration:', err.message);
+    }
 
     // Créer la table users pour l'authentification
     await connection.query(`
@@ -119,6 +129,75 @@ async function initializeDatabase() {
       )
     `);
     console.log('Table car_images créée/vérifiée avec UUID');
+
+    // Créer la table promotions pour les offres spéciales
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS promotions (
+        id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
+        title VARCHAR(255) NOT NULL,
+        title_fr VARCHAR(255),
+        title_en VARCHAR(255),
+        description_fr TEXT,
+        description_en TEXT,
+        discount_percent INT DEFAULT 0,
+        discount_amount DECIMAL(10, 2) DEFAULT 0,
+        code VARCHAR(50),
+        start_date DATE,
+        end_date DATE NOT NULL,
+        is_active BOOLEAN DEFAULT TRUE,
+        display_order INT DEFAULT 0,
+        car_id CHAR(36),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        FOREIGN KEY (car_id) REFERENCES cars(id) ON DELETE SET NULL
+      )
+    `);
+    console.log('Table promotions créée/vérifiée');
+
+    // Migration: Ajouter car_id si la table existe déjà sans cette colonne
+    try {
+      await connection.query(`ALTER TABLE promotions ADD COLUMN car_id CHAR(36)`);
+      await connection.query(`ALTER TABLE promotions ADD FOREIGN KEY (car_id) REFERENCES cars(id) ON DELETE SET NULL`);
+      console.log('Colonne car_id ajoutée à la table promotions');
+    } catch (err) {
+      console.log('Note: colonne car_id déjà présente ou erreur migration:', err.message);
+    }
+
+    // Migration: Supprimer image_url si présent
+    try {
+      await connection.query(`ALTER TABLE promotions DROP COLUMN image_url`);
+      console.log('Colonne image_url supprimée de la table promotions');
+    } catch (err) {
+      console.log('Note: colonne image_url déjà supprimée ou non présente:', err.message);
+    }
+
+    // Migration: Ajouter description_fr et description_en si elles n'existent pas
+    try {
+      await connection.query(`ALTER TABLE promotions ADD COLUMN IF NOT EXISTS description_fr TEXT`);
+      await connection.query(`ALTER TABLE promotions ADD COLUMN IF NOT EXISTS description_en TEXT`);
+      console.log('Colonnes description_fr et description_en vérifiées/ajoutées à la table promotions');
+    } catch (err) {
+      console.log('Note: colonnes description_fr/description_en déjà présentes ou erreur migration:', err.message);
+    }
+
+    // Migration: Supprimer description si présent (on utilise description_fr et description_en)
+    try {
+      await connection.query(`ALTER TABLE promotions DROP COLUMN description`);
+      console.log('Colonne description supprimée de la table promotions');
+    } catch (err) {
+      console.log('Note: colonne description déjà supprimée ou non présente:', err.message);
+    }
+
+    // Insérer des promotions par défaut si aucune n'existe
+    const [promoRows] = await connection.query('SELECT COUNT(*) as count FROM promotions');
+    if (promoRows[0].count === 0) {
+      await connection.query(`
+        INSERT INTO promotions (title, title_fr, title_en, description_fr, description_en, discount_percent, end_date, is_active, display_order) VALUES
+        ('Offre de lancement', 'Offre de lancement', 'Launch Offer', 'Profitez de -20% sur toutes les réservations de plus de 7 jours!', 'Enjoy 20% off on all bookings over 7 days!', 20, DATE_ADD(CURDATE(), INTERVAL 30 DAY), TRUE, 1),
+        ('Weekend Spécial', 'Weekend Spécial', 'Special Weekend', 'Réservez pour le weekend et économisez 15%', 'Book for the weekend and save 15%', 15, DATE_ADD(CURDATE(), INTERVAL 60 DAY), TRUE, 2)
+      `);
+      console.log('Promotions par défaut insérées');
+    }
 
     // Vérifier si des données existent
     const [rows] = await connection.query('SELECT COUNT(*) as count FROM cars');

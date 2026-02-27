@@ -33,6 +33,7 @@ app.use('/api/cars', require('./routes/carRoutes'));
 app.use('/api/bookings', require('./routes/bookingRoutes'));
 app.use('/api/contact', require('./routes/contactRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
+app.use('/api/promotions', require('./routes/promotionRoutes'));
 
 // Error handler
 app.use((err, req, res, next) => {
