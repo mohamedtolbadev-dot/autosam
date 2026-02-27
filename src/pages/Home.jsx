@@ -1111,12 +1111,12 @@ const brands = [
                     {/* Title & Price row */}
                     <div className="flex justify-between items-start gap-2">
                       <div className="space-y-2 flex-1">
-                        <div className="h-5 w-32 bg-slate-200 rounded-lg relative overflow-hidden animate-pulse-glow">
-                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-shimmer" />
+                        <div className="h-5 w-32 bg-slate-200 rounded-lg relative overflow-hidden">
+                          <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/50 to-transparent animate-shimmer" />
                         </div>
                         <div className="h-3 w-20 bg-slate-100 rounded-md" />
                       </div>
-                      <div className="h-6 w-20 bg-gradient-to-r from-red-100 to-red-200 rounded-lg animate-pulse-glow" />
+                      <div className="h-6 w-20 bg-linear-to-r from-red-100 to-red-200 rounded-lg animate-pulse-glow" />
                     </div>
                     {/* Specs row - 3 items */}
                     <div className="flex gap-3 pt-1">
