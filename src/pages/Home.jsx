@@ -135,6 +135,17 @@ const Home = () => {
   });
 
   const clientCount = '10K+';
+  const heroHighlights = [
+    { icon: <IconShield className="w-5 h-5" />, label: t('hero.trust.insurance') },
+    { icon: <IconClock className="w-5 h-5" />, label: t('hero.trust.assistance') },
+    { icon: <IconMapPin className="w-5 h-5" />, label: t('hero.trust.agencies') }
+  ];
+
+  const heroStats = [
+    { value: clientCount, label: t('testimonials.satisfied') },
+    { value: '24/7', label: t('hero.trust.assistance') },
+    { value: '12+', label: t('hero.trust.agencies') }
+  ];
 
   const testimonials = [
     {
@@ -405,218 +416,160 @@ const brands = [
 
   return (
     <div key={i18n.language} className="min-h-screen bg-slate-50 min-w-0 overflow-x-hidden">
-      {/* Hero — Morocco background image, overlay for readability */}
+      {/* Hero */}
       <section
-        className="relative text-white overflow-hidden rounded-b-2xl sm:rounded-b-3xl bg-slate-800"
+        className="relative overflow-hidden text-white"
         style={{
-          backgroundImage: 'url(https://www.goride.ma/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fgoride-ma.c6b6281e.jpg&w=3840&q=75)',
+          backgroundImage: "url('/hero_image/hero_image.avif')",
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat'
+          backgroundRepeat: 'no-repeat',
         }}
       >
-        {/* Dark overlay for text contrast */}
-        <div className="absolute inset-0 bg-slate-900/70" aria-hidden />
-        {/* Optional light grid */}
-        <div className="absolute inset-0 opacity-[0.04]" aria-hidden>
-          <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <pattern id="hero-grid" width="32" height="32" patternUnits="userSpaceOnUse">
-                <path d="M0 32V0h32" fill="none" stroke="currentColor" strokeWidth="0.5" />
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#hero-grid)" />
-          </svg>
-        </div>
+        <div className="absolute inset-0 bg-black/50" aria-hidden />
 
-        <div className="container relative z-10 mx-auto px-4 sm:px-6 max-w-6xl py-10 sm:py-16 md:py-24">
-          <div className="grid grid-cols-1 md:grid-cols-12 md:gap-10 lg:gap-14 items-center">
-            {/* Copy block */}
-            <div className="md:col-span-7 min-w-0 text-center md:text-left order-1">
-              <p className="text-slate-300 text-xs sm:text-sm font-medium uppercase tracking-wider mb-3 sm:mb-4">
-                {t('hero.subtitle')}
-              </p>
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-4 sm:mb-5 text-white break-words leading-tight">
-                {t('hero.title')}
-              </h1>
-              <p className="text-base sm:text-lg md:text-xl text-slate-200 mb-6 sm:mb-8 max-w-xl mx-auto md:mx-0 leading-relaxed">
-                {t('hero.description')}
-              </p>
-              <div className="flex flex-wrap justify-center md:justify-start gap-3 sm:gap-4">
-                <Link
-                  to="/cars"
-                  className="inline-flex items-center gap-2 bg-white text-red-600 px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl font-semibold hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-slate-900 transition-colors text-sm sm:text-base"
-                >
-                  {t('hero.search')}
-                  <IconArrowRight className="w-4 h-4 shrink-0" />
-                </Link>
-                <Link
-                  to="/contact"
-                  className="inline-flex items-center border-2 border-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl font-semibold hover:bg-white hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-slate-900 transition-colors text-sm sm:text-base"
-                >
-                  {t('nav.contact')}
-                </Link>
-              </div>
-              {/* Trust line */}
-              <ul className="mt-8 sm:mt-10 flex flex-wrap justify-center md:justify-start gap-4 sm:gap-6 text-xs sm:text-sm text-slate-300" role="list">
-                <li className="flex items-center gap-2">
-                  <IconShield className="w-5 h-5 text-slate-400 shrink-0" />
-                  <span>{t('hero.trust.insurance')}</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <IconClock className="w-5 h-5 text-slate-400 shrink-0" />
-                  <span>{t('hero.trust.assistance')}</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <IconMapPin className="w-5 h-5 text-slate-400 shrink-0" />
-                  <span>{t('hero.trust.agencies')}</span>
-                </li>
-              </ul>
-            </div>
+        <div className="container relative z-10 mx-auto max-w-3xl px-4 pb-16 pt-20 sm:px-6 sm:pb-24 sm:pt-28 md:pb-28 md:pt-36 flex flex-col items-center text-center">
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/15 px-3 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-white shadow-sm backdrop-blur-sm">
+            <span className="h-2 w-2 rounded-full bg-red-500" />
+            {t('hero.subtitle')}
           </div>
-        </div>
-      </section>
+          <h1 className="mt-5 text-4xl font-black leading-[1.02] tracking-tight text-white sm:text-5xl md:text-6xl">
+            {t('hero.title')}
+          </h1>
 
-     
+          <div className="mt-10 w-full text-left">
+            <div className="overflow-hidden rounded-[28px] border border-white/20 bg-white/10 p-5 shadow-2xl backdrop-blur-md sm:p-6">
+              <form onSubmit={handleSearch} className="space-y-4">
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <div className="flex flex-col">
+                      <label htmlFor="search-location" className="mb-2 text-sm font-semibold text-white">
+                        {t('form.pickupLocation')}
+                      </label>
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" aria-hidden>
+                          <IconMapPin className="w-5 h-5" />
+                        </span>
+                        <select
+                          id="search-location"
+                          value={searchData.location}
+                          onChange={(e) => setSearchData({ ...searchData, location: e.target.value })}
+                          className={selectWithIconClassName}
+                        >
+                          <option value="casablanca_airport">{t('common:cities.casablanca')} - {t('common:locations.airport')}</option>
+                          <option value="casablanca_city">{t('common:cities.casablanca')} - {t('common:locations.cityCenter')}</option>
+                          <option value="casablanca_train">{t('common:cities.casablanca')} - {t('common:locations.trainStation')}</option>
+                          <option value="rabat_airport">{t('common:cities.rabat')} - {t('common:locations.airport')}</option>
+                          <option value="rabat_city">{t('common:cities.rabat')} - {t('common:locations.cityCenter')}</option>
+                          <option value="rabat_train">{t('common:cities.rabat')} - {t('common:locations.trainStation')}</option>
+                          <option value="marrakech_airport">{t('common:cities.marrakech')} - {t('common:locations.airport')}</option>
+                          <option value="marrakech_city">{t('common:cities.marrakech')} - {t('common:locations.cityCenter')}</option>
+                          <option value="marrakech_train">{t('common:cities.marrakech')} - {t('common:locations.trainStation')}</option>
+                          <option value="fes_airport">{t('common:cities.fes')} - {t('common:locations.airport')}</option>
+                          <option value="fes_city">{t('common:cities.fes')} - {t('common:locations.cityCenter')}</option>
+                          <option value="fes_train">{t('common:cities.fes')} - {t('common:locations.trainStation')}</option>
+                        </select>
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" aria-hidden>
+                          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9l6 6 6-6" /></svg>
+                        </span>
+                      </div>
+                    </div>
 
-      {/* Search bar — detailed fields, date placeholder hidden */}
-      <section className="px-4 sm:px-6 -mt-6 sm:-mt-8 relative z-10">
-        <div className="container mx-auto max-w-5xl min-w-0">
-          <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-slate-200 p-4 sm:p-5 md:p-6">
-            <form onSubmit={handleSearch} className="space-y-1">
-              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-5">
-                {/* Pickup Location */}
-                <div className="flex flex-col">
-                  <label htmlFor="search-location" className="text-sm font-medium text-slate-700 mb-2">
-                    {t('form.pickupLocation')}
-                  </label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" aria-hidden>
-                      <IconMapPin className="w-5 h-5" />
-                    </span>
-                    <select
-                      id="search-location"
-                      value={searchData.location}
-                      onChange={(e) => setSearchData({ ...searchData, location: e.target.value })}
-                      className={`search-field-input ${selectWithIconClassName}`}
-                    >
-                      <option value="casablanca_airport">{t('common:cities.casablanca')} - {t('common:locations.airport')}</option>
-                      <option value="casablanca_city">{t('common:cities.casablanca')} - {t('common:locations.cityCenter')}</option>
-                      <option value="casablanca_train">{t('common:cities.casablanca')} - {t('common:locations.trainStation')}</option>
-                      <option value="rabat_airport">{t('common:cities.rabat')} - {t('common:locations.airport')}</option>
-                      <option value="rabat_city">{t('common:cities.rabat')} - {t('common:locations.cityCenter')}</option>
-                      <option value="rabat_train">{t('common:cities.rabat')} - {t('common:locations.trainStation')}</option>
-                      <option value="marrakech_airport">{t('common:cities.marrakech')} - {t('common:locations.airport')}</option>
-                      <option value="marrakech_city">{t('common:cities.marrakech')} - {t('common:locations.cityCenter')}</option>
-                      <option value="marrakech_train">{t('common:cities.marrakech')} - {t('common:locations.trainStation')}</option>
-                      <option value="fes_airport">{t('common:cities.fes')} - {t('common:locations.airport')}</option>
-                      <option value="fes_city">{t('common:cities.fes')} - {t('common:locations.cityCenter')}</option>
-                      <option value="fes_train">{t('common:cities.fes')} - {t('common:locations.trainStation')}</option>
-                    </select>
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" aria-hidden>
-                      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9l6 6 6-6" /></svg>
-                    </span>
+                    <div className="flex flex-col">
+                      <label htmlFor="search-dropoff" className="mb-2 text-sm font-semibold text-white">
+                        {t('form.dropoffLocation')}
+                      </label>
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" aria-hidden>
+                          <IconMapPin className="w-5 h-5" />
+                        </span>
+                        <select
+                          id="search-dropoff"
+                          value={searchData.dropoffLocation}
+                          onChange={(e) => setSearchData({ ...searchData, dropoffLocation: e.target.value })}
+                          className={selectWithIconClassName}
+                        >
+                          <option value="casablanca_airport">{t('common:cities.casablanca')} - {t('common:locations.airport')}</option>
+                          <option value="casablanca_city">{t('common:cities.casablanca')} - {t('common:locations.cityCenter')}</option>
+                          <option value="casablanca_train">{t('common:cities.casablanca')} - {t('common:locations.trainStation')}</option>
+                          <option value="rabat_airport">{t('common:cities.rabat')} - {t('common:locations.airport')}</option>
+                          <option value="rabat_city">{t('common:cities.rabat')} - {t('common:locations.cityCenter')}</option>
+                          <option value="rabat_train">{t('common:cities.rabat')} - {t('common:locations.trainStation')}</option>
+                          <option value="marrakech_airport">{t('common:cities.marrakech')} - {t('common:locations.airport')}</option>
+                          <option value="marrakech_city">{t('common:cities.marrakech')} - {t('common:locations.cityCenter')}</option>
+                          <option value="marrakech_train">{t('common:cities.marrakech')} - {t('common:locations.trainStation')}</option>
+                          <option value="fes_airport">{t('common:cities.fes')} - {t('common:locations.airport')}</option>
+                          <option value="fes_city">{t('common:cities.fes')} - {t('common:locations.cityCenter')}</option>
+                          <option value="fes_train">{t('common:cities.fes')} - {t('common:locations.trainStation')}</option>
+                        </select>
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" aria-hidden>
+                          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9l6 6 6-6" /></svg>
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col">
+                      <label htmlFor="search-start" className="mb-2 text-sm font-semibold text-white">
+                        {t('form.startDate')}
+                      </label>
+                      <div className={`relative date-field-wrapper ${!searchData.startDate ? 'date-field-empty' : ''}`}>
+                        <span className="absolute left-3 top-1/2 z-10 -translate-y-1/2 text-slate-400 pointer-events-none" aria-hidden>
+                          <IconCalendar className="w-5 h-5" />
+                        </span>
+                        <input
+                          id="search-start"
+                          type="text"
+                          readOnly
+                          value={searchData.startDate}
+                          onClick={() => openDateModal('start')}
+                          className={inputWithIconClassName}
+                        />
+                        {!searchData.startDate && (
+                          <span className="date-custom-placeholder pointer-events-none absolute left-10 top-1/2 -translate-y-1/2 text-[15px] text-slate-400">
+                            {t('actions.chooseDate')}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col">
+                      <label htmlFor="search-end" className="mb-2 text-sm font-semibold text-white">
+                        {t('form.endDate')}
+                      </label>
+                      <div className={`relative date-field-wrapper ${!searchData.endDate ? 'date-field-empty' : ''}`}>
+                        <span className="absolute left-3 top-1/2 z-10 -translate-y-1/2 text-slate-400 pointer-events-none" aria-hidden>
+                          <IconCalendar className="w-5 h-5" />
+                        </span>
+                        <input
+                          id="search-end"
+                          type="text"
+                          readOnly
+                          value={searchData.endDate}
+                          onClick={() => openDateModal('end')}
+                          className={inputWithIconClassName}
+                        />
+                        {!searchData.endDate && (
+                          <span className="date-custom-placeholder pointer-events-none absolute left-10 top-1/2 -translate-y-1/2 text-[15px] text-slate-400">
+                            {t('actions.chooseDate')}
+                          </span>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                </div>
 
-                {/* Dropoff Location */}
-                <div className="flex flex-col">
-                  <label htmlFor="search-dropoff" className="text-sm font-medium text-slate-700 mb-2">
-                    {t('form.dropoffLocation')}
-                  </label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" aria-hidden>
-                      <IconMapPin className="w-5 h-5" />
-                    </span>
-                    <select
-                      id="search-dropoff"
-                      value={searchData.dropoffLocation}
-                      onChange={(e) => setSearchData({ ...searchData, dropoffLocation: e.target.value })}
-                      className={`search-field-input ${selectWithIconClassName}`}
-                    >
-                      <option value="casablanca_airport">{t('common:cities.casablanca')} - {t('common:locations.airport')}</option>
-                      <option value="casablanca_city">{t('common:cities.casablanca')} - {t('common:locations.cityCenter')}</option>
-                      <option value="casablanca_train">{t('common:cities.casablanca')} - {t('common:locations.trainStation')}</option>
-                      <option value="rabat_airport">{t('common:cities.rabat')} - {t('common:locations.airport')}</option>
-                      <option value="rabat_city">{t('common:cities.rabat')} - {t('common:locations.cityCenter')}</option>
-                      <option value="rabat_train">{t('common:cities.rabat')} - {t('common:locations.trainStation')}</option>
-                      <option value="marrakech_airport">{t('common:cities.marrakech')} - {t('common:locations.airport')}</option>
-                      <option value="marrakech_city">{t('common:cities.marrakech')} - {t('common:locations.cityCenter')}</option>
-                      <option value="marrakech_train">{t('common:cities.marrakech')} - {t('common:locations.trainStation')}</option>
-                      <option value="fes_airport">{t('common:cities.fes')} - {t('common:locations.airport')}</option>
-                      <option value="fes_city">{t('common:cities.fes')} - {t('common:locations.cityCenter')}</option>
-                      <option value="fes_train">{t('common:cities.fes')} - {t('common:locations.trainStation')}</option>
-                    </select>
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" aria-hidden>
-                      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9l6 6 6-6" /></svg>
-                    </span>
-                  </div>
-                </div>
-
-                {/* Start date — native placeholder hidden */}
-                <div className="flex flex-col">
-                  <label htmlFor="search-start" className="text-sm font-medium text-slate-700 mb-2">
-                    {t('form.startDate')}
-                  </label>
-                  <div className={`relative date-field-wrapper ${!searchData.startDate ? 'date-field-empty' : ''}`}>
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none z-10" aria-hidden>
-                      <IconCalendar className="w-5 h-5" />
-                    </span>
-                    <input
-                      id="search-start"
-                      type="text"
-                      readOnly
-                      value={searchData.startDate}
-                      onClick={() => openDateModal('start')}
-                      className={`search-date-input ${inputWithIconClassName}`}
-                    />
-                    {!searchData.startDate && (
-                      <span className="date-custom-placeholder pointer-events-none absolute left-10 top-1/2 -translate-y-1/2 text-slate-400 text-[15px]">
-                        {t('actions.chooseDate')}
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                {/* End date — native placeholder hidden */}
-                <div className="flex flex-col">
-                  <label htmlFor="search-end" className="text-sm font-medium text-slate-700 mb-2">
-                    {t('form.endDate')}
-                  </label>
-                  <div className={`relative date-field-wrapper ${!searchData.endDate ? 'date-field-empty' : ''}`}>
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none z-10" aria-hidden>
-                      <IconCalendar className="w-5 h-5" />
-                    </span>
-                    <input
-                      id="search-end"
-                      type="text"
-                      readOnly
-                      value={searchData.endDate}
-                      onClick={() => openDateModal('end')}
-                      className={`search-date-input ${inputWithIconClassName}`}
-                    />
-                    {!searchData.endDate && (
-                      <span className="date-custom-placeholder pointer-events-none absolute left-10 top-1/2 -translate-y-1/2 text-slate-400 text-[15px]">
-                        {t('actions.chooseDate')}
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                {/* Search button */}
-                <div className="flex flex-col justify-end mt-2 md:mt-0">
-                  <label className="text-sm font-medium text-slate-700 mb-2 hidden md:block md:invisible">{t('actions.search')}</label>
                   <button
                     type="submit"
                     disabled={!isSearchFormValid}
-                    className={`inline-flex items-center justify-center gap-2 px-6 py-3 bg-red-600 text-white font-semibold rounded-xl hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all h-11 ${!isSearchFormValid ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    className={`inline-flex w-full h-11 items-center justify-center gap-2 rounded-xl px-6 text-sm font-semibold text-white transition-all focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 ${
+                      isSearchFormValid
+                        ? 'bg-red-600 hover:bg-red-700'
+                        : 'cursor-not-allowed bg-slate-300'
+                    }`}
                   >
                     <IconSearch className="w-5 h-5 shrink-0" />
                     {t('actions.search')}
                   </button>
-                </div>
-              </div>
-            </form>
+              </form>
+            </div>
           </div>
         </div>
       </section>
@@ -773,7 +726,7 @@ const brands = [
     PROMOTIONS SECTION — Clean Design, Image fills space, Red & #1B2638
     ============================================================ */}
 
-<section className="py-12 sm:py-16 bg-gray-50">
+<section className="py-12 sm:py-16 bg-slate-50">
   <div className="max-w-5xl mx-auto px-4 sm:px-6">
 
     {/* ── Section Header ── */}
@@ -784,22 +737,22 @@ const brands = [
         </svg>
         {t('promotions.badge', 'Offres Spéciales')}
       </span>
-      <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#1B2638] mb-2 tracking-tight">
+      <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-2 tracking-tight">
         {t('promotions.title', 'Profitez de nos promotions')}
       </h2>
-      <p className="text-gray-500 text-sm sm:text-base max-w-lg mx-auto">
+      <p className="text-slate-500 text-sm sm:text-base max-w-lg mx-auto">
         {t('promotions.description', 'Des offres exclusives pour vos locations de voitures au Maroc')}
       </p>
     </div>
 
     {/* ── Loading State — Light Glowing Skeleton ── */}
     {promotionsLoading && (
-      <div className="bg-white rounded-2xl border border-gray-200 shadow-lg overflow-hidden">
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-lg overflow-hidden">
         <div className="flex flex-col lg:flex-row">
           {/* Image skeleton */}
-          <div className="relative lg:w-[45%] h-52 sm:h-64 lg:h-auto lg:min-h-[320px] bg-gray-100 overflow-hidden">
+          <div className="relative lg:w-[45%] h-52 sm:h-64 lg:h-auto lg:min-h-[320px] bg-slate-100 overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/60 to-transparent animate-shimmer" />
-            <div className="absolute inset-0 bg-linear-to-br from-gray-50 via-gray-100 to-gray-50" />
+            <div className="absolute inset-0 bg-linear-to-br from-slate-50 via-slate-100 to-slate-50" />
             {/* Glow effect */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-red-200/30 rounded-full blur-2xl animate-pulse" />
           </div>
@@ -807,28 +760,28 @@ const brands = [
           {/* Content skeleton */}
           <div className="flex-1 p-5 sm:p-6 space-y-4">
             {/* Title */}
-            <div className="h-6 w-3/4 bg-gray-100 rounded-lg relative overflow-hidden">
+            <div className="h-6 w-3/4 bg-slate-100 rounded-lg relative overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/70 to-transparent animate-shimmer" />
             </div>
             {/* Description lines */}
             <div className="space-y-2">
-              <div className="h-4 w-full bg-gray-50 rounded relative overflow-hidden">
+              <div className="h-4 w-full bg-slate-50 rounded relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/60 to-transparent animate-shimmer" />
               </div>
-              <div className="h-4 w-2/3 bg-gray-50 rounded relative overflow-hidden">
+              <div className="h-4 w-2/3 bg-slate-50 rounded relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/60 to-transparent animate-shimmer" />
               </div>
             </div>
             {/* Car info card skeleton */}
-            <div className="rounded-xl border border-gray-100 bg-gray-50/50 p-4 flex items-center gap-3">
-              <div className="w-16 h-12 bg-gray-200 rounded-lg relative overflow-hidden">
+            <div className="rounded-xl border border-slate-100 bg-slate-50/50 p-4 flex items-center gap-3">
+              <div className="w-16 h-12 bg-slate-200 rounded-lg relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-shimmer" />
               </div>
               <div className="flex-1 space-y-2">
-                <div className="h-4 w-32 bg-gray-200 rounded relative overflow-hidden">
+                <div className="h-4 w-32 bg-slate-200 rounded relative overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-shimmer" />
                 </div>
-                <div className="h-3 w-24 bg-gray-100 rounded relative overflow-hidden">
+                <div className="h-3 w-24 bg-slate-100 rounded relative overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-shimmer" />
                 </div>
               </div>
@@ -840,11 +793,11 @@ const brands = [
               </div>
             </div>
             {/* Footer skeleton */}
-            <div className="pt-3 border-t border-gray-100 flex justify-between items-center">
-              <div className="h-4 w-40 bg-gray-100 rounded relative overflow-hidden">
+            <div className="pt-3 border-t border-slate-100 flex justify-between items-center">
+              <div className="h-4 w-40 bg-slate-100 rounded relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-shimmer" />
               </div>
-              <div className="h-10 w-32 bg-linear-to-r from-gray-200 to-gray-300 rounded-lg relative overflow-hidden">
+              <div className="h-10 w-32 bg-linear-to-r from-slate-200 to-slate-300 rounded-lg relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer" />
               </div>
             </div>
@@ -859,7 +812,7 @@ const brands = [
         {(() => {
           const promo = promotions[currentPromoIndex];
           return (
-            <div className="group bg-white rounded-2xl border border-gray-200 shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300">
+            <div className="group bg-white rounded-2xl border border-slate-200 shadow-lg overflow-hidden hover:shadow-xl hover:border-slate-300 transition-all duration-300">
               <div className="flex flex-col lg:flex-row">
                 {/* ── Left: Full Image Section (no dark background) ── */}
                 <div className="relative lg:w-[45%] h-52 sm:h-64 lg:h-auto lg:min-h-[320px]">
@@ -892,12 +845,12 @@ const brands = [
                   
                   {/* Title + Description */}
                   <div>
-                    <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-[#1B2638] mb-2 leading-tight">
+                    <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-slate-900 mb-2 leading-tight">
                       {i18n.language === 'en'
                         ? promo.title_en || promo.title
                         : promo.title_fr || promo.title}
                     </h3>
-                    <p className="text-gray-600 text-sm leading-relaxed line-clamp-3 sm:line-clamp-none">
+                    <p className="text-slate-600 text-sm leading-relaxed line-clamp-3 sm:line-clamp-none">
                       {i18n.language === 'en'
                         ? promo.description_en || promo.description
                         : promo.description_fr || promo.description}
@@ -906,18 +859,18 @@ const brands = [
 
                   {/* ── Car Info Card ── */}
                   {promo.car_name && (
-                    <div className="rounded-xl border border-gray-100 bg-gray-50 p-4">
+                    <div className="rounded-xl border border-slate-100 bg-slate-50 p-4">
                       <div className="flex items-center gap-3">
                         <img
                           src={promo.car_image || '/imgs/promo-default.jpg'}
                           alt={promo.car_name}
-                          className="w-16 h-12 object-cover rounded-lg border border-gray-200 flex-shrink-0"
+                          className="w-16 h-12 object-cover rounded-lg border border-slate-200 flex-shrink-0"
                           onError={(e) => { e.target.src = '/imgs/promo-default.jpg'; }}
                         />
                         <div className="flex-1 min-w-0">
-                          <p className="font-bold text-[#1B2638] text-sm mb-1">{promo.car_name}</p>
+                          <p className="font-bold text-slate-900 text-sm mb-1">{promo.car_name}</p>
                           
-                          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500">
+                          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500">
                             {promo.car_price && (
                               <span className="text-red-600 font-semibold">
                                 {formatPrice(promo.car_price)}/{t('common:currency.perDayShort') || 'j'}
@@ -925,13 +878,13 @@ const brands = [
                             )}
                             {promo.car_category && (
                               <span className="flex items-center gap-1.5">
-                                <span className="w-1 h-1 bg-gray-300 rounded-full" />
+                                <span className="w-1 h-1 bg-slate-300 rounded-full" />
                                 {promo.car_category}
                               </span>
                             )}
                             {promo.car_seats && (
                               <span className="flex items-center gap-1.5">
-                                <span className="w-1 h-1 bg-gray-300 rounded-full" />
+                                <span className="w-1 h-1 bg-slate-300 rounded-full" />
                                 {promo.car_seats} places
                               </span>
                             )}
@@ -947,7 +900,7 @@ const brands = [
                   {/* ── Promo Code ── */}
                   {promo.code && (
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-xs text-gray-400 font-medium uppercase tracking-wide">
+                      <span className="text-xs text-slate-400 font-medium uppercase tracking-wide">
                         {t('promotions.code', 'Code')}
                       </span>
                       <div className="flex items-center gap-1.5">
@@ -956,7 +909,7 @@ const brands = [
                         </span>
                         <button 
                           onClick={() => navigator.clipboard?.writeText(promo.code)}
-                          className="p-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-500 transition-colors"
+                          className="p-2 bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-500 hover:text-slate-700 transition-colors"
                           title="Copier"
                         >
                           <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -969,8 +922,8 @@ const brands = [
                   )}
 
                   {/* ── Footer: Validity + CTA ── */}
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-3 border-t border-gray-100">
-                    <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-3 border-t border-slate-100">
+                    <div className="flex items-center gap-1.5 text-xs text-slate-500">
                       <svg className="w-4 h-4 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
                         <line x1="16" y1="2" x2="16" y2="6"/>
@@ -979,7 +932,7 @@ const brands = [
                       </svg>
                       <span>
                         {t('promotions.validUntil', "Jusqu'au")}{' '}
-                        <strong className="text-[#1B2638]">
+                        <strong className="text-slate-900">
                           {new Date(promo.end_date).toLocaleDateString(
                             i18n.language === 'en' ? 'en-US' : 'fr-FR'
                           )}
@@ -990,7 +943,7 @@ const brands = [
                     <div className="flex flex-wrap gap-2 sm:gap-3">
                       <Link
                         to={`/cars/${promo.car_id}`}
-                        className="inline-flex items-center justify-center gap-1.5 px-4 sm:px-5 py-2.5 rounded-lg text-sm font-semibold text-slate-700 bg-gray-100 hover:bg-gray-200 transition-all"
+                        className="inline-flex items-center justify-center gap-1.5 px-4 sm:px-5 py-2.5 rounded-lg text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-all"
                       >
                         {t('actions.details', 'Détails')}
                         <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -1000,7 +953,7 @@ const brands = [
                       </Link>
                       <Link
                         to={`/booking?promo=${promo.code || ''}&car=${promo.car_id || ''}`}
-                        className="inline-flex items-center justify-center gap-1.5 px-4 sm:px-5 py-2.5 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-[#0F172B] to-[#1B2638] hover:from-[#1B2638] hover:to-[#2d3748] transition-all shadow-md hover:shadow-lg"
+                        className="inline-flex items-center justify-center gap-1.5 px-4 sm:px-5 py-2.5 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-slate-900 to-slate-800 hover:from-slate-800 hover:to-slate-700 transition-all shadow-md hover:shadow-lg"
                       >
                         {t('promotions.bookNow', 'Réserver')}
                         <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -1026,7 +979,7 @@ const brands = [
                   prev === 0 ? promotions.length - 1 : prev - 1
                 )
               }
-              className="absolute -left-3 sm:-left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full shadow-lg border border-gray-200 flex items-center justify-center text-gray-400 hover:text-red-600 hover:border-red-200 transition-all z-10"
+              className="absolute -left-3 sm:-left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full shadow-lg border border-slate-200 flex items-center justify-center text-slate-400 hover:text-red-600 hover:border-red-200 hover:shadow-xl transition-all z-10"
               aria-label="Previous promotion"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -1039,7 +992,7 @@ const brands = [
                   prev === promotions.length - 1 ? 0 : prev + 1
                 )
               }
-              className="absolute -right-3 sm:-right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full shadow-lg border border-gray-200 flex items-center justify-center text-gray-400 hover:text-red-600 hover:border-red-200 transition-all z-10"
+              className="absolute -right-3 sm:-right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full shadow-lg border border-slate-200 flex items-center justify-center text-slate-400 hover:text-red-600 hover:border-red-200 hover:shadow-xl transition-all z-10"
               aria-label="Next promotion"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -1052,7 +1005,7 @@ const brands = [
         {/* ── Dots Navigation ── */}
         {promotions.length > 1 && (
           <div className="flex justify-center items-center gap-2 mt-5">
-            <span className="text-xs text-gray-400 font-medium">
+            <span className="text-xs text-slate-400 font-medium">
               {currentPromoIndex + 1} / {promotions.length}
             </span>
             <div className="flex gap-1.5">
@@ -1064,7 +1017,7 @@ const brands = [
                   style={{
                     width: idx === currentPromoIndex ? '24px' : '8px',
                     height: '8px',
-                    backgroundColor: idx === currentPromoIndex ? '#DC2626' : '#D1D5DB',
+                    backgroundColor: idx === currentPromoIndex ? '#DC2626' : '#CBD5E1',
                   }}
                   aria-label={`Go to promotion ${idx + 1}`}
                 />
@@ -1078,13 +1031,13 @@ const brands = [
     {/* ── Empty State ── */}
     {!promotionsLoading && promotions.length === 0 && !promotionsError && (
       <div className="text-center py-14">
-        <div className="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-3">
-          <svg className="w-7 h-7 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <div className="w-14 h-14 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-3">
+          <svg className="w-7 h-7 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
             <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/>
             <line x1="7" y1="7" x2="7.01" y2="7"/>
           </svg>
         </div>
-        <p className="text-gray-500 font-medium">
+        <p className="text-slate-500 font-medium">
           {t('promotions.noOffers', 'Aucune promotion en cours')}
         </p>
       </div>
@@ -1210,8 +1163,8 @@ const brands = [
                         </div>
                       )}
                       {car.reserved && car.available && (
-                        <div className="absolute inset-0 bg-[#F01023]/40 backdrop-blur-[2px] flex items-center justify-center">
-                          <span className="bg-[#F01023] text-white px-3 py-1 rounded font-bold text-sm shadow-lg rotate-[-5deg]">{t('vehicles.reserved')}</span>
+                        <div className="absolute inset-0 bg-red-600/40 backdrop-blur-[2px] flex items-center justify-center">
+                          <span className="bg-red-600 text-white px-3 py-1 rounded font-bold text-sm shadow-lg rotate-[-5deg]">{t('vehicles.reserved')}</span>
                         </div>
                       )}
                     </div>
@@ -1258,7 +1211,7 @@ const brands = [
                           }}
                           className={`flex-1 py-2 text-center text-sm font-bold rounded-xl flex items-center justify-center gap-1 transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 ${
                             car.available && !car.reserved
-                              ? 'bg-gradient-to-r from-[#0F172B] to-[#1e293b] text-white hover:from-[#1e293b] hover:to-[#334155]'
+                              ? 'bg-gradient-to-r from-slate-900 to-slate-800 text-white hover:from-slate-800 hover:to-slate-700'
                               : 'bg-slate-100 text-slate-400 cursor-not-allowed'
                           }`}
                         >

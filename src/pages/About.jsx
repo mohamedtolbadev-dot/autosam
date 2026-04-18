@@ -54,8 +54,16 @@ const About = () => {
   return (
     <div className="min-h-screen bg-slate-50 min-w-0 overflow-x-hidden">
       {/* Hero Section */}
-      <section className="relative text-white overflow-hidden rounded-b-2xl sm:rounded-b-3xl bg-slate-800">
-        <div className="absolute inset-0 bg-slate-900/70" aria-hidden />
+      <section
+        className="relative text-white overflow-hidden rounded-b-2xl sm:rounded-b-3xl"
+        style={{
+          backgroundImage: "url('/hero_image/hero_image.avif')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+        }}
+      >
+        <div className="absolute inset-0 bg-slate-950/65" aria-hidden />
         <div className="container relative z-10 mx-auto px-4 sm:px-6 max-w-6xl py-10 sm:py-16">
           <div className="max-w-3xl mx-auto text-center">
             <p className="text-slate-300 text-xs sm:text-sm font-medium uppercase tracking-wider mb-3">{t('hero.breadcrumb')}</p>

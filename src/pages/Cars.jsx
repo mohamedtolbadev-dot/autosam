@@ -298,16 +298,17 @@ const Cars = () => {
     <div className="min-h-screen bg-slate-50 overflow-x-hidden">
 
       {/* ── HEADER ─────────────────────────────────────────────────────────── */}
-      <section className="bg-[#0F172B] text-white pt-16 pb-32 px-4 relative overflow-hidden">
-        {/* Subtle grid pattern */}
-        <div
-          className="absolute inset-0 opacity-[0.04]"
-          style={{
-            backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)',
-            backgroundSize: '40px 40px'
-          }}
-          aria-hidden="true"
-        />
+      <section
+        className="text-white pt-16 pb-32 px-4 relative overflow-hidden"
+        style={{
+          backgroundImage: "url('/hero_image/hero_image.avif')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+        }}
+      >
+        {/* Dark overlay for text readability */}
+        <div className="absolute inset-0 bg-slate-950/65" aria-hidden="true" />
         {/* Top accent line */}
         <div className="absolute top-0 left-0 right-0 h-0.5 bg-red-600" />
 
@@ -319,10 +320,10 @@ const Cars = () => {
                 {t('header.subtitle')}
               </p>
             </div>
-            <h1 className="text-4xl sm:text-5xl font-black tracking-tight mb-4 text-white leading-[1.08]">
+            <h1 className="text-4xl sm:text-5xl font-black tracking-tight mb-4 text-white leading-[1.08] drop-shadow-lg">
               {t('header.title')}
             </h1>
-            <p className="text-sm text-slate-400 max-w-md leading-relaxed">
+            <p className="text-sm text-slate-200 max-w-md leading-relaxed">
               {t('header.description')}
             </p>
           </div>

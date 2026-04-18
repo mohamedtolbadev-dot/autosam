@@ -665,8 +665,16 @@ const Booking = () => {
           setShowRegisterModal(true);
         }}
       />
-      <section className="relative text-white overflow-hidden rounded-b-2xl sm:rounded-b-3xl bg-slate-800">
-        <div className="absolute inset-0 bg-slate-900/70" aria-hidden />
+      <section
+        className="relative text-white overflow-hidden rounded-b-2xl sm:rounded-b-3xl"
+        style={{
+          backgroundImage: "url('/hero_image/hero_image.avif')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+        }}
+      >
+        <div className="absolute inset-0 bg-slate-950/65" aria-hidden />
         <div className="container relative z-10 mx-auto px-4 sm:px-6 max-w-6xl py-8 sm:py-14 min-w-0">
           <p className="text-slate-300 text-xs sm:text-sm font-medium uppercase tracking-wider mb-2">{t('title')}</p>
           <h1 className="text-2xl sm:text-4xl font-bold tracking-tight mb-2 text-white">{t('heroTitle')}</h1>
